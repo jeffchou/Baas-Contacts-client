@@ -1,3 +1,15 @@
 /* 
 	styles on main screen
 */
+
+.head-operations {
+	height: 70px;
+}
+
+.advance-operations {
+	height: 30px;
+}
+
+.main-screen {
+	min-height: 500px;
+}
