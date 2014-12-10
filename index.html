@@ -18,16 +18,45 @@
 <body>
 	<div class="container">
 		<div class="row head-operations">
-			<div class="col-md-4 logo">Logo</div>
-			<div class="col-md-8">Search</div>
+			<div class="col-md-3 logo">Logo</div>
+			<div class="col-md-9">
+				<div class="navbar-form">
+					<div class="form-group">
+						<input id="search-text" type="text" class="form-control" placeholder="Search">
+					</div>
+					<button id="search" class="btn btn-default">Search</button>
+					<div class="navbar-form col-md-2" id="account-panel">帳號/登入</div>
+				</div>
+			</div>
 		</div>
 		<div class="row advance-operations">
-			<div class="col-md-4">Blank</div>
-			<div class="col-md-8">Operations over Contacts</div>
+			<div class="col-md-3">Blank</div>
+			<div class="col-md-9">
+				<div class="navbar-form">
+					<div class="radio">
+						過濾條件
+						<label>
+							<input type="radio" name="optionsRadios" id="filter-all" value="option1" checked> 全部
+						</label>
+						<label>
+							<input type="radio" name="optionsRadios" id="filter-name" value="option2"> 姓名
+						</label>
+						<label>
+							<input type="radio" name="optionsRadios" id="filter-dep" value="option3" > 部門
+						</label>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="row main-screen">
-			<div class="col-md-4">Future Features</div>
-			<div class="col-md-8">Contacts List</div>
+			<div class="col-md-3">Future Features</div>
+			<div class="col-md-9">
+				<div class="jumbotron">
+					<div idd="contacts-panel">
+						Contacts...
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	
