@@ -2,6 +2,14 @@
 	styles on main screen
 */
 
+body {
+	background-color: #eee;
+}
+
+.container {
+	background-color: #fff;
+}
+
 .head-operations {
 	height: 70px;
 }
@@ -12,4 +20,17 @@
 
 .main-screen {
 	min-height: 500px;
+}
+
+#search-text {
+	width: 300px;
+}
+
+#contacts-panel{
+	min-height: 500px;
+}
+
+#account-panel {
+	background-color: #eee;
+	float: right;
 }
