@@ -49,3 +49,9 @@ body {
 	padding-right: 0;
 	text-align: right;
 }
+
+.contact-form-label {
+	width: 170px;
+	text-align: right;
+	padding: 5px;
+}
