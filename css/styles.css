@@ -6,8 +6,22 @@ body {
 	background-color: #eee;
 }
 
-.container {
+.todo {
+	display: none;
+}
+
+#app {
 	background-color: #fff;
+}
+
+.form-signin {
+	max-width: 350px;
+	padding: 15px;
+	margin: 0 auto;
+}
+
+#signin-error-panel{
+	display: none;
 }
 
 .head-operations {

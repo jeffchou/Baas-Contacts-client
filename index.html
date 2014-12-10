@@ -16,7 +16,7 @@
 </head>
 
 <body>
-	<div class="container">
+	<div class="container" id="app">
 		<div class="row head-operations">
 			<div class="col-md-3 logo">Logo</div>
 			<div class="col-md-9">
@@ -25,7 +25,9 @@
 						<input id="search-text" type="text" class="form-control" placeholder="Search">
 					</div>
 					<button id="search" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-					<div class="navbar-form col-md-2" id="account-panel">帳號/登入</div>
+					<div class="navbar-form col-md-2" id="account-panel">
+						
+					</div>
 				</div>
 			</div>
 		</div>
@@ -34,15 +36,15 @@
 			<div class="col-md-9">
 				<div class="navbar-form">
 					<div class="radio">
-						過濾條件
+						search field
 						<label>
-							<input type="radio" name="optionsRadios" id="filter-all" value="option1" checked> 全部
+							<input type="radio" name="optionsRadios" id="filter-all" value="option1" checked> for all
 						</label>
 						<label>
-							<input type="radio" name="optionsRadios" id="filter-name" value="option2"> 姓名
+							<input type="radio" name="optionsRadios" id="filter-name" value="option2"> name
 						</label>
 						<label>
-							<input type="radio" name="optionsRadios" id="filter-dep" value="option3" > 部門
+							<input type="radio" name="optionsRadios" id="filter-dep" value="option3" > department
 						</label>
 					</div>
 				</div>
@@ -59,7 +61,27 @@
 			</div>
 		</div>
 	</div>
-	
+	<div class="container" id="signin-form">
+		<div class="form-signin" role="form">
+			<h1 class="form-signin-heading">Sign in</h1>
+			<h5>Welcome back! Please enter your account and password to proceed.</h5>
+			<label for="inputAccount" class="sr-only">Account</label>
+			<input type="text" id="inputAccount" class="form-control" placeholder="User Account" required autofocus>
+			<label for="inputPassword" class="sr-only">Password</label>
+			<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+			<div class="checkbox todo">
+				<label>
+					<input type="checkbox" value="remember-me"> Remember me
+				</label>
+			</div>
+			<button class="btn btn-lg btn-primary btn-block" id="signin">Sign in</button>
+			<button class="btn btn-lg btn-info btn-block todo" id="signup">Sign up</button>
+			<div class="alert alert-danger" role="alert" id="signin-error-panel">
+				<strong>Sign in error !</strong> Invalid user account or password. 
+				<a class="todo" href="#"> forgot password ?</a>
+			</div>
+		</div>
+	</div>
 	<script src="js/libs/jquery-2.1.1.js"></script>
 	<script src="js/libs/bootstrap.js"></script>
 	<script src="js/baasbox.js"></script>
