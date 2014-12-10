@@ -21,8 +21,7 @@ $(document).ready(function(){
 	if (user) {
 		loginSuccess(user);
 	} else {
-		$("#signin-form").show();
-		$("#app").hide();
+		logout();
 	}
 	if (DEBUG) {
 		$.print("BaasBox.getCurrentUser() -> " + BaasBox.getCurrentUser());
@@ -37,8 +36,13 @@ var loginSuccess = function(userInfo) {
 	$("#signin-form").hide();
 	$("#app").show();
 	
-	$("#account-panel").text(user.username);
+	$("#account-name").text(user.username);
 };
+
+var logout = function() {
+	$("#signin-form").show();
+	$("#app").hide();
+}
 
 function registerSigninEvents() {
 	
@@ -73,6 +77,11 @@ function registerSigninEvents() {
 		if(event.keyCode == 13){
 			$("#signin").click();
 		}
+	});
+	
+	$("#signout").click(function(){
+		BaasBox.login();
+		logout();
 	});
 	
 }
