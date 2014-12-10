@@ -33,9 +33,11 @@ $(document).ready(function(){
 });
 
 
-var loginSuccess = function(user) {
+var loginSuccess = function(userInfo) {
 	$("#signin-form").hide();
 	$("#app").show();
+	
+	$("#account-panel").text(user.username);
 };
 
 function registerSigninEvents() {
@@ -60,7 +62,7 @@ function registerSigninEvents() {
 		
 		BaasBox.login(user, password)
 			.done(function(res) {
-				loginSuccess(user);
+				loginSuccess(res);
 			})
 			.fail(function (err) {
 				$("#signin-error-panel").fadeIn();
