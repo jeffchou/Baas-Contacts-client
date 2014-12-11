@@ -9,8 +9,7 @@
 }
 
 .contact-header {
-	background-color: Green;
-	height: 2em;
+	margin-top: 1em;
 }
 
 #contacts-panel {
@@ -18,5 +17,11 @@
 }
 
 #contacts-panel .row {
-	height: 2em;
+}
+
+#contacts-panel [class^=col-] {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border: 1px solid #ddd;
+	border: 1px solid rgba(86,61,124,.2);
 }
