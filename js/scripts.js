@@ -1,4 +1,5 @@
 var DEBUG = false;
+var CONTACK_COLLECTION = "contacts";
 
 $.print = function(msg, type) {
 	if (typeof type !== "undefined")
@@ -29,8 +30,6 @@ $(document).ready(function(){
 	
 	registerContactsEvents();
 	registerSigninEvents();
-	
-	loadContacts();
 });
 
 
@@ -39,6 +38,8 @@ var loginSuccess = function(userInfo) {
 	$("#app").show();
 	
 	$("#account-name").text(user.username);
+	
+	loadContacts();
 };
 
 var logout = function() {
@@ -46,8 +47,17 @@ var logout = function() {
 	$("#app").hide();
 }
 
+// load all
 var loadContacts = function() {
-
+	BaasBox.loadCollection(CONTACK_COLLECTION)
+		.done(function(contacts) {
+			$.print(contacts);
+		})
+		.fail(function(err) {
+			alert("load contact failed");
+				$.print("load contact failed");
+				$.print(err);
+		});
 }
 
 function registerContactsEvents() {
@@ -67,7 +77,7 @@ function registerContactsEvents() {
 		$.print(newContacts);
 		
 		// contacts
-		BaasBox.save(newContacts, "contacts")
+		BaasBox.save(newContacts, CONTACK_COLLECTION)
 			.done(function(res) {
 				$("#add-contact-form").modal('hide');
 				// todo: refresh or add something.
