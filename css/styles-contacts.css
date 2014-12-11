@@ -7,3 +7,16 @@
 	text-align: right;
 	padding: 5px;
 }
+
+.contact-header {
+	background-color: Green;
+	height: 2em;
+}
+
+#contacts-panel {
+	text-align: center;
+}
+
+#contacts-panel .row {
+	height: 2em;
+}

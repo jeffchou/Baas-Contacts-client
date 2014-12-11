@@ -51,7 +51,17 @@ var logout = function() {
 var loadContacts = function() {
 	BaasBox.loadCollection(CONTACK_COLLECTION)
 		.done(function(contacts) {
-			$.print(contacts);
+			var contactTmpl = $("#contact-tmpl").html();
+			var tmplFunc = doT.template(contactTmpl),
+				composedText,
+				$contactsList = $("#contacts-list"),
+				i = 0;
+			
+			$contactsList.empty();
+			for (; i < contacts.length; i++) {
+				composedText = tmplFunc(contacts[i]);
+				$contactsList.append(composedText);
+			}
 		})
 		.fail(function(err) {
 			alert("load contact failed");
