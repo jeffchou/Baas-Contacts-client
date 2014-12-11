@@ -26,9 +26,11 @@ $(document).ready(function(){
 	if (DEBUG) {
 		$.print("BaasBox.getCurrentUser() -> " + BaasBox.getCurrentUser());
 	}
-	//
 	
+	registerContactsEvents();
 	registerSigninEvents();
+	
+	loadContacts();
 });
 
 
@@ -44,8 +46,41 @@ var logout = function() {
 	$("#app").hide();
 }
 
+var loadContacts = function() {
+
+}
+
+function registerContactsEvents() {
+	// on add a new contact
+	$("#cf-add").click(function(){
+		var newContacts = {};
+		
+		// todo: verify form inputs.
+		newContacts.employeeId = $("#cf-id").val();
+		newContacts.name = $("#cf-name").val();
+		newContacts.extNo = $("#cf-extno").val();
+		newContacts.email = $("#cf-email").val();
+		newContacts.mobileNo = $("#cf-mobileno").val();
+		newContacts.birthDay = $("#cf-birth").val();
+		newContacts.address = $("#cf-address").val();
+		
+		$.print(newContacts);
+		
+		// contacts
+		BaasBox.save(newContacts, "contacts")
+			.done(function(res) {
+				$("#add-contact-form").modal('hide');
+				// todo: refresh or add something.
+			})
+			.fail(function(err) {
+				alert("add new contact failed");
+				$.print("add new contact failed");
+				$.print(err);
+			});
+	});
+}
+
 function registerSigninEvents() {
-	
 	if (DEBUG) {
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
