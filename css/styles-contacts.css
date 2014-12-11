@@ -1,3 +1,9 @@
 /* 
 	styles on the contacts
 */
+
+.contact-form-label {
+	width: 170px;
+	text-align: right;
+	padding: 5px;
+}

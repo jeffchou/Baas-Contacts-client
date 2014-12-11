@@ -1,4 +1,5 @@
 var DEBUG = false;
+var CONTACK_COLLECTION = "contacts";
 
 $.print = function(msg, type) {
 	if (typeof type !== "undefined")
@@ -26,8 +27,8 @@ $(document).ready(function(){
 	if (DEBUG) {
 		$.print("BaasBox.getCurrentUser() -> " + BaasBox.getCurrentUser());
 	}
-	//
 	
+	registerContactsEvents();
 	registerSigninEvents();
 });
 
@@ -37,6 +38,8 @@ var loginSuccess = function(userInfo) {
 	$("#app").show();
 	
 	$("#account-name").text(user.username);
+	
+	loadContacts();
 };
 
 var logout = function() {
@@ -44,8 +47,50 @@ var logout = function() {
 	$("#app").hide();
 }
 
+// load all
+var loadContacts = function() {
+	BaasBox.loadCollection(CONTACK_COLLECTION)
+		.done(function(contacts) {
+			$.print(contacts);
+		})
+		.fail(function(err) {
+			alert("load contact failed");
+				$.print("load contact failed");
+				$.print(err);
+		});
+}
+
+function registerContactsEvents() {
+	// on add a new contact
+	$("#cf-add").click(function(){
+		var newContacts = {};
+		
+		// todo: verify form inputs.
+		newContacts.employeeId = $("#cf-id").val();
+		newContacts.name = $("#cf-name").val();
+		newContacts.extNo = $("#cf-extno").val();
+		newContacts.email = $("#cf-email").val();
+		newContacts.mobileNo = $("#cf-mobileno").val();
+		newContacts.birthDay = $("#cf-birth").val();
+		newContacts.address = $("#cf-address").val();
+		
+		$.print(newContacts);
+		
+		// contacts
+		BaasBox.save(newContacts, CONTACK_COLLECTION)
+			.done(function(res) {
+				$("#add-contact-form").modal('hide');
+				// todo: refresh or add something.
+			})
+			.fail(function(err) {
+				alert("add new contact failed");
+				$.print("add new contact failed");
+				$.print(err);
+			});
+	});
+}
+
 function registerSigninEvents() {
-	
 	if (DEBUG) {
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");

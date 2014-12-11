@@ -25,11 +25,11 @@ body {
 }
 
 .head-operations {
-	height: 70px;
+	height: 50px;
 }
 
 .advance-operations {
-	height: 30px;
+	height: 50px;
 }
 
 .main-screen {
@@ -46,4 +46,7 @@ body {
 
 #account-panel {
 	float: right;
+	padding-right: 0;
+	text-align: right;
 }
+

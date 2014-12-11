@@ -25,8 +25,8 @@
 						<input id="search-text" type="text" class="form-control" placeholder="Search">
 					</div>
 					<button id="search" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-					<div class="navbar-form col-md-2" id="account-panel">
-						<!-- Split button -->
+					<div class="col-md-2" id="account-panel">
+						<!-- account button -->
 						<div class="btn-group">
 							<button type="button" class="btn btn-default" title=""><span id="account-name"></span></button>
 							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -38,7 +38,7 @@
 								<li><a href="#" id="signout">Sign out</a></li>
 							</ul>
 						</div>
-						
+							
 					</div>
 				</div>
 			</div>
@@ -65,14 +65,69 @@
 		<div class="row main-screen">
 			<div class="col-md-3">Future Features</div>
 			<div class="col-md-9">
-				<div class="jumbotron">
-					<div idd="contacts-panel">
-						Contacts...
+				<div class="well">
+					<!-- + contact button-->
+					<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#add-contact-form" title="Add a new contact">
+						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
+					</button>
+
+					<!-- + contact form in Modal -->
+					<div class="modal fade" id="add-contact-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+									<h4 class="modal-title" id="myModalLabel">Add a new contact</h4>
+								</div>
+								<div class="modal-body">
+									<div id="edit-contact-form">
+										<div class="input-group">
+											<label for="cf-id" class="contact-form-label">ID</label>
+											<input type="text" id="cf-id" class="" placeholder="">
+										</div>
+										<div class="input-group">
+											<label for="cf-name" class="contact-form-label">Name</label>
+											<input type="text" id="cf-name" class="" placeholder="">
+										</div>
+										<div class="input-group">
+											<label for="cf-extno" class="contact-form-label">Extension Number</label>
+											<input type="text" id="cf-extno" class="" placeholder="">
+										</div>
+										<div class="input-group">
+											<label for="cf-email" class="contact-form-label">Email</label>
+											<input type="text" id="cf-email" class="" placeholder="">
+										</div>
+										<div class="input-group">
+											<label for="cf-mobileno" class="contact-form-label">Mobile Number</label>
+											<input type="text" id="cf-mobileno" class="" placeholder="">
+										</div>
+										<div class="input-group">
+											<label for="cf-birth" class="contact-form-label">Birthday</label>
+											<input type="text" id="cf-birth" class="" placeholder="">
+										</div>
+										<div class="input-group">
+											<label for="cf-address" class="contact-form-label">Address</label>
+											<input type="text" id="cf-address" class="" placeholder="">
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary" id="cf-add">Add</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="contacts-panel" class="">
+						
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	
+	
+	
 	<div class="container" id="signin-form">
 		<div class="form-signin" role="form">
 			<h1 class="form-signin-heading">Sign in</h1>
@@ -94,6 +149,8 @@
 			</div>
 		</div>
 	</div>
+	
+	
 	<script src="js/libs/jquery-2.1.1.js"></script>
 	<script src="js/libs/bootstrap.js"></script>
 	<script src="js/baasbox.js"></script>
