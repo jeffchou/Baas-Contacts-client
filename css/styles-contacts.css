@@ -7,3 +7,21 @@
 	text-align: right;
 	padding: 5px;
 }
+
+.contact-header {
+	margin-top: 1em;
+}
+
+#contacts-panel {
+	text-align: center;
+}
+
+#contacts-panel .row {
+}
+
+#contacts-panel [class^=col-] {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border: 1px solid #ddd;
+	border: 1px solid rgba(86,61,124,.2);
+}

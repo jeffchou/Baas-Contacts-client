@@ -18,8 +18,8 @@
 <body>
 	<div class="container" id="app">
 		<div class="row head-operations">
-			<div class="col-md-3 logo">Logo</div>
-			<div class="col-md-9">
+			<div class="col-md-2 logo">Logo</div>
+			<div class="col-md-10">
 				<div class="navbar-form">
 					<div class="form-group">
 						<input id="search-text" type="text" class="form-control" placeholder="Search">
@@ -44,8 +44,8 @@
 			</div>
 		</div>
 		<div class="row advance-operations">
-			<div class="col-md-3">Blank</div>
-			<div class="col-md-9">
+			<div class="col-md-2">Blank</div>
+			<div class="col-md-10">
 				<div class="navbar-form">
 					<div class="radio">
 						search field
@@ -63,15 +63,15 @@
 			</div>
 		</div>
 		<div class="row main-screen">
-			<div class="col-md-3">Future Features</div>
-			<div class="col-md-9">
+			<div class="col-md-2">Future Features</div>
+			<div class="col-md-10">
 				<div class="well">
-					<!-- + contact button-->
-					<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#add-contact-form" title="Add a new contact">
+					<!-- add contact button-->
+					<button type="button" id="c-add" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#add-contact-form" title="Add a new contact">
 						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
 					</button>
 
-					<!-- + contact form in Modal -->
+					<!-- add contact form in Modal -->
 					<div class="modal fade" id="add-contact-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 						<div class="modal-dialog">
 							<div class="modal-content">
@@ -118,8 +118,21 @@
 							</div>
 						</div>
 					</div>
-					<div id="contacts-panel" class="">
-						
+					<div id="contacts-panel">
+						<div class="contact-header">
+							<div class="row">
+							  <div class="col-xs-1">Id</div>
+							  <div class="col-xs-2">Name</div>
+							  <div class="col-xs-1">Ext No</div>
+							  <div class="col-xs-3">Email</div>
+							  <div class="col-xs-1">Mobile</div>
+							  <div class="col-xs-1">Birthday</div>
+							  <div class="col-xs-3">Address</div>
+							</div>
+						</div>
+						<div id="contacts-list" class="">
+							
+						</div>
 					</div>
 				</div>
 			</div>
@@ -151,8 +164,21 @@
 	</div>
 	
 	
+	<script id="contact-tmpl" type="text/template">
+		<div class="row">
+		  <div class="col-xs-1">{{=it.employeeId}}</div>
+		  <div class="col-xs-2">{{=it.name}}</div>
+		  <div class="col-xs-1">{{=it.extNo}}</div>
+		  <div class="col-xs-3">{{=it.email}}</div>
+		  <div class="col-xs-1">{{=it.mobileNo}}</div>
+		  <div class="col-xs-1">{{=it.birthDay}}</div>
+		  <div class="col-xs-3">{{=it.address}}</div>
+		</div>
+	</script>
+	
 	<script src="js/libs/jquery-2.1.1.js"></script>
 	<script src="js/libs/bootstrap.js"></script>
+	<script src="js/libs/doT.js"></script>
 	<script src="js/baasbox.js"></script>
 	<script src="js/scripts.js"></script>
 	<script src="js/debug.js"></script>
