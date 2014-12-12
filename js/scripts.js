@@ -56,10 +56,16 @@ var composeContactHtml = (function(){
 	return doT.template(contactTmpl);
 }());
 
-var create$contact = function(contact) {
+var renderContact = function(contact) {
 	var contactHtml = composeContactHtml(contact);
 	return $(contactHtml).data("contact", contact);
 }
+
+
+//var renderContactForm = function(contact) {
+//	var contactHtml = composeContactFormHtml(contact);
+//	return $(contactHtml).data("contact", contact);
+//}
 
 var refreshContactsList = function(contacts) {
 	var $contactsList = $("#contacts-list"),
@@ -68,7 +74,7 @@ var refreshContactsList = function(contacts) {
 		
 	$contactsList.empty();
 	for (; i < contacts.length; i++) {
-		$contact = create$contact(contacts[i]);
+		$contact = renderContact(contacts[i]);
 		$contactsList.append($contact);
 	}
 };
@@ -87,36 +93,86 @@ var loadContacts = function() {
 }
 
 function registerContactsEvents() {
-	// on add a new contact
-	$("#cf-add").click(function(){
-		var newContacts = {};
+	var createBlankContact = function() {
+		return { 
+			employeeId: "",
+			name: "",
+			extNo: "",
+			email: "",
+			mobileNo: "",
+			birthDay: "",
+			address: ""
+		};
+	};
+	var composeContactFormHtml = doT.template($("#contact-form-tmpl").html());
+	var putContactData = function(contact) {
+		var contactFormHtml = composeContactFormHtml(contact);
+		$("#edit-contact-form").empty().append(contactFormHtml);
+	};
+	var fillFromToContact = function(contact) {
+		contact.employeeId = $("#cf-id").val();
+		contact.name = $("#cf-name").val();
+		contact.extNo = $("#cf-extno").val();
+		contact.email = $("#cf-email").val();
+		contact.mobileNo = $("#cf-mobileno").val();
+		contact.birthDay = $("#cf-birth").val();
+		contact.address = $("#cf-address").val();
+	};
+	
+	$('#add-contact-form').on('show.bs.modal', function (e) {
+		//debugger;
+	})
+	
+	// open add form 
+	$("#c-add").click(function() {
+		var contact = createBlankContact();
+		putContactData(contact);
+		$('#add-contact-form').modal()
+			.find(".modal-title").text("Add New Contact");
 		
-		// todo: verify form inputs.
-		newContacts.employeeId = $("#cf-id").val();
-		newContacts.name = $("#cf-name").val();
-		newContacts.extNo = $("#cf-extno").val();
-		newContacts.email = $("#cf-email").val();
-		newContacts.mobileNo = $("#cf-mobileno").val();
-		newContacts.birthDay = $("#cf-birth").val();
-		newContacts.address = $("#cf-address").val();
-		
-		$.print(newContacts);
-		
-		// contacts
-		BaasBox.save(newContacts, CONTACK_COLLECTION)
-			.done(function(res) {
-				$("#add-contact-form").modal('hide');
-				// todo: refresh or add something.
-			})
-			.fail(function(err) {
-				alert("add new contact failed");
-				$.print("add new contact failed");
-				$.print(err);
-			});
+		$("#cf-save").off().click(function(e) {
+			// todo: verify form inputs.
+			fillFromToContact(contact);
+			
+			e.preventDefault();
+			
+			BaasBox.save(contact, CONTACK_COLLECTION)
+				.done(function(res) {
+					$("#add-contact-form").modal('hide');
+					// todo: refresh or add something.
+				})
+				.fail(function(err) {
+					alert("add new contact failed");
+					$.print("add new contact failed");
+					$.print(err);
+				});
+		});
 	});
 	
-	$("#contacts-list").on("click", "div.row", function(){
-		$.print($(this).data("contact"));
+	// open edit form
+	$("#contacts-list").on("click", "div.row", function(e) {
+		var contact = $(this).data("contact");
+		putContactData(contact);
+		$('#add-contact-form').modal()
+			.find(".modal-title").text("Edit Contact");
+		
+		$("#cf-save").off().click(function(e) {
+			// todo: verify form inputs.
+			fillFromToContact(contact);
+			
+			e.preventDefault();
+			
+			BaasBox.save(contact, CONTACK_COLLECTION)
+				.done(function(res) {
+					$("#add-contact-form").modal('hide');
+					// todo: refresh or add something.
+				})
+				.fail(function(err) {
+					alert("add new contact failed");
+					$.print("add new contact failed");
+					$.print(err);
+				});
+		});
 	});
 }
 

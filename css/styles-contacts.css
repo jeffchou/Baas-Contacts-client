@@ -17,16 +17,15 @@
 	text-align: left;
 }
 
-#contacts-panel div[class^=col-] {
-	padding-left: 0;
+#contacts-list div[class^=col-] {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+	cursor: pointer;
 }
 
 #contacts-panel [class^=col-] {
-	padding-top: 10px;
-	padding-bottom: 10px;
+	padding: 10px 0 10px 0;
 	border: 1px solid #ddd;
 	border: 1px solid rgba(86,61,124,.2);
 }
