@@ -43,7 +43,7 @@ var loginSuccess = function(userInfo) {
 	
 	$("#account-name").text(user.username);
 	
-	loadContacts();
+	loadAllContacts();
 };
 
 var logout = function() {
@@ -79,8 +79,13 @@ var refreshContactsList = function(contacts) {
 	}
 };
 
+var getSearchField = function() {
+	$("#contact-filter input[name='optionsRadios']")
+	$( "input[n='Hot Fuzz']" ).next().text( "Hot Fuzz" );
+};
+
 // load all
-var loadContacts = function() {
+var loadAllContacts = function() {
 	BaasBox.loadCollection(CONTACK_COLLECTION)
 		.done(function(contacts) {
 			refreshContactsList(contacts);
@@ -92,7 +97,48 @@ var loadContacts = function() {
 		});
 }
 
+var loadContacts = function() {
+	var searchBy = $('input[name=optionsRadios]:checked', '#contact-filter').val(),
+		searchKey = $("#search-text").val();
+		
+	$.print(searchBy);
+	$.print(searchKey);
+	
+	if (searchKey == "") {
+		loadAllContacts();
+		return;
+	}
+	var searchFiled = "";
+	switch(searchBy) {
+		case "by-name": 
+			searchFiled = "name";
+			break;
+		case "by-department": 
+			searchFiled = "department";
+			break;	
+	}
+	
+	// http://172.16.252.102:9000/document/contacts?page=0&recordsPerPage=50
+	//BaasBox.loadCollectionWithParams(CONTACK_COLLECTION, {page: 0, recordsPerPage: BaasBox.pagelength})
+	//GET /link?where=in.name.toLowerCase() like 'john%' and label="customer"
+	//name.toLowerCase()%20like%20%27john%25%27%20and%20label%3D%27customer%27
+	$.ajax(BaasBox.endPoint + '/document/contacts?page=0&recordsPerPage=50&' + searchFiled + ' like ' + "'%" + searchKey +"%'")
+		.done(function(contacts) {
+			refreshContactsList(contacts);
+		})
+		.fail(function(err) {
+			alert("load contact failed");
+				$.print("load contact failed");
+				$.print(err);
+		});
+}
+
 function registerContactsEvents() {
+	
+	$("#search").click(function() {
+		loadContacts();
+	});
+	
 	var createBlankContact = function() {
 		return { 
 			employeeId: "",
