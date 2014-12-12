@@ -10,13 +10,18 @@
 
 .contact-header {
 	margin-top: 1em;
-}
-
-#contacts-panel {
 	text-align: center;
 }
 
-#contacts-panel .row {
+#contacts-panel {
+	text-align: left;
+}
+
+#contacts-panel div[class^=col-] {
+	padding-left: 0;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 #contacts-panel [class^=col-] {
