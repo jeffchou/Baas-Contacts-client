@@ -51,21 +51,33 @@ var logout = function() {
 	$("#app").hide();
 }
 
+var composeContactHtml = (function(){
+	var contactTmpl = $("#contact-tmpl").html();
+	return doT.template(contactTmpl);
+}());
+
+var create$contact = function(contact) {
+	var contactHtml = composeContactHtml(contact);
+	return $(contactHtml).data("contact", contact);
+}
+
+var refreshContactsList = function(contacts) {
+	var $contactsList = $("#contacts-list"),
+		i = 0,
+		$contact;
+		
+	$contactsList.empty();
+	for (; i < contacts.length; i++) {
+		$contact = create$contact(contacts[i]);
+		$contactsList.append($contact);
+	}
+};
+
 // load all
 var loadContacts = function() {
 	BaasBox.loadCollection(CONTACK_COLLECTION)
 		.done(function(contacts) {
-			var contactTmpl = $("#contact-tmpl").html();
-			var tmplFunc = doT.template(contactTmpl),
-				composedText,
-				$contactsList = $("#contacts-list"),
-				i = 0;
-			
-			$contactsList.empty();
-			for (; i < contacts.length; i++) {
-				composedText = tmplFunc(contacts[i]);
-				$contactsList.append(composedText);
-			}
+			refreshContactsList(contacts);
 		})
 		.fail(function(err) {
 			alert("load contact failed");
@@ -101,6 +113,10 @@ function registerContactsEvents() {
 				$.print("add new contact failed");
 				$.print(err);
 			});
+	});
+	
+	$("#contacts-list").on("click", "div.row", function(){
+		$.print($(this).data("contact"));
 	});
 }
 
