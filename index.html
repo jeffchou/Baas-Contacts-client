@@ -149,14 +149,30 @@
 							  <div class="col-xs-1">Id</div>
 							  <div class="col-xs-2">Name</div>
 							  <div class="col-xs-1">Ext No</div>
-							  <div class="col-xs-3">Email</div>
+							  <div class="col-xs-2">Email</div>
 							  <div class="col-xs-1">Mobile</div>
 							  <div class="col-xs-1">Birthday</div>
 							  <div class="col-xs-3">Address</div>
+							  <div class="col-xs-1">&nbsp;</div>
 							</div>
 						</div>
 						<div id="contacts-list" class="">
 							
+						</div>
+						
+						<div id="delete-contact-confirm" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+							<div class="modal-dialog modal-sm">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+										<h4 class="modal-title" id="">Delete it ?</h4>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-danger" id="delete-contact">Delete</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -194,10 +210,11 @@
 		  <div class="col-xs-1">&nbsp;{{=it.employeeId}}</div>
 		  <div class="col-xs-2">&nbsp;{{=it.name}}</div>
 		  <div class="col-xs-1">&nbsp;{{=it.extNo}}</div>
-		  <div class="col-xs-3">&nbsp;{{=it.email}}</div>
+		  <div class="col-xs-2">&nbsp;{{=it.email}}</div>
 		  <div class="col-xs-1">&nbsp;{{=it.mobileNo}}</div>
 		  <div class="col-xs-1">&nbsp;{{=it.birthDay}}</div>
 		  <div class="col-xs-3">&nbsp;{{=it.address}}</div>
+		  <div class="col-xs-1">&nbsp;<span class="glyphicon glyphicon-trash delete-contact" aria-hidden="true" title="delete me" data-dismiss="alert"></span></div>
 		</div>
 	</script>
 	

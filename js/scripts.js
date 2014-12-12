@@ -140,6 +140,7 @@ function registerContactsEvents() {
 				.done(function(res) {
 					$("#add-contact-form").modal('hide');
 					// todo: refresh or add something.
+					loadContacts();
 				})
 				.fail(function(err) {
 					alert("add new contact failed");
@@ -152,6 +153,28 @@ function registerContactsEvents() {
 	// open edit form
 	$("#contacts-list").on("click", "div.row", function(e) {
 		var contact = $(this).data("contact");
+		var $target = $(e.target);
+		if ($target.is(".delete-contact")) {
+			// ugly
+			var $confirm = $("#delete-contact-confirm").modal();
+			$("#delete-contact").off().on("click", function() {
+				//contact
+				BaasBox.deleteObject(contact.id, CONTACK_COLLECTION)
+					.done(function(res) {
+						$("#add-contact-form").modal('hide');
+						// todo: refresh or add something.
+						loadContacts();
+					})
+					.fail(function(err) {
+						alert("delete contact failed");
+						$.print("delete contact failed");
+						$.print(err);
+					});
+				$confirm.modal('hide');
+			});
+			return;
+		}
+		
 		putContactData(contact);
 		$('#add-contact-form').modal()
 			.find(".modal-title").text("Edit Contact");
@@ -166,6 +189,7 @@ function registerContactsEvents() {
 				.done(function(res) {
 					$("#add-contact-form").modal('hide');
 					// todo: refresh or add something.
+					loadContacts();
 				})
 				.fail(function(err) {
 					alert("add new contact failed");
