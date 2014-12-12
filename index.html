@@ -77,7 +77,7 @@
 							<div class="modal-content">
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-									<h4 class="modal-title" id="myModalLabel">Add a new contact</h4>
+									<h4 class="modal-title" id="">Add a new contact</h4>
 								</div>
 								<div class="modal-body">
 									<div id="edit-contact-form">
@@ -110,6 +110,31 @@
 											<input type="text" id="cf-address" class="" placeholder="">
 										</div>
 									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary" id="cf-add">Add</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- add contact button-->
+					<button type="button" id="p-c-add" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#p-add-contact-form" title="Patch Add">
+						<span class="glyphicon glyphicon-import" aria-hidden="true"></span> Patch Add
+					</button>
+
+					<!-- add contact form in Modal -->
+					<div class="modal fade" id="p-add-contact-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+									<h4 class="modal-title" id="">Patch Add (Development)</h4>
+								</div>
+								<div class="modal-body">
+									<p>Put json data here in a right order. (it's a feature for development stage)</p>
+									
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

@@ -50,3 +50,6 @@ body {
 	text-align: right;
 }
 
+#p-c-add {
+	display: none;
+}

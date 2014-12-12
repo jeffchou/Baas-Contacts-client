@@ -30,6 +30,10 @@ $(document).ready(function(){
 	
 	registerContactsEvents();
 	registerSigninEvents();
+	
+	if (DEBUG) {
+		initializeImport();
+	}
 });
 
 
@@ -141,3 +145,7 @@ function registerSigninEvents() {
 	
 }
 
+function initializeImport() {
+	// later
+	// $("#p-c-add").show();
+}
