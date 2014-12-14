@@ -14,6 +14,10 @@ body {
 	background-color: #fff;
 }
 
+.off {
+	display: none;
+}
+
 .form-signin {
 	max-width: 350px;
 	padding: 15px;
@@ -50,3 +54,6 @@ body {
 	text-align: right;
 }
 
+#p-c-add {
+	display: none;
+}
