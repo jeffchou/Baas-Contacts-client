@@ -108,6 +108,7 @@ var loadContacts = function() {
 		loadAllContacts();
 		return;
 	}
+	
 	var searchFiled = "";
 	switch(searchBy) {
 		case "by-name": 
@@ -115,16 +116,21 @@ var loadContacts = function() {
 			break;
 		case "by-department": 
 			searchFiled = "department";
-			break;	
+			break;
+		case "by-all": 
+			searchFiled = "any()";
+			break;
+		default:
+			searchFiled = "any()";
+			break;
 	}
 	
-	// http://172.16.252.102:9000/document/contacts?page=0&recordsPerPage=50
-	//BaasBox.loadCollectionWithParams(CONTACK_COLLECTION, {page: 0, recordsPerPage: BaasBox.pagelength})
-	//GET /link?where=in.name.toLowerCase() like 'john%' and label="customer"
-	//name.toLowerCase()%20like%20%27john%25%27%20and%20label%3D%27customer%27
-	$.ajax(BaasBox.endPoint + '/document/contacts?page=0&recordsPerPage=50&' + searchFiled + ' like ' + "'%" + searchKey +"%'")
-		.done(function(contacts) {
-			refreshContactsList(contacts);
+	var condition = searchFiled + "+like+" + encodeURIComponent("\'%" + searchKey + "%\'") + "";
+	var url = BaasBox.endPoint + "/document/" + CONTACK_COLLECTION + "?where=" + (condition);
+																//   "?skip=0&page=0&recordsPerPage=10&where=" + (condition);
+	$.ajax((url))
+		.done(function(res) {
+			refreshContactsList(res.data);
 		})
 		.fail(function(err) {
 			alert("load contact failed");
@@ -198,6 +204,7 @@ function registerContactsEvents() {
 	
 	// open edit form
 	$("#contacts-list").on("click", "div.row", function(e) {
+		$.print(this);
 		var contact = $(this).data("contact");
 		var $target = $(e.target);
 		if ($target.is(".delete-contact")) {
@@ -243,6 +250,9 @@ function registerContactsEvents() {
 					$.print(err);
 				});
 		});
+	})
+	.on("mouseover", "div.row", function(e) {
+		$(this).tooltip();
 	});
 }
 
