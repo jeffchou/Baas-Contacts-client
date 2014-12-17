@@ -44,10 +44,6 @@ body {
 	width: 300px;
 }
 
-#contacts-panel{
-	min-height: 500px;
-}
-
 #account-panel {
 	float: right;
 	padding-right: 0;

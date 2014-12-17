@@ -14,7 +14,9 @@
 }
 
 #contacts-panel {
-	text-align: left;
+	height: 700px;
+	overflow-y: scroll;
+	padding: 0 16px 0 16px;
 }
 
 #contacts-list div[class^=col-] {
