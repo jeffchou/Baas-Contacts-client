@@ -125,7 +125,9 @@ var loadContacts = function() {
 			break;
 	}
 	
-	var condition = searchFiled + "+like+" + encodeURIComponent("\'%" + searchKey + "%\'") + "";
+	searchKey = searchKey.toLowerCase();
+	
+	var condition = searchFiled + ".toLowerCase()+like+" + encodeURIComponent("\'%" + searchKey + "%\'") + "";
 	var url = BaasBox.endPoint + "/document/" + CONTACK_COLLECTION + "?where=" + (condition);
 																//   "?skip=0&page=0&recordsPerPage=10&where=" + (condition);
 	$.ajax((url))
