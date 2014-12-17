@@ -18,8 +18,8 @@
 <body>
 	<div class="container" id="app">
 		<div class="row head-operations">
-			<div class="col-md-2 logo">{Logo}</div>
-			<div class="col-md-10">
+			<div class="col-md-1 logo">{Logo}</div>
+			<div class="col-md-11">
 				<div class="navbar-form">
 					<div class="form-group">
 						<input id="search-text" type="text" class="form-control" placeholder="Search">
@@ -44,8 +44,8 @@
 			</div>
 		</div>
 		<div class="row advance-operations">
-			<div class="col-md-2">{Blank}</div>
-			<div class="col-md-10">
+			<div class="col-md-1">{Blank}</div>
+			<div class="col-md-11">
 				<form class="navbar-form" id="contact-filter">
 					<div class="radio">
 						search field
@@ -63,8 +63,8 @@
 			</div>
 		</div>
 		<div class="row main-screen">
-			<div class="col-md-2">{Future Features}</div>
-			<div class="col-md-10">
+			<div class="col-md-1">{Future Features}</div>
+			<div class="col-md-11">
 				<div class="well">
 					<!-- add contact button-->
 					<button type="button" id="c-add" class="btn btn-primary btn-sm" title="Add a new contact">
@@ -209,6 +209,7 @@
 		<div class="row">
 		  <div class="col-xs-1">&nbsp;{{=it.employeeId}}</div>
 		  <div class="col-xs-2">&nbsp;{{=it.name}}</div>
+		  <div class="col-xs-1 off">&nbsp;{{=it.department}}</div>
 		  <div class="col-xs-1">&nbsp;{{=it.extNo}}</div>
 		  <div class="col-xs-2">&nbsp;{{=it.email}}</div>
 		  <div class="col-xs-1">&nbsp;{{=it.mobileNo}}</div>
