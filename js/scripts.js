@@ -146,9 +146,10 @@ function registerContactsEvents() {
 	});
 	
 	var createBlankContact = function() {
-		return { 
+		return {
 			employeeId: "",
 			name: "",
+			department : "",
 			extNo: "",
 			email: "",
 			mobileNo: "",
@@ -164,6 +165,7 @@ function registerContactsEvents() {
 	var fillFromToContact = function(contact) {
 		contact.employeeId = $("#cf-id").val();
 		contact.name = $("#cf-name").val();
+		contact.department  = $("#cf-department").val();
 		contact.extNo = $("#cf-extno").val();
 		contact.email = $("#cf-email").val();
 		contact.mobileNo = $("#cf-mobileno").val();
