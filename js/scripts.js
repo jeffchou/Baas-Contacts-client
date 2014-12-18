@@ -146,6 +146,17 @@ function registerContactsEvents() {
 	$("#search").click(function() {
 		loadContacts();
 	});
+
+	var $searchText = $("#search-text");
+	setTimeout(function(){
+		$searchText.focus();
+	}, 300);
+	
+
+	$searchText.focus(function(event) {
+		$searchText.select();
+	});
+
 	
 	var createBlankContact = function() {
 		return {
