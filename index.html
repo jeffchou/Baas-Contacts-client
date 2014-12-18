@@ -146,7 +146,8 @@
 					<div id="contacts-panel">
 						<div class="contact-header">
 							<div class="row">
-							  <div class="col-xs-1">Id</div>
+							  <div class="col-xs-1 off">Id</div>
+							  <div class="col-xs-1">Department</div>
 							  <div class="col-xs-2">Name</div>
 							  <div class="col-xs-1">Ext No</div>
 							  <div class="col-xs-2">Email</div>
@@ -207,15 +208,15 @@
 	
 	<script id="contact-tmpl" type="text/template">
 		<div class="row">
-		  <div class="col-xs-1">&nbsp;{{=it.employeeId}}</div>
-		  <div class="col-xs-2">&nbsp;{{=it.name}}</div>
-		  <div class="col-xs-1 off">&nbsp;{{=it.department}}</div>
-		  <div class="col-xs-1">&nbsp;{{=it.extNo}}</div>
-		  <div class="col-xs-2">&nbsp;{{=it.email}}</div>
-		  <div class="col-xs-1">&nbsp;{{=it.mobileNo}}</div>
-		  <div class="col-xs-1">&nbsp;{{=it.birthDay}}</div>
-		  <div class="col-xs-3">&nbsp;{{=it.address}}</div>
-		  <div class="col-xs-1">&nbsp;<span class="glyphicon glyphicon-trash delete-contact" aria-hidden="true" title="delete me" data-dismiss="alert" ></span></div>
+			<div class="col-xs-1 off">&nbsp;{{=it.employeeId}}</div>
+			<div class="col-xs-1">&nbsp;{{=it.department}}</div>
+			<div class="col-xs-2">&nbsp;{{=it.name}}</div>
+			<div class="col-xs-1">&nbsp;{{=it.extNo}}</div>
+			<div class="col-xs-2">&nbsp;{{=it.email}}</div>
+			<div class="col-xs-1">&nbsp;{{=it.mobileNo}}</div>
+			<div class="col-xs-1">&nbsp;{{=it.birthDay}}</div>
+			<div class="col-xs-3">&nbsp;{{=it.address}}</div>
+			<div class="col-xs-1">&nbsp;<span class="glyphicon glyphicon-trash delete-contact" aria-hidden="true" title="delete me" data-dismiss="alert" ></span></div>
 		</div>
 	</script>
 	
