@@ -39,11 +39,13 @@ $(document).ready(function(){
 
 var loginSuccess = function(userInfo) {
 	$("#signin-form").hide();
-	$("#app").show();
+	
+	$("#app").show(300, function(){
+		$("#search-text").focus();
+		loadAllContacts();
+	});
 	
 	$("#account-name").text(user.username);
-	
-	loadAllContacts();
 };
 
 var logout = function() {
@@ -147,13 +149,7 @@ function registerContactsEvents() {
 		loadContacts();
 	});
 
-	var $searchText = $("#search-text");
-	setTimeout(function(){
-		$searchText.focus();
-	}, 300);
-	
-
-	$searchText.focus(function(event) {
+	$("#search-text").focus(function(event) {
 		$searchText.select();
 	});
 
