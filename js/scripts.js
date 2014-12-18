@@ -149,7 +149,7 @@ function registerContactsEvents() {
 		loadContacts();
 	});
 
-	$("#search-text").on("focus", function(event) {
+	$("#search-text").on("focus click", function(event) {
 		$("#search-text").select();
 	});
 
