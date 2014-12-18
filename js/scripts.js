@@ -39,7 +39,7 @@ $(document).ready(function(){
 
 var loginSuccess = function(userInfo) {
 	$("#signin-form").hide();
-	
+
 	$("#app").show(300, function(){
 		$("#search-text").focus();
 		loadAllContacts();
@@ -149,8 +149,8 @@ function registerContactsEvents() {
 		loadContacts();
 	});
 
-	$("#search-text").focus(function(event) {
-		$searchText.select();
+	$("#search-text").on("focus", function(event) {
+		$("#search-text").select();
 	});
 
 	
