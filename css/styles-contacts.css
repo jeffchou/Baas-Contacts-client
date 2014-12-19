@@ -13,6 +13,10 @@
 	text-align: center;
 }
 
+#contact-filter {
+	margin-top: 0;
+}
+
 #contacts-panel {
 	height: 700px;
 	overflow-y: scroll;

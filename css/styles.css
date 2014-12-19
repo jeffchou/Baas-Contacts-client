@@ -29,7 +29,9 @@ body {
 }
 
 .head-operations {
-	height: 50px;
+	height: 60px;
+	padding-top: 10px;
+}
 }
 
 .advance-operations {
