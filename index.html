@@ -126,19 +126,21 @@
 
 					<!-- patch add contact form in Modal -->
 					<div class="modal fade" id="p-add-contact-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-						<div class="modal-dialog">
+						<div class="modal-dialog modal-lg">
 							<div class="modal-content">
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 									<h4 class="modal-title" id="">Patch Add (Development)</h4>
 								</div>
 								<div class="modal-body">
-									<p>Put json data here in a right order. (it's a feature for development stage)</p>
-									
+									<p>Put JSON data here in a right order. (it's a feature for development stage)</p>
+									<div>
+										<textarea id="raw-contacts" style="width: 420px; height: 400px;"></textarea>
+									</div>
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-									<button type="button" class="btn btn-primary" id="cf-import">Import</button>
+									<button type="button" class="btn btn-primary" id="import-contacts">Import</button>
 								</div>
 							</div>
 						</div>
@@ -181,7 +183,9 @@
 		</div>
 	</div>
 	
-	
+	<div id="message-sm" class="off alert">
+		<span></span>
+	</div>
 	
 	<div class="container" id="signin-form">
 		<div class="form-signin" role="form">
@@ -261,5 +265,10 @@
 	<script src="js/baasbox.js"></script>
 	<script src="js/scripts.js"></script>
 	<script src="js/debug.js"></script>
+
+	<link href="js/libs/codemirror/lib/codemirror.css" rel="stylesheet">
+	<script src="js/libs/codemirror/lib/codemirror.js"></script>
+	<script src="js/libs/codemirror/mode/javascript/javascript.js"></script>
+	<script src="js/import.js"></script>
 </body>
 </html>

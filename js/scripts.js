@@ -1,11 +1,17 @@
 var DEBUG = false;
-var CONTACK_COLLECTION = "contacts";
+var CONTACK_COLLECTION = "contacts"; //"employees"; //"contacts";
 
 $.print = function(msg, type) {
 	if (typeof type !== "undefined")
 		console.log(type, msg);
 	else
 		console.log(msg);
+}
+
+$.notify = function(msg) {
+	$("#message-sm").text(msg).fadeIn().delay(3000).fadeOut(function () {
+		$("#message-sm").clearQueue()
+	});
 }
 
 $(document).ready(function(){
@@ -306,9 +312,4 @@ function registerSigninEvents() {
 		logout();
 	});
 	
-}
-
-function initializeImport() {
-	// later
-	// $("#p-c-add").show();
 }
