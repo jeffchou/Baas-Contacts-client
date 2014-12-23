@@ -32,12 +32,13 @@ function initializeImport() {
 			var i, rawContact;
 			for (i = 0; i < rawData.data.length; i++) {
 				rawContact = rawData.data[i];
-				var key, newContact = {};
+				var key, newContact = createBlankContact();
 				for (key in rawContact){
 					if (key != "id" && key[0] != '@') {
 						newContact[key] = rawContact[key];
 					}
 				}
+				newContact.employeeId = parseInt(newContact.employeeId, 10);
 				newContacts.push(newContact);
 			}
 		} else {
@@ -55,6 +56,7 @@ function initializeImport() {
 					birthDay: rawContact[5],
 					address: rawContact[6]
 				}
+				newContact.employeeId = parseInt(newContact.employeeId, 10);
 				newContacts.push(newContact);
 			}
 		}

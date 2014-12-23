@@ -149,6 +149,18 @@ var loadContacts = function() {
 		});
 }
 
+var createBlankContact = function() {
+	return {
+		employeeId: 0,
+		name: "",
+		department : "",
+		extNo: "",
+		email: "",
+		mobileNo: "",
+		birthDay: "",
+		address: ""
+	};
+};
 function registerContactsEvents() {
 	
 	$("#search").click(function() {
@@ -159,19 +171,6 @@ function registerContactsEvents() {
 		$("#search-text").select();
 	});
 
-	
-	var createBlankContact = function() {
-		return {
-			employeeId: "",
-			name: "",
-			department : "",
-			extNo: "",
-			email: "",
-			mobileNo: "",
-			birthDay: "",
-			address: ""
-		};
-	};
 	var composeContactFormHtml = doT.template($("#contact-form-tmpl").html());
 	var putContactData = function(contact) {
 		var contactFormHtml = composeContactFormHtml(contact);
