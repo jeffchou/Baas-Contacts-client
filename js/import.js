@@ -48,7 +48,7 @@ function initializeImport() {
 				var newContact = {
 					employeeId: rawContact[0],
 					name: rawContact[1],
-					apartment : "rc",
+					department : "rc",
 					extNo: rawContact[2].toString(),
 					email: rawContact[3],
 					mobileNo: "0" + rawContact[4],
