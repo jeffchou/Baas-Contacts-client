@@ -40,6 +40,15 @@ $(document).ready(function(){
 	if (DEBUG) {
 		initializeImport();
 	}
+
+	if (DEBUG && !user) {
+		$("#inputAccount").val("admin");
+		$("#inputPassword").val("admin");
+
+		//setTimeout(function(){
+			$("#signin").click();
+		//}, 100);
+	}
 });
 
 
@@ -273,13 +282,6 @@ function registerContactsEvents() {
 }
 
 function registerSigninEvents() {
-	if (DEBUG) {
-		$("#inputAccount").val("admin");
-		$("#inputPassword").val("admin");
-		setTimeout(function(){
-			$("#signin").click();
-		}, 100);
-	}
 	
 	$("#signin").click(function(e) {
 		$("#signin-error-panel").hide();
@@ -291,6 +293,7 @@ function registerSigninEvents() {
 		
 		e.preventDefault();
 		
+		$.print("Logging in by: " + user);
 		BaasBox.login(user, password)
 			.done(function(res) {
 				loginSuccess(res);
