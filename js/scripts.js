@@ -1,18 +1,21 @@
+"use strict";
+
+var BaasContact = {};
 var DEBUG = false;
-var CONTACK_COLLECTION = "contacts"; //"employees"; //"contacts";
+var CONTACK_COLLECTION = "contacts";
 
 $.print = function(msg, type) {
 	if (typeof type !== "undefined")
 		console.log(type, msg);
 	else
 		console.log(msg);
-}
+};
 
 $.notify = function(msg) {
 	$("#message-sm").text(msg).fadeIn().delay(3000).fadeOut(function () {
-		$("#message-sm").clearQueue()
+		$("#message-sm").clearQueue();
 	});
-}
+};
 
 $(document).ready(function(){
 	// start program here while the whole page is ready.
@@ -45,7 +48,7 @@ $(document).ready(function(){
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
 
-		$("#signin").click();
+		//$("#signin").click();
 	}
 
 	registerUsersEvents();
@@ -121,7 +124,7 @@ var loadContacts = function() {
 	$.print(searchBy);
 	$.print(searchKey);
 	
-	if (searchKey == "") {
+	if (searchKey === "") {
 		loadAllContacts();
 		return;
 	}

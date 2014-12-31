@@ -1,5 +1,4 @@
 function registerSigninEvents() {
-	
 	$("#signin").click(function(e) {
 		$("#signin-error-panel").hide();
 		
@@ -48,5 +47,54 @@ function registerUsersEvents() {
 		$("#signup-form").fadeOut(function() {
 			$("#signin-form").fadeIn();
 		});
+	});
+
+	$("#new-account").on("change", function(e){
+		var user = $("#new-account").val();
+		// TODO: see bellow msg
+		$.print("TODO: check if the user name [" + user + "] exist, when BaasBox has such an Api.")
+	});
+
+	$("#signup").click(function(e) {
+		e.preventDefault();
+
+		$("#signup-error-panel").hide();
+		
+		var user = $("#new-account").val(),
+			password = $("#new-password").val(),
+			password2 = $("#re-password").val(),
+			userInfo = {
+				name: $("#new-name").val(),
+				email: $("#new-email").val(),
+			}; 
+		
+		// TODO: better checks
+		if (password !== password2) {
+			$("#signup-error-panel").text("please confirm password").fadeIn();
+			return;
+		}
+
+		if (userInfo.email.indexOf('@') === -1){
+			$("#signup-error-panel").text("Invalid email").fadeIn();
+			return;
+		}
+		if (userInfo.name === ""){
+			$("#signup-error-panel").text("Invalid account name").fadeIn();
+			return;
+		}
+
+		BaasBox.signup(user, password, {"visibleByTheUser": userInfo})
+			.done(function(res) {
+				$.print("signup success");
+				$.print(res);
+				$("#signup-form").fadeOut(function() {
+					loginSuccess(res);
+				});
+			})
+			.fail(function (err) {
+				var errInfo = JSON.parse(err.responseText);
+				$("#signup-error-panel").text("Error: " + errInfo.message).fadeIn();
+				$("#signup-error-panel").fadeIn();
+			});
 	});
 }
