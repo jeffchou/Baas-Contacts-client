@@ -8,6 +8,9 @@
 	<meta name="description" content="The Baas Contacts">
 	<meta name="author" content="rc3">
 
+	<link type="image/x-icon" rel="shortcut icon" href="favicon.ico">
+	<link type="image/x-icon" rel="icon" href="favicon.ico" />
+
 	<link rel="stylesheet" href="css/reset.css">
 	<link rel="stylesheet" href="css/bootstrap.css">
 	<link rel="stylesheet" href="css/bootstrap-theme.css">
@@ -16,164 +19,164 @@
 </head>
 
 <body>
-	<div class="container" id="app">
-		<div class="row head-operations">
-			<div class="col-md-1 logo">{Logo}</div>
-			<div class="col-md-11">
-				<div class="navbar-form">
-					<div class="form-group">
-						<input id="search-text" type="text" class="form-control" placeholder="Search">
+
+<div class="container off" id="app">
+	<div class="row head-operations">
+		<div class="col-md-1 logo">{Logo}</div>
+		<div class="col-md-11">
+			<div class="navbar-form">
+				<div class="form-group">
+					<input id="search-text" type="text" class="form-control" placeholder="Search">
+				</div>
+				<button id="search" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+				<div class="col-md-2" id="account-panel">
+					<!-- account button -->
+					<div class="btn-group">
+						<button type="button" class="btn btn-default" title=""><span id="account-name"></span></button>
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							<span class="caret"></span>
+							<span class="sr-only">Toggle Dropdown</span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li class="divider"></li>
+							<li><a href="#" id="signout">Sign out</a></li>
+						</ul>
 					</div>
-					<button id="search" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-					<div class="col-md-2" id="account-panel">
-						<!-- account button -->
-						<div class="btn-group">
-							<button type="button" class="btn btn-default" title=""><span id="account-name"></span></button>
-							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-								<span class="caret"></span>
-								<span class="sr-only">Toggle Dropdown</span>
-							</button>
-							<ul class="dropdown-menu" role="menu">
-								<li class="divider"></li>
-								<li><a href="#" id="signout">Sign out</a></li>
-							</ul>
-						</div>
-							
-					</div>
+						
 				</div>
 			</div>
 		</div>
-		<div class="row advance-operations">
-			<div class="col-md-1">{Blank}</div>
-			<div class="col-md-11">
-				<form class="navbar-form" id="contact-filter">
-					<div class="radio">
-						search field
-						<label>
-							<input type="radio" name="optionsRadios" value="by-all" checked> all
-						</label>
-						<label>
-							<input type="radio" name="optionsRadios" value="by-name"> name
-						</label>
-						<label>
-							<input type="radio" name="optionsRadios" value="by-department"> department
-						</label>
-					</div>
-				</form>
-			</div>
+	</div>
+	<div class="row advance-operations">
+		<div class="col-md-1">{Blank}</div>
+		<div class="col-md-11">
+			<form class="navbar-form" id="contact-filter">
+				<div class="radio">
+					search field
+					<label>
+						<input type="radio" name="optionsRadios" value="by-all" checked> all
+					</label>
+					<label>
+						<input type="radio" name="optionsRadios" value="by-name"> name
+					</label>
+					<label>
+						<input type="radio" name="optionsRadios" value="by-department"> department
+					</label>
+				</div>
+			</form>
 		</div>
-		<div class="row main-screen">
-			<div class="col-md-1">{Future Features}</div>
-			<div class="col-md-11">
-				<div class="well">
-					<!-- add contact button-->
-					<button type="button" id="c-add" class="btn btn-primary btn-sm" title="Add a new contact">
-						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
-					</button>
+	</div>
+	<div class="row main-screen">
+		<div class="col-md-1">{Future Features}</div>
+		<div class="col-md-11">
+			<div class="well">
+				<!-- add contact button-->
+				<button type="button" id="c-add" class="btn btn-primary btn-sm" title="Add a new contact">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
+				</button>
 
-					<!-- add contact form in Modal -->
-					<div class="modal fade" id="add-contact-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-									<h4 class="modal-title" id=""></h4>
-								</div>
-								<div class="modal-body">
-									<form id="edit-contact-form">
-										<div class="input-group">
-											<label for="cf-id" class="contact-form-label">ID</label>
-											<input type="text" id="cf-id" class="" placeholder="">
-										</div>
-										<div class="input-group">
-											<label for="cf-name" class="contact-form-label">Name</label>
-											<input type="text" id="cf-name" class="" placeholder="">
-										</div>
-										<div class="input-group">
-											<label for="cf-extno" class="contact-form-label">Extension Number</label>
-											<input type="text" id="cf-extno" class="" placeholder="">
-										</div>
-										<div class="input-group">
-											<label for="cf-email" class="contact-form-label">Email</label>
-											<input type="text" id="cf-email" class="" placeholder="">
-										</div>
-										<div class="input-group">
-											<label for="cf-mobileno" class="contact-form-label">Mobile Number</label>
-											<input type="text" id="cf-mobileno" class="" placeholder="">
-										</div>
-										<div class="input-group">
-											<label for="cf-birth" class="contact-form-label">Birthday</label>
-											<input type="text" id="cf-birth" class="" placeholder="">
-										</div>
-										<div class="input-group">
-											<label for="cf-address" class="contact-form-label">Address</label>
-											<input type="text" id="cf-address" class="" placeholder="">
-										</div>
-									</form>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-									<button type="button" class="btn btn-primary" id="cf-save">Save</button>
-								</div>
+				<!-- add contact form in Modal -->
+				<div class="modal fade" id="add-contact-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+								<h4 class="modal-title" id=""></h4>
+							</div>
+							<div class="modal-body">
+								<form id="edit-contact-form">
+									<div class="input-group">
+										<label for="cf-id" class="contact-form-label">ID</label>
+										<input type="text" id="cf-id" class="" placeholder="">
+									</div>
+									<div class="input-group">
+										<label for="cf-name" class="contact-form-label">Name</label>
+										<input type="text" id="cf-name" class="" placeholder="">
+									</div>
+									<div class="input-group">
+										<label for="cf-extno" class="contact-form-label">Extension Number</label>
+										<input type="text" id="cf-extno" class="" placeholder="">
+									</div>
+									<div class="input-group">
+										<label for="cf-email" class="contact-form-label">Email</label>
+										<input type="text" id="cf-email" class="" placeholder="">
+									</div>
+									<div class="input-group">
+										<label for="cf-mobileno" class="contact-form-label">Mobile Number</label>
+										<input type="text" id="cf-mobileno" class="" placeholder="">
+									</div>
+									<div class="input-group">
+										<label for="cf-birth" class="contact-form-label">Birthday</label>
+										<input type="text" id="cf-birth" class="" placeholder="">
+									</div>
+									<div class="input-group">
+										<label for="cf-address" class="contact-form-label">Address</label>
+										<input type="text" id="cf-address" class="" placeholder="">
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary" id="cf-save">Save</button>
 							</div>
 						</div>
+					</div>
+				</div>
+				
+				<!-- patch add contact button-->
+				<button type="button" id="p-c-add" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#p-add-contact-form" title="Patch Add">
+					<span class="glyphicon glyphicon-import" aria-hidden="true"></span> Patch Add
+				</button>
+
+				<!-- patch add contact form in Modal -->
+				<div class="modal fade" id="p-add-contact-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+								<h4 class="modal-title" id="">Patch Add (Development)</h4>
+							</div>
+							<div class="modal-body">
+								<p>Put JSON data here in a right order. (it's a feature for development stage)</p>
+								<div>
+									<textarea id="raw-contacts" style="width: 420px; height: 400px;"></textarea>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary" id="import-contacts">Import</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="contacts-panel">
+					<div class="contact-header">
+						<div class="row">
+						  <div class="col-xs-1 off">Id</div>
+						  <div class="col-xs-1">Department</div>
+						  <div class="col-xs-2">Name</div>
+						  <div class="col-xs-1">Ext No</div>
+						  <div class="col-xs-2">Email</div>
+						  <div class="col-xs-1">Mobile</div>
+						  <div class="col-xs-1">Birthday</div>
+						  <div class="col-xs-3">Address</div>
+						  <div class="col-xs-1">&nbsp;</div>
+						</div>
+					</div>
+					<div id="contacts-list" class="">
+						
 					</div>
 					
-					<!-- patch add contact button-->
-					<button type="button" id="p-c-add" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#p-add-contact-form" title="Patch Add">
-						<span class="glyphicon glyphicon-import" aria-hidden="true"></span> Patch Add
-					</button>
-
-					<!-- patch add contact form in Modal -->
-					<div class="modal fade" id="p-add-contact-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-						<div class="modal-dialog modal-lg">
+					<div id="delete-contact-confirm" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-sm">
 							<div class="modal-content">
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-									<h4 class="modal-title" id="">Patch Add (Development)</h4>
-								</div>
-								<div class="modal-body">
-									<p>Put JSON data here in a right order. (it's a feature for development stage)</p>
-									<div>
-										<textarea id="raw-contacts" style="width: 420px; height: 400px;"></textarea>
-									</div>
+									<h4 class="modal-title" id="">Delete it ?</h4>
 								</div>
 								<div class="modal-footer">
+									<button type="button" class="btn btn-danger" id="delete-contact">Delete</button>
 									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-									<button type="button" class="btn btn-primary" id="import-contacts">Import</button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div id="contacts-panel">
-						<div class="contact-header">
-							<div class="row">
-							  <div class="col-xs-1 off">Id</div>
-							  <div class="col-xs-1">Department</div>
-							  <div class="col-xs-2">Name</div>
-							  <div class="col-xs-1">Ext No</div>
-							  <div class="col-xs-2">Email</div>
-							  <div class="col-xs-1">Mobile</div>
-							  <div class="col-xs-1">Birthday</div>
-							  <div class="col-xs-3">Address</div>
-							  <div class="col-xs-1">&nbsp;</div>
-							</div>
-						</div>
-						<div id="contacts-list" class="">
-							
-						</div>
-						
-						<div id="delete-contact-confirm" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-							<div class="modal-dialog modal-sm">
-								<div class="modal-content">
-									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-										<h4 class="modal-title" id="">Delete it ?</h4>
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-danger" id="delete-contact">Delete</button>
-										<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-									</div>
 								</div>
 							</div>
 						</div>
@@ -182,15 +185,17 @@
 			</div>
 		</div>
 	</div>
-	
-	<div id="message-sm" class="off alert">
-		<span></span>
-	</div>
-	
-	<div class="container" id="signin-form">
-		<div class="form-signin" role="form">
-			<h1 class="form-signin-heading">Sign in</h1>
-			<h5>Welcome back! Please enter your account and password to proceed.</h5>
+</div>
+
+<div id="message-sm" class="off alert">
+	<span></span>
+</div>
+
+<div class="container off" id="signin-form">
+	<div class="form-user" role="form">
+		<h1>Sign in</h1>
+		<h5>Welcome back! Please enter your account and password to proceed.</h5>
+		<form>
 			<label for="inputAccount" class="sr-only">Account</label>
 			<input type="text" id="inputAccount" class="form-control" placeholder="User Account" required autofocus>
 			<label for="inputPassword" class="sr-only">Password</label>
@@ -201,74 +206,121 @@
 				</label>
 			</div>
 			<button class="btn btn-lg btn-primary btn-block" id="signin">Sign in</button>
-			<button class="btn btn-lg btn-info btn-block todo" id="signup">Sign up</button>
-			<div class="alert alert-danger" role="alert" id="signin-error-panel">
-				<strong>Sign in error !</strong> Invalid user account or password. 
-				<a class="todo" href="#"> forgot password ?</a>
+		</form>
+		<div class="alert alert-danger off" role="alert" id="signin-error-panel">
+			<strong>Sign in error !</strong> Invalid user account or password. 
+			<a id="forgot-password" href="#"> forgot password ?</a>
+		</div>
+		<div id="reset-password-confirm" class="modal fade" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="">Forgot password ?</h4>
+					</div>
+					<div class="modal-body">
+						Send password reset mail to 
+						<input type="text" id="reset-password-account">
+						&#39;s email?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" id="reset-password">Send</button>
+					</div>
+				</div>
 			</div>
 		</div>
+		<button class="btn btn-lg btn-info btn-block" id="signup-gate">Sign up</button>
 	</div>
-	
-	
-	<script id="contact-tmpl" type="text/template">
-		<div class="row">
-			<div class="col-xs-1 off">&nbsp;{{=it.employeeId}}</div>
-			<div class="col-xs-1">&nbsp;{{=it.department}}</div>
-			<div class="col-xs-2">&nbsp;{{=it.name}}</div>
-			<div class="col-xs-1">&nbsp;{{=it.extNo}}</div>
-			<div class="col-xs-2">&nbsp;{{=it.email}}</div>
-			<div class="col-xs-1">&nbsp;{{=it.mobileNo}}</div>
-			<div class="col-xs-1">&nbsp;{{=it.birthDay}}</div>
-			<div class="col-xs-3">&nbsp;{{=it.address}}</div>
-			<div class="col-xs-1">&nbsp;<span class="glyphicon glyphicon-trash delete-contact" aria-hidden="true" title="delete me" data-dismiss="alert" ></span></div>
-		</div>
-	</script>
-	
-	<script id="contact-form-tmpl" type="text/template">
-		<div class="input-group">
-			<label for="cf-id" class="contact-form-label">ID</label>
-			<input type="text" id="cf-id" class="" placeholder="" value='{{=it.employeeId}}'>
-		</div>
-		<div class="input-group">
-			<label for="cf-name" class="contact-form-label">Name</label>
-			<input type="text" id="cf-name" class="" placeholder="" value='{{=it.name}}'>
-		</div>
-		<div class="input-group">
-			<label for="cf-department " class="contact-form-label">Department </label>
-			<input type="text" id="cf-department" class="" placeholder="" value='{{=it.department }}'>
-		</div>
-		<div class="input-group">
-			<label for="cf-extno" class="contact-form-label">Extension Number</label>
-			<input type="text" id="cf-extno" class="" placeholder="" value='{{=it.extNo}}'>
-		</div>
-		<div class="input-group">
-			<label for="cf-email" class="contact-form-label">Email</label>
-			<input type="text" id="cf-email" class="" placeholder="" value='{{=it.email}}'>
-		</div>
-		<div class="input-group">
-			<label for="cf-mobileno" class="contact-form-label">Mobile Number</label>
-			<input type="text" id="cf-mobileno" class="" placeholder="" value='{{=it.mobileNo}}'>
-		</div>
-		<div class="input-group">
-			<label for="cf-birth" class="contact-form-label">Birthday</label>
-			<input type="text" id="cf-birth" class="" placeholder="" value='{{=it.birthDay}}'>
-		</div>
-		<div class="input-group">
-			<label for="cf-address" class="contact-form-label">Address</label>
-			<input type="text" id="cf-address" class="" placeholder="" value='{{=it.address}}'>
-		</div>
-	</script>
-	
-	<script src="js/libs/jquery-2.1.1.js"></script>
-	<script src="js/libs/bootstrap.js"></script>
-	<script src="js/libs/doT.js"></script>
-	<script src="js/baasbox.js"></script>
-	<script src="js/scripts.js"></script>
-	<script src="js/debug.js"></script>
+</div>
 
-	<link href="js/libs/codemirror/lib/codemirror.css" rel="stylesheet">
-	<script src="js/libs/codemirror/lib/codemirror.js"></script>
-	<script src="js/libs/codemirror/mode/javascript/javascript.js"></script>
-	<script src="js/import.js"></script>
+<div class="container off" id="signup-form">
+	<div class="form-user" role="form">
+		<h1>Sign up</h1>
+		<strong>Welcome! Choose your account Name</strong>
+		<label for="inputAccount" class="sr-only">Account</label>
+		<input type="text" id="new-account" class="form-control" placeholder="User Account" required autofocus>
+		<strong>Create a password</strong>
+		<label for="new-password" class="sr-only">Password</label>
+		<input type="password" id="new-password" class="form-control" placeholder="Password" required>
+		<strong>Confirm your password</strong>
+		<label for="re-password" class="sr-only">Password</label>
+		<input type="password" id="re-password" class="form-control" placeholder="Re-enter Password" required>
+		<strong>Name</strong>
+		<label for="new-account" class="sr-only">Name</label>
+		<input type="text" id="new-name" class="form-control" placeholder="Name" required>
+		<strong>Email</strong>
+		<label for="new-account" class="sr-only">Email</label>
+		<input type="email" id="new-email" class="form-control" placeholder="Email" required>
+
+		<button class="btn btn-lg btn-info btn-block" id="signup">Sign up</button>
+		<div class="alert alert-danger off" role="alert" id="signup-error-panel"></div>
+		<button class="btn btn-lg btn-primary btn-block" id="signin-gate">Sign in</button>
+	</div>
+</div>
+
+
+<script id="contact-tmpl" type="text/template">
+	<div class="row">
+		<div class="col-xs-1 off">&nbsp;{{=it.employeeId}}</div>
+		<div class="col-xs-1">&nbsp;{{=it.department}}</div>
+		<div class="col-xs-2">&nbsp;{{=it.name}}</div>
+		<div class="col-xs-1">&nbsp;{{=it.extNo}}</div>
+		<div class="col-xs-2">&nbsp;{{=it.email}}</div>
+		<div class="col-xs-1">&nbsp;{{=it.mobileNo}}</div>
+		<div class="col-xs-1">&nbsp;{{=it.birthDay}}</div>
+		<div class="col-xs-3">&nbsp;{{=it.address}}</div>
+		<div class="col-xs-1">&nbsp;<span class="glyphicon glyphicon-trash delete-contact" aria-hidden="true" title="delete me" data-dismiss="alert" ></span></div>
+	</div>
+</script>
+
+<script id="contact-form-tmpl" type="text/template">
+	<div class="input-group">
+		<label for="cf-id" class="contact-form-label">ID</label>
+		<input type="text" id="cf-id" class="" placeholder="" value='{{=it.employeeId}}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-name" class="contact-form-label">Name</label>
+		<input type="text" id="cf-name" class="" placeholder="" value='{{=it.name}}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-department " class="contact-form-label">Department </label>
+		<input type="text" id="cf-department" class="" placeholder="" value='{{=it.department }}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-extno" class="contact-form-label">Extension Number</label>
+		<input type="text" id="cf-extno" class="" placeholder="" value='{{=it.extNo}}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-email" class="contact-form-label">Email</label>
+		<input type="text" id="cf-email" class="" placeholder="" value='{{=it.email}}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-mobileno" class="contact-form-label">Mobile Number</label>
+		<input type="text" id="cf-mobileno" class="" placeholder="" value='{{=it.mobileNo}}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-birth" class="contact-form-label">Birthday</label>
+		<input type="text" id="cf-birth" class="" placeholder="" value='{{=it.birthDay}}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-address" class="contact-form-label">Address</label>
+		<input type="text" id="cf-address" class="" placeholder="" value='{{=it.address}}'>
+	</div>
+</script>
+
+<script src="js/libs/jquery-2.1.1.js"></script>
+<script src="js/libs/bootstrap.js"></script>
+<script src="js/libs/doT.js"></script>
+<script src="js/baasbox.js"></script>
+<script src="js/scripts.js"></script>
+<script src="js/users.js"></script>
+<script src="js/debug.js"></script>
+
+<link href="js/libs/codemirror/lib/codemirror.css" rel="stylesheet">
+<script src="js/libs/codemirror/lib/codemirror.js"></script>
+<script src="js/libs/codemirror/mode/javascript/javascript.js"></script>
+<script src="js/import.js"></script>
+
 </body>
 </html>

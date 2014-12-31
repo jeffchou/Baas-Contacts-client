@@ -1,18 +1,21 @@
+"use strict";
+
+var BaasContact = {};
 var DEBUG = false;
-var CONTACK_COLLECTION = "contacts"; //"employees"; //"contacts";
+var CONTACK_COLLECTION = "contacts";
 
 $.print = function(msg, type) {
 	if (typeof type !== "undefined")
 		console.log(type, msg);
 	else
 		console.log(msg);
-}
+};
 
 $.notify = function(msg) {
-	$("#message-sm").text(msg).fadeIn().delay(3000).fadeOut(function () {
-		$("#message-sm").clearQueue()
+	$("#message-sm").text(msg).fadeIn().delay(3500).fadeOut(function () {
+		$("#message-sm").clearQueue();
 	});
-}
+};
 
 $(document).ready(function(){
 	// start program here while the whole page is ready.
@@ -40,6 +43,15 @@ $(document).ready(function(){
 	if (DEBUG) {
 		initializeImport();
 	}
+
+	if (DEBUG && !user) {
+		$("#inputAccount").val("admin");
+		$("#inputPassword").val("admin");
+
+		//$("#signin").click();
+	}
+
+	registerUsersEvents();
 });
 
 
@@ -112,25 +124,25 @@ var loadContacts = function() {
 	$.print(searchBy);
 	$.print(searchKey);
 	
-	if (searchKey == "") {
+	if (searchKey === "") {
 		loadAllContacts();
 		return;
 	}
 	
 	var searchFiled = "";
 	switch(searchBy) {
-		case "by-name": 
-			searchFiled = "name";
-			break;
-		case "by-department": 
-			searchFiled = "department";
-			break;
-		case "by-all": 
-			searchFiled = "any()";
-			break;
-		default:
-			searchFiled = "any()";
-			break;
+	case "by-name": 
+		searchFiled = "name";
+		break;
+	case "by-department": 
+		searchFiled = "department";
+		break;
+	case "by-all": 
+		searchFiled = "any()";
+		break;
+	default:
+		searchFiled = "any()";
+		break;
 	}
 	
 	searchKey = searchKey.toLowerCase();
@@ -149,7 +161,7 @@ var loadContacts = function() {
 		});
 }
 
-var createBlankContact = function() {
+function createBlankContact() {
 	return {
 		employeeId: 0,
 		name: "",
@@ -161,6 +173,7 @@ var createBlankContact = function() {
 		address: ""
 	};
 };
+
 function registerContactsEvents() {
 	
 	$("#search").click(function() {
@@ -270,45 +283,4 @@ function registerContactsEvents() {
 	.on("mouseover", "div.row", function(e) {
 		$(this).tooltip();
 	});
-}
-
-function registerSigninEvents() {
-	if (DEBUG) {
-		$("#inputAccount").val("admin");
-		$("#inputPassword").val("admin");
-		setTimeout(function(){
-			$("#signin").click();
-		}, 100);
-	}
-	
-	$("#signin").click(function(e) {
-		$("#signin-error-panel").hide();
-		
-		var user = $("#inputAccount").val(),
-			password = $("#inputPassword").val();
-			
-		if (user == "" || password == "") return;
-		
-		e.preventDefault();
-		
-		BaasBox.login(user, password)
-			.done(function(res) {
-				loginSuccess(res);
-			})
-			.fail(function (err) {
-				$("#signin-error-panel").fadeIn();
-			});
-	});
-	
-	$("#inputPassword").keyup(function(event){
-		if(event.keyCode == 13){
-			$("#signin").click();
-		}
-	});
-	
-	$("#signout").click(function(){
-		BaasBox.login();
-		logout();
-	});
-	
 }
