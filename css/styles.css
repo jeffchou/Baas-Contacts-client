@@ -38,7 +38,9 @@ body {
 	margin: 1px 0 8px 0;
 }
 
-#signin-error-panel{
+#reset-password-account{
+	width: 120px;
+	text-align: center;
 }
 
 .head-operations {

@@ -12,7 +12,7 @@ $.print = function(msg, type) {
 };
 
 $.notify = function(msg) {
-	$("#message-sm").text(msg).fadeIn().delay(3000).fadeOut(function () {
+	$("#message-sm").text(msg).fadeIn().delay(3500).fadeOut(function () {
 		$("#message-sm").clearQueue();
 	});
 };

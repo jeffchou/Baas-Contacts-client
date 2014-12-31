@@ -49,6 +49,7 @@ function registerUsersEvents() {
 		});
 	});
 
+	// TODO: check need refactory to one place
 	$("#new-account").on("change", function(e){
 		var user = $("#new-account").val();
 		// TODO: see bellow msg
@@ -79,7 +80,7 @@ function registerUsersEvents() {
 			return;
 		}
 		if (userInfo.name === ""){
-			$("#signup-error-panel").text("Invalid account name").fadeIn();
+			$("#signup-error-panel").text("Invalid name").fadeIn();
 			return;
 		}
 
@@ -96,5 +97,30 @@ function registerUsersEvents() {
 				$("#signup-error-panel").text("Error: " + errInfo.message).fadeIn();
 				$("#signup-error-panel").fadeIn();
 			});
+	});
+
+	$("#forgot-password").click(function(event) {
+		var user = $("#inputAccount").val();
+
+		$("#reset-password-confirm").modal();
+		$("#reset-password-account").val(user);
+	});
+
+	$("#reset-password").click(function(event) {
+		var user = $("#reset-password-account").val();
+		// same as BaasBox.resetPassword();
+		$.get(BaasBox.endPoint + '/user/' + user + '/password/reset')
+			.done(function(res) {
+				$.print("resetPassword mail send");
+				$.notify("resetPassword mail send");
+			})
+			.fail(function (err) {
+				var errInfo = JSON.parse(err.responseText);
+				var errMsg = errInfo.message;
+				$.print(errMsg);
+				$.notify(errMsg);
+			});
+
+		$("#reset-password-confirm").modal('hide');
 	});
 }
