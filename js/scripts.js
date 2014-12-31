@@ -45,10 +45,10 @@ $(document).ready(function(){
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
 
-		//setTimeout(function(){
-			$("#signin").click();
-		//}, 100);
+		//$("#signin").click();
 	}
+
+	registerUsersEvents();
 });
 
 
@@ -170,6 +170,7 @@ var createBlankContact = function() {
 		address: ""
 	};
 };
+
 function registerContactsEvents() {
 	
 	$("#search").click(function() {
@@ -279,39 +280,4 @@ function registerContactsEvents() {
 	.on("mouseover", "div.row", function(e) {
 		$(this).tooltip();
 	});
-}
-
-function registerSigninEvents() {
-	
-	$("#signin").click(function(e) {
-		$("#signin-error-panel").hide();
-		
-		var user = $("#inputAccount").val(),
-			password = $("#inputPassword").val();
-			
-		if (user == "" || password == "") return;
-		
-		e.preventDefault();
-		
-		$.print("Logging in by: " + user);
-		BaasBox.login(user, password)
-			.done(function(res) {
-				loginSuccess(res);
-			})
-			.fail(function (err) {
-				$("#signin-error-panel").fadeIn();
-			});
-	});
-	
-	$("#inputPassword").keyup(function(event){
-		if(event.keyCode == 13){
-			$("#signin").click();
-		}
-	});
-	
-	$("#signout").click(function(){
-		BaasBox.login();
-		logout();
-	});
-	
 }
