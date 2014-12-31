@@ -45,7 +45,7 @@ $(document).ready(function(){
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
 
-		//$("#signin").click();
+		$("#signin").click();
 	}
 
 	registerUsersEvents();
@@ -128,18 +128,18 @@ var loadContacts = function() {
 	
 	var searchFiled = "";
 	switch(searchBy) {
-		case "by-name": 
-			searchFiled = "name";
-			break;
-		case "by-department": 
-			searchFiled = "department";
-			break;
-		case "by-all": 
-			searchFiled = "any()";
-			break;
-		default:
-			searchFiled = "any()";
-			break;
+	case "by-name": 
+		searchFiled = "name";
+		break;
+	case "by-department": 
+		searchFiled = "department";
+		break;
+	case "by-all": 
+		searchFiled = "any()";
+		break;
+	default:
+		searchFiled = "any()";
+		break;
 	}
 	
 	searchKey = searchKey.toLowerCase();
@@ -158,7 +158,7 @@ var loadContacts = function() {
 		});
 }
 
-var createBlankContact = function() {
+function createBlankContact() {
 	return {
 		employeeId: 0,
 		name: "",

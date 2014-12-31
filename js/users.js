@@ -14,6 +14,8 @@ function registerSigninEvents() {
 		BaasBox.login(user, password)
 			.done(function(res) {
 				loginSuccess(res);
+				$("#inputAccount").val("");
+				$("#inputPassword").val("");
 			})
 			.fail(function (err) {
 				$("#signin-error-panel").fadeIn();
@@ -27,12 +29,24 @@ function registerSigninEvents() {
 	});
 	
 	$("#signout").click(function(){
-		BaasBox.login();
+		BaasBox.logout();
 		logout();
 	});
 	
 }
 
-function registerUsersEvents(){
-	
+function registerUsersEvents() {
+	$("#signup-gate").click(function(event) {
+		$("#signin-error-panel").hide('slideUp');
+		$("#signin-form").fadeOut(function() {
+			$("#signup-form").fadeIn();
+		});
+	});
+
+	$("#signin-gate").click(function(event) {
+		$("#signin-error-panel").hide('slideUp');
+		$("#signup-form").fadeOut(function() {
+			$("#signin-form").fadeIn();
+		});
+	});
 }
