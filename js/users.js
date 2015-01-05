@@ -13,8 +13,8 @@ function registerSigninEvents() {
 		BaasBox.login(user, password)
 			.done(function(res) {
 				loginSuccess(res);
-				$("#inputAccount").val("");
-				$("#inputPassword").val("");
+				//$("#inputAccount").val("");
+				//$("#inputPassword").val("");
 			})
 			.fail(function (err) {
 				$("#signin-error-panel").fadeIn();
@@ -22,7 +22,7 @@ function registerSigninEvents() {
 	});
 	
 	$("#inputAccount, #inputPassword").keyup(function(event){
-		if(event.keyCode == 13){
+		if(event.keyCode == 13) { // 13 means "enter"
 			$("#signin").click();
 		}
 	});
@@ -52,8 +52,12 @@ function registerUsersEvents() {
 	// TODO: check need refactory to one place
 	$("#new-account").on("change", function(e){
 		var user = $("#new-account").val();
-		// TODO: see bellow msg
-		$.print("TODO: check if the user name [" + user + "] exist, when BaasBox has such an Api.")
+		$.get(BaasBox.endPoint + "/plugin/users.exist?username=" + user)
+			.done(function(res){
+				if (res.data === "exist"){
+					$.notify("User name [" + user + "] has been used.");
+				}
+			});
 	});
 
 	$("#signup").click(function(e) {
