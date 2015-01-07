@@ -14,6 +14,10 @@ body {
 	background-color: #fff;
 }
 
+#app .nav > li > a {
+	padding: 5px 9px;
+}
+
 .off {
 	display: none;
 }
@@ -47,14 +51,17 @@ body {
 	height: 60px;
 	padding-top: 10px;
 }
-}
 
 .advance-operations {
-	height: 50px;
+	height: 10px;
 }
 
 .main-screen {
 	min-height: 500px;
+}
+
+#search-contacts-text {
+	width: 150px;
 }
 
 #search-text {

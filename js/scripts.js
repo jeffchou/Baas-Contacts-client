@@ -37,7 +37,7 @@ $(document).ready(function(){
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
 
-		//$("#signin").click();
+		$("#signin").click();
 	}
 
 	registerUsersEvents();
@@ -68,14 +68,6 @@ BaasContact.Views.Modes = (function() {
 				$("#app").hide();
 			}
 		},
-		"Contacts": {
-			enter: function() {
-				$("#app-contacts").show();
-			},
-			leave: function() {
-				$("#app-contacts").hide();
-			}	
-		},
 		"Logon": {
 			enter: function() {
 				$("#signin-form").show();
@@ -94,38 +86,69 @@ BaasContact.Views.Modes = (function() {
 		this.gotoState("Logon");
 	};
 
-	var goContacts = function(){
-		this.gotoState("Contacts");
-	};
-
 	return {
 		States: States,
 		goApp: goApp,
-		goLogon: goLogon,
-		goContacts:goContacts,
-		//GoPersonal
+		goLogon: goLogon
+	};
+})();
+$.makeStateMachine(BaasContact.Views.Modes);
+
+BaasContact.Views.Contacts = (function() {
+	var show = function(){
+		$("#main-feature>div").hide();
+		$("#contacts-panel").show();
+	};
+
+	return {
+		show: show
 	};
 })();
 
-$.makeStateMachine(BaasContact.Views.Modes);
+BaasContact.Views.Profile = (function() {
+	var show = function(){
+		$("#main-feature>div").hide();
+		$("#profile-panel").show();
+	};
+
+	return {
+		show: show
+	};
+})();
+
+$("#nav-contacts").click(function() {
+	BaasContact.Views.Contacts.show();
+	loadAllContacts();
+	var $this = $(this);
+	$this.parent().find("li").removeClass('active');
+	$this.addClass('active');
+});
+
+var showProfile = function() {
+	BaasContact.Views.Profile.show();
+	var $this = $(this);
+	$this.parent().find("li").removeClass('active');
+	$this.addClass('active');
+}
+
+$("#nav-profile").click(showProfile);
 
 var loginSuccess = function(userInfo) {
 //	$("#signin-form").hide();
 
-	//$("#app-contacts").show(300, function(){
+//	$("#app-contacts").show(300, function(){
 //		$("#search-text").focus();
 //		loadAllContacts();
 //	});
 
 	BaasContact.Views.Modes.goApp();
 	$("#search-text").focus();
-	loadAllContacts();
 	$("#account-name").text(user.username);
+
+	showProfile();
 };
 
 var logout = function() {
-	//$("#signin-form").show();
-	//$("#app-contacts").hide();
 	BaasContact.Views.Modes.goLogon();
 }
 
@@ -233,14 +256,7 @@ function createBlankContact() {
 };
 
 function registerContactsEvents() {
-	$("#nav-contacts").click(function(event) {
-		BaasContact.Views.Modes.goContacts();
-	});
 
-	$("#nav-profile").click(function(event) {
-		BaasContact.Views.Modes.goApp();
-	});
-	
 	$("#search").click(function() {
 		loadContacts();
 	});
