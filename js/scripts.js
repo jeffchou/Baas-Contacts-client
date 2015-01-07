@@ -1,24 +1,13 @@
 "use strict";
 
-var BaasContact = {};
+var BaasContact = {};	// project namespace
+
 var DEBUG = false;
 var CONTACK_COLLECTION = "contacts";
 
-$.print = function(msg, type) {
-	if (typeof type !== "undefined")
-		console.log(type, msg);
-	else
-		console.log(msg);
-};
-
-$.notify = function(msg) {
-	$("#message-sm").text(msg).fadeIn().delay(3500).fadeOut(function () {
-		$("#message-sm").clearQueue();
-	});
-};
-
 $(document).ready(function(){
 	// start program here while the whole page is ready.
+	// similar to a "main" function.
 	$.print("hello contact user");
 	
 	// initial BaasBox
@@ -54,21 +43,77 @@ $(document).ready(function(){
 	registerUsersEvents();
 });
 
+BaasContact.Views = {};
+BaasContact.Views.Users = {};
+BaasContact.Views.Contacts = {};
+BaasContact.Views.Posts = {};
+BaasContact.Views.Profile = {};
+BaasContact.Views.Notify = {};
+BaasContact.Views.Modes = {};
+
+BaasContact.Views.Notify.show = function(msg) {
+	$("#message-sm").text(msg).fadeIn().delay(3500).fadeOut(function () {
+		$("#message-sm").clearQueue();
+	});
+}
+
+BaasContact.Views.Modes = (function() {
+	// modes: 
+	var States = {
+		"App": {
+			enter: function() {
+				$("#app-contacts").show(300);
+			},
+			leave: function() {
+				$("#app-contacts").hide();
+			}
+		},
+		"Logon": {
+			enter: function() {
+				$("#signin-form").show();
+			},
+			leave: function() {
+				$("#signin-form").hide();
+			}
+		}
+	};
+
+	var goApp = function() {
+		this.gotoState("App");
+	};
+
+	var goLogon = function() {
+		this.gotoState("Logon");
+	};
+
+	return {
+		States: States,
+		goApp: goApp,
+		goLogon: goLogon,
+		//GoPersonal
+	};
+})();
+
+$.makeStateMachine(BaasContact.Views.Modes);
 
 var loginSuccess = function(userInfo) {
-	$("#signin-form").hide();
+//	$("#signin-form").hide();
 
-	$("#app").show(300, function(){
-		$("#search-text").focus();
-		loadAllContacts();
-	});
-	
+	//$("#app-contacts").show(300, function(){
+//		$("#search-text").focus();
+//		loadAllContacts();
+//	});
+
+	BaasContact.Views.Modes.goApp();
+	$("#search-text").focus();
+	loadAllContacts();
 	$("#account-name").text(user.username);
 };
 
 var logout = function() {
-	$("#signin-form").show();
-	$("#app").hide();
+	//$("#signin-form").show();
+	//$("#app-contacts").hide();
+	BaasContact.Views.Modes.goLogon();
 }
 
 var composeContactHtml = (function(){
@@ -208,7 +253,7 @@ function registerContactsEvents() {
 	$("#c-add").click(function() {
 		var contact = createBlankContact();
 		putContactData(contact);
-		$('#add-contact-form').modal()
+		$('#add-contact-form').modal({backdrop: "static"})
 			.find(".modal-title").text("Add New Contact");
 		
 		$("#cf-save").off().click(function(e) {
@@ -233,7 +278,6 @@ function registerContactsEvents() {
 	
 	// open edit form
 	$("#contacts-list").on("click", "div.row", function(e) {
-		$.print(this);
 		var contact = $(this).data("contact");
 		var $target = $(e.target);
 		if ($target.is(".delete-contact")) {
@@ -257,8 +301,9 @@ function registerContactsEvents() {
 			return;
 		}
 		
+		$.print(contact);
 		putContactData(contact);
-		$('#add-contact-form').modal()
+		$('#add-contact-form').modal({backdrop: "static"})
 			.find(".modal-title").text("Edit Contact");
 		
 		$("#cf-save").off().click(function(e) {
@@ -281,6 +326,6 @@ function registerContactsEvents() {
 		});
 	})
 	.on("mouseover", "div.row", function(e) {
-		$(this).tooltip();
+		//$(this).tooltip();
 	});
 }
