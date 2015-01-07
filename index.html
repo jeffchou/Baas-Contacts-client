@@ -20,6 +20,59 @@
 
 <body>
 
+<div class="container off" id="app">
+	<div class="row head-operations">
+		<div class="col-md-1 logo">{Logo}</div>
+		<div class="col-md-11">
+			<div class="navbar-form">
+				<div class="form-group">
+					<input id="search-text" type="text" class="form-control" placeholder="Search People">
+				</div>
+				<button id="search" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+				<div class="col-md-2" id="account-panel">
+					<!-- account button -->
+					<div class="btn-group">
+						<button type="button" class="btn btn-default" title=""><span id="account-name"></span></button>
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							<span class="caret"></span>
+							<span class="sr-only">Toggle Dropdown</span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li class="divider"></li>
+							<li><a href="#" id="signout">Sign out</a></li>
+						</ul>
+					</div>
+						
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row advance-operations">
+		<div class="col-md-1">{Blank}</div>
+		<div class="col-md-11">
+			
+		</div>
+	</div>
+	<div class="row main-screen">
+		<div class="col-md-1">
+			<ul class="nav nav-pills nav-stacked">
+			 	<li role="presentation" id="nav-contacts"><a href="#">Contacts</a></li>
+				<li role="presentation" class="active"><a href="#" >Profile</a></li>
+				<li role="presentation"><a href="#">Post</a></li>
+			</ul>
+		</div>
+		<div class="col-md-11">
+			<div class="well">
+				to be profile
+			</div>
+			<div class="well">
+				to be post
+			</div>
+		</div>
+	</div>
+</div>
+
+
 <div class="container off" id="app-contacts">
 	<div class="row head-operations">
 		<div class="col-md-1 logo">{Logo}</div>
@@ -67,7 +120,15 @@
 		</div>
 	</div>
 	<div class="row main-screen">
-		<div class="col-md-1">{Future Features}</div>
+		<div class="col-md-1">
+			<div class="col-md-1">
+				<ul class="nav nav-pills nav-stacked">
+				 	<li role="presentation" class="active"><a href="#">Contacts</a></li>
+					<li role="presentation" id="nav-profile"><a href="#" >Profile</a></li>
+					<li role="presentation"><a href="#">Post</a></li>
+				</ul>
+			</div>
+		</div>
 		<div class="col-md-11">
 			<div class="well">
 				<!-- add contact button-->

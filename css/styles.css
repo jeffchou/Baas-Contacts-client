@@ -10,7 +10,7 @@ body {
 	display: none;
 }
 
-#app-contacts {
+#app-contacts, #app {
 	background-color: #fff;
 }
 

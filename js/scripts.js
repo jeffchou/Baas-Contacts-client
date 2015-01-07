@@ -62,11 +62,19 @@ BaasContact.Views.Modes = (function() {
 	var States = {
 		"App": {
 			enter: function() {
-				$("#app-contacts").show(300);
+				$("#app").show();
+			},
+			leave: function() {
+				$("#app").hide();
+			}
+		},
+		"Contacts": {
+			enter: function() {
+				$("#app-contacts").show();
 			},
 			leave: function() {
 				$("#app-contacts").hide();
-			}
+			}	
 		},
 		"Logon": {
 			enter: function() {
@@ -86,10 +94,15 @@ BaasContact.Views.Modes = (function() {
 		this.gotoState("Logon");
 	};
 
+	var goContacts = function(){
+		this.gotoState("Contacts");
+	};
+
 	return {
 		States: States,
 		goApp: goApp,
 		goLogon: goLogon,
+		goContacts:goContacts,
 		//GoPersonal
 	};
 })();
@@ -220,6 +233,13 @@ function createBlankContact() {
 };
 
 function registerContactsEvents() {
+	$("#nav-contacts").click(function(event) {
+		BaasContact.Views.Modes.goContacts();
+	});
+
+	$("#nav-profile").click(function(event) {
+		BaasContact.Views.Modes.goApp();
+	});
 	
 	$("#search").click(function() {
 		loadContacts();
