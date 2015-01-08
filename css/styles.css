@@ -89,3 +89,22 @@ body {
 	transform: translate(-50%, -50%);
 	padding: 0.5em 1em;
 }
+
+#profile-face-thumb {
+    background-color: white;
+}
+
+#upload-profile-face {
+    cursor: pointer;
+    text-align: center;
+    background-color: black;
+}
+
+.float-status {
+    width: 160px;
+    height: 35px;
+    position: absolute;
+    top: 125px;
+    padding: 7px;
+    opacity: 0.5;
+}
