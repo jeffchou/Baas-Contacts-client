@@ -5,7 +5,7 @@ var BaasContact = {};	// project namespace
 var DEBUG = false;
 var CONTACK_COLLECTION = "contacts";
 
-$(document).ready(function(){
+$(document).ready(function() {
 	// start program here while the whole page is ready.
 	// similar to a "main" function.
 	$.print("hello contact user");
@@ -18,17 +18,18 @@ $(document).ready(function(){
 	// initail account
 	var user = BaasBox.getCurrentUser();
 	if (user) {
-		loginSuccess(user);
+        loginSuccess(user);
 	} else {
 		logout();
 	}
 	if (DEBUG) {
-		$.print("BaasBox.getCurrentUser() -> " + BaasBox.getCurrentUser());
+		$.print("BaasBox.getCurrentUser() -> " + user);
 	}
 	
 	registerContactsEvents();
 	registerSigninEvents();
-	
+	registerUsersEvents();
+    
 	if (DEBUG) {
 		initializeImport();
 	}
@@ -39,8 +40,6 @@ $(document).ready(function(){
 
 		$("#signin").click();
 	}
-
-	registerUsersEvents();
 });
 
 BaasContact.Views = {};
@@ -119,6 +118,8 @@ BaasContact.Views.Profile = (function() {
 $("#nav-contacts").click(function() {
 	BaasContact.Views.Contacts.show();
 	loadAllContacts();
+    
+    
 	var $this = $(this);
 	$this.parent().find("li").removeClass('active');
 	$this.addClass('active');
@@ -126,6 +127,7 @@ $("#nav-contacts").click(function() {
 
 var showProfile = function() {
 	BaasContact.Views.Profile.show();
+    
 	var $this = $(this);
 	$this.parent().find("li").removeClass('active');
 	$this.addClass('active');
@@ -134,18 +136,37 @@ var showProfile = function() {
 $("#nav-profile").click(showProfile);
 
 var loginSuccess = function(userInfo) {
-//	$("#signin-form").hide();
-
-//	$("#app-contacts").show(300, function(){
-//		$("#search-text").focus();
-//		loadAllContacts();
-//	});
-
 	BaasContact.Views.Modes.goApp();
+    
 	$("#search-text").focus();
 	$("#account-name").text(user.username);
 
-	showProfile();
+	checkAndLoadMyProfile();
+    showProfile();
+};
+
+var checkAndLoadMyProfile = function() {
+    BaasBox.fetchCurrentUser()
+        .done(function(res){
+            if (res.result === "ok") {
+                renderProfile(res.data);
+            } else {
+                $.notify("Login error");
+                $.print(data);
+                logout();    
+            }
+        })
+        .fail(function(){
+            // an error of login
+            $.notify("Your login has expired");
+            logout();
+        });
+};
+
+var renderProfile = function(data) {
+    $.print("renderProfile");
+    $.print(data);
+    
 };
 
 var logout = function() {
@@ -170,11 +191,11 @@ var renderContact = function(contact) {
 
 var refreshContactsList = function(contacts) {
 	var $contactsList = $("#contacts-list"),
-		i = 0,
+		i = 0 ,
 		$contact;
 		
 	$contactsList.empty();
-	for (; i < contacts.length; i++) {
+	for ( ; i < contacts.length; i++) {
 		$contact = renderContact(contacts[i]);
 		$contactsList.append($contact);
 	}
@@ -200,7 +221,7 @@ var loadAllContacts = function() {
 
 var loadContacts = function() {
 	var searchBy = $('input[name=optionsRadios]:checked', '#contact-filter').val(),
-		searchKey = $("#search-text").val();
+		searchKey = $("#search-contacts-text").val();
 		
 	$.print(searchBy);
 	$.print(searchKey);
@@ -257,12 +278,12 @@ function createBlankContact() {
 
 function registerContactsEvents() {
 
-	$("#search").click(function() {
+	$("#search-contacts").click(function() {
 		loadContacts();
 	});
 
-	$("#search-text").on("focus click", function(event) {
-		$("#search-text").select();
+	$("#search-contacts-text").on("focus click", function(event) {
+		$("#search-contacts-text").select();
 	});
 
 	var composeContactFormHtml = doT.template($("#contact-form-tmpl").html());
