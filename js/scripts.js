@@ -1,24 +1,13 @@
 "use strict";
 
-var BaasContact = {};
+var BaasContact = {};	// project namespace
+
 var DEBUG = false;
 var CONTACK_COLLECTION = "contacts";
 
-$.print = function(msg, type) {
-	if (typeof type !== "undefined")
-		console.log(type, msg);
-	else
-		console.log(msg);
-};
-
-$.notify = function(msg) {
-	$("#message-sm").text(msg).fadeIn().delay(3500).fadeOut(function () {
-		$("#message-sm").clearQueue();
-	});
-};
-
-$(document).ready(function(){
+$(document).ready(function() {
 	// start program here while the whole page is ready.
+	// similar to a "main" function.
 	$.print("hello contact user");
 	
 	// initial BaasBox
@@ -29,17 +18,18 @@ $(document).ready(function(){
 	// initail account
 	var user = BaasBox.getCurrentUser();
 	if (user) {
-		loginSuccess(user);
+        loginSuccess(user);
 	} else {
 		logout();
 	}
 	if (DEBUG) {
-		$.print("BaasBox.getCurrentUser() -> " + BaasBox.getCurrentUser());
+		$.print("BaasBox.getCurrentUser() -> " + user);
 	}
 	
 	registerContactsEvents();
 	registerSigninEvents();
-	
+	registerUsersEvents();
+    
 	if (DEBUG) {
 		initializeImport();
 	}
@@ -48,27 +38,139 @@ $(document).ready(function(){
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
 
-		//$("#signin").click();
+		$("#signin").click();
 	}
-
-	registerUsersEvents();
 });
 
+BaasContact.Views = {};
+BaasContact.Views.Users = {};
+BaasContact.Views.Contacts = {};
+BaasContact.Views.Posts = {};
+BaasContact.Views.Profile = {};
+BaasContact.Views.Notify = {};
+BaasContact.Views.Modes = {};
+
+BaasContact.Views.Notify.show = function(msg) {
+	$("#message-sm").text(msg).fadeIn().delay(3500).fadeOut(function () {
+		$("#message-sm").clearQueue();
+	});
+}
+
+BaasContact.Views.Modes = (function() {
+	// modes: 
+	var States = {
+		"App": {
+			enter: function() {
+				$("#app").show();
+			},
+			leave: function() {
+				$("#app").hide();
+			}
+		},
+		"Logon": {
+			enter: function() {
+				$("#signin-form").show();
+			},
+			leave: function() {
+				$("#signin-form").hide();
+			}
+		}
+	};
+
+	var goApp = function() {
+		this.gotoState("App");
+	};
+
+	var goLogon = function() {
+		this.gotoState("Logon");
+	};
+
+	return {
+		States: States,
+		goApp: goApp,
+		goLogon: goLogon
+	};
+})();
+$.makeStateMachine(BaasContact.Views.Modes);
+
+BaasContact.Views.Contacts = (function() {
+	var show = function(){
+		$("#main-feature>div").hide();
+		$("#contacts-panel").show();
+	};
+
+	return {
+		show: show
+	};
+})();
+
+BaasContact.Views.Profile = (function() {
+	var show = function(){
+		$("#main-feature>div").hide();
+		$("#profile-panel").show();
+	};
+
+	return {
+		show: show
+	};
+})();
+
+$("#nav-contacts").click(function() {
+	BaasContact.Views.Contacts.show();
+	loadAllContacts();
+    
+    
+	var $this = $(this);
+	$this.parent().find("li").removeClass('active');
+	$this.addClass('active');
+});
+
+var showProfile = function() {
+	BaasContact.Views.Profile.show();
+    
+	var $this = $(this);
+	$this.parent().find("li").removeClass('active');
+	$this.addClass('active');
+}
+
+$("#nav-profile").click(showProfile);
 
 var loginSuccess = function(userInfo) {
-	$("#signin-form").hide();
-
-	$("#app").show(300, function(){
-		$("#search-text").focus();
-		loadAllContacts();
-	});
-	
+	BaasContact.Views.Modes.goApp();
+    
+	$("#search-text").focus();
 	$("#account-name").text(user.username);
+
+	checkAndLoadMyProfile();
+    showProfile();
+};
+
+var checkAndLoadMyProfile = function() {
+    BaasBox.fetchCurrentUser()
+        .done(function(res){
+            if (res.result === "ok") {
+                renderProfile(res.data);
+            } else {
+                $.notify("Login error");
+                $.print(data);
+                logout();    
+            }
+        })
+        .fail(function(){
+            // an error of login
+            $.notify("Your login has expired");
+            logout();
+        });
+};
+
+var renderProfile = function(data) {
+    $.print("renderProfile");
+    $.print(data);
+    
 };
 
 var logout = function() {
-	$("#signin-form").show();
-	$("#app").hide();
+	BaasContact.Views.Modes.goLogon();
 }
 
 var composeContactHtml = (function(){
@@ -89,11 +191,11 @@ var renderContact = function(contact) {
 
 var refreshContactsList = function(contacts) {
 	var $contactsList = $("#contacts-list"),
-		i = 0,
+		i = 0 ,
 		$contact;
 		
 	$contactsList.empty();
-	for (; i < contacts.length; i++) {
+	for ( ; i < contacts.length; i++) {
 		$contact = renderContact(contacts[i]);
 		$contactsList.append($contact);
 	}
@@ -119,7 +221,7 @@ var loadAllContacts = function() {
 
 var loadContacts = function() {
 	var searchBy = $('input[name=optionsRadios]:checked', '#contact-filter').val(),
-		searchKey = $("#search-text").val();
+		searchKey = $("#search-contacts-text").val();
 		
 	$.print(searchBy);
 	$.print(searchKey);
@@ -175,13 +277,13 @@ function createBlankContact() {
 };
 
 function registerContactsEvents() {
-	
-	$("#search").click(function() {
+
+	$("#search-contacts").click(function() {
 		loadContacts();
 	});
 
-	$("#search-text").on("focus click", function(event) {
-		$("#search-text").select();
+	$("#search-contacts-text").on("focus click", function(event) {
+		$("#search-contacts-text").select();
 	});
 
 	var composeContactFormHtml = doT.template($("#contact-form-tmpl").html());
@@ -208,7 +310,7 @@ function registerContactsEvents() {
 	$("#c-add").click(function() {
 		var contact = createBlankContact();
 		putContactData(contact);
-		$('#add-contact-form').modal()
+		$('#add-contact-form').modal({backdrop: "static"})
 			.find(".modal-title").text("Add New Contact");
 		
 		$("#cf-save").off().click(function(e) {
@@ -233,7 +335,6 @@ function registerContactsEvents() {
 	
 	// open edit form
 	$("#contacts-list").on("click", "div.row", function(e) {
-		$.print(this);
 		var contact = $(this).data("contact");
 		var $target = $(e.target);
 		if ($target.is(".delete-contact")) {
@@ -257,8 +358,9 @@ function registerContactsEvents() {
 			return;
 		}
 		
+		$.print(contact);
 		putContactData(contact);
-		$('#add-contact-form').modal()
+		$('#add-contact-form').modal({backdrop: "static"})
 			.find(".modal-title").text("Edit Contact");
 		
 		$("#cf-save").off().click(function(e) {
@@ -281,6 +383,6 @@ function registerContactsEvents() {
 		});
 	})
 	.on("mouseover", "div.row", function(e) {
-		$(this).tooltip();
+		//$(this).tooltip();
 	});
 }
