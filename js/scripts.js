@@ -164,9 +164,21 @@ var checkAndLoadMyProfile = function() {
 };
 
 var renderProfile = function(data) {
-    $.print("renderProfile");
     $.print(data);
-    
+    $("#profile-name").text(data.user.name);
+    $("#profile-intro").text(data.user.intro);
+    var joinDate = new Date(data.signUpDate);
+    $("#prfile-join-date").text(joinDate.toLocaleDateString());
+    var $upload = $("#upload-profile-face");
+    $upload.fadeTo(0, 0);
+    $upload.hover(
+        function(){
+            $.print("over");
+            $(this).fadeTo(200, 0.1);
+        },function(){
+            $(this).fadeTo(200, 0.0);
+        });
+    $upload.click();
 };
 
 var logout = function() {
