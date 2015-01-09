@@ -13,6 +13,11 @@
 	text-align: center;
 }
 
+.contacts-search {
+	display: inline-block;
+	float: right;
+}
+
 #contact-filter {
 	margin-top: 0;
 }
