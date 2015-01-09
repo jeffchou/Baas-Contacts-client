@@ -54,7 +54,7 @@ BaasContact.Views.Notify.show = function(msg) {
 	$("#message-sm").text(msg).fadeIn().delay(3500).fadeOut(function () {
 		$("#message-sm").clearQueue();
 	});
-}
+};
 
 BaasContact.Views.Modes = (function() {
 	// modes: 
@@ -143,13 +143,16 @@ var loginSuccess = function(userInfo) {
 
 	checkAndLoadMyProfile();
     showProfile();
+    registerProfileEvents();
 };
 
+var userInfo;
 var checkAndLoadMyProfile = function() {
     BaasBox.fetchCurrentUser()
         .done(function(res){
             if (res.result === "ok") {
-                renderProfile(res.data);
+                userInfo = res.data;
+                renderProfile(userInfo);
             } else {
                 $.notify("Login error");
                 $.print(data);
@@ -163,23 +166,82 @@ var checkAndLoadMyProfile = function() {
         });
 };
 
-var renderProfile = function(data) {
-    $.print(data);
-    $("#profile-name").text(data.user.name);
-    $("#profile-intro").text(data.user.intro);
-    var joinDate = new Date(data.signUpDate);
+var renderProfile = function(userInfo) {
+    $.print("userInfo:");
+    $.print(userInfo);
+    $("#profile-name").text(userInfo.user.name);
+    $("#profile-intro").text(userInfo.user.intro);
+    var joinDate = new Date(userInfo.signUpDate);
     $("#prfile-join-date").text(joinDate.toLocaleDateString());
-    var $upload = $("#upload-profile-face");
-    $upload.fadeTo(0, 0);
-    $upload.hover(
-        function(){
-            $.print("over");
-            $(this).fadeTo(200, 0.1);
-        },function(){
-            $(this).fadeTo(200, 0.0);
-        });
-    $upload.click();
+    displayProfileImg(userInfo.visibleByAnonymousUsers.profileImg);
+    
+    var rawInfo = {};
+    for(var key in userInfo) {
+        if (key.indexOf("visibleBy") > -1) {
+            $.extend(rawInfo, userInfo[key]);
+        }
+    }
+    
+    var text = "<p>";
+    for(var key in rawInfo) {
+        text += key + " : " + rawInfo[key] + " <br />";
+    }
+    text += "</p>";
+    $("#profile-intro").html(text);
 };
+
+var registerProfileEvents = function() {
+    var $upload = $("#upload-face-img");
+    $upload.hover(
+        function() {
+            $(this).find("div.float-buttom").fadeTo(200, 0.5);
+        },function() {
+            $(this).find("div.float-buttom").fadeTo(200, 0.0);
+        });
+    
+    $upload.find("input").on("change", uploadImg);
+}
+
+var updateProfileImg = function (imgId) {
+    userInfo.visibleByAnonymousUsers.profileImg = imgId;
+    BaasBox.updateUserProfile(userInfo);
+};
+
+var uploadImg = function(e) {
+    var files = e.target.files;
+    if (files.length < 0) return;
+    var file = files[0];
+    if (!file.type.match('image.*')) {
+        $.notify(file.name + " is not a image");
+        return;
+    }
+    
+    var formData = new FormData();
+    formData.append("upload", file, file.name);
+    
+    $.notify("Uploading " + file.name + "...");
+    BaasBox.uploadFile(formData)
+        .done(function(res){
+            $.notify("Upload " + file.name + " success.");
+            var info = JSON.parse(res);
+            var imgId = info.data.id;
+            displayProfileImg(imgId);
+            updateProfileImg(imgId);
+        })
+        .fail(function(error){
+            var info = JSON.parse(error.responseText);
+            var message = info.message;
+            $.notify("Error on uploading image. message: " + message);
+        });
+}
+
+var displayProfileImg = function(imgId){
+    if (!imgId) return;
+    BaasBox.fetchFile(imgId, true)
+		.done(function(res){
+			$("#profile-face-thumb img").attr("src", this.url);
+		});
+}
 
 var logout = function() {
 	BaasContact.Views.Modes.goLogon();
