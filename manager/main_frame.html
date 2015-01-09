@@ -1,0 +1,154 @@
+<div class="container off" id="app">
+	<div class="row ">
+		<div class="col-md-3">
+			<h4>Custom Manager<br/><small>Version 10.0.0.1</small></h4>
+			
+		</div>
+		<div class="col-md-9">
+			<div class="navbar-form">
+				<div class="col-md-2" id="account-panel">
+					<!-- account button -->
+					
+					<div class="btn-group">
+						<button type="button" class="btn btn-default" title=""><span id="account-name"></span></button>
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							<span class="caret"></span>
+							<span class="sr-only">Toggle Dropdown</span>
+						</button>
+						
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#" id="settings">Settings</a></li>
+							<li class="divider"></li>
+							<li><a href="#" id="logout">Logout</a></li>
+						</ul>
+						
+					</div>
+					
+						
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row main-screen">
+		<div class="col-md-2">
+			<ul class="nav nav-pills nav-stacked">
+			  <li role="presentation"><a href="#panel_dashboard" data-toggle="tab" id="menu_dashboard">Dashboard</a></li>
+			  <li role="presentation"><a href="#panel_contacts" data-toggle="tab" id="menu_contacts">Contacts</a></li>
+			  <li role="presentation"><a href="#panel_import" data-toggle="tab" id="menu_import">Import</a></li>
+			  <li role="presentation"><a href="#panel_export" data-toggle="tab" id="menu_export">Export</a></li>
+			</ul>
+			
+		</div>
+		<div class="col-md-10">
+			<div class="tab-content">
+				<div class="tab-pane" id="panel_dashboard">
+
+					<div class="panel panel-primary">
+					   <div class="panel-heading">
+						  <h3 class="panel-title">
+							 Dashboard
+						  </h3>
+					   </div>
+					   <div class="panel-body">
+						  Dashboard content
+					   </div>
+					   <div class="panel-footer">&nbsp;</div>
+					</div>
+				
+				</div>
+				<div class="tab-pane" id="panel_contacts">
+
+					<div class="panel panel-primary">
+					   <div class="panel-heading">
+						  <h3 class="panel-title">
+							 Contacts
+						  </h3>
+					   </div>
+					   <div class="panel-body">
+						  Contacts content
+					   </div>
+					</div>
+				
+				</div>
+				<div class="tab-pane" id="panel_import">
+
+					<div class="panel panel-primary">
+					   <div class="panel-heading">
+						  <h3 class="panel-title">
+							 Import contact data
+						  </h3>
+					   </div>
+					   <div class="panel-body">
+						  Import contact data
+					   </div>
+					</div>
+				
+				</div>
+				<div class="tab-pane" id="panel_export">
+
+					<div class="panel panel-primary">
+					   <div class="panel-heading">
+						  <h3 class="panel-title">
+							 Export contact
+						  </h3>
+					   </div>
+					   <div class="panel-body">
+						  Export content data
+					   </div>
+					</div>
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script id="contact-tmpl" type="text/template">
+	<div class="row">
+		<div class="col-xs-1 off">&nbsp;{{=it.employeeId}}</div>
+		<div class="col-xs-1">&nbsp;{{=it.department}}</div>
+		<div class="col-xs-2">&nbsp;{{=it.name}}</div>
+		<div class="col-xs-1">&nbsp;{{=it.extNo}}</div>
+		<div class="col-xs-2">&nbsp;{{=it.email}}</div>
+		<div class="col-xs-1">&nbsp;{{=it.mobileNo}}</div>
+		<div class="col-xs-1">&nbsp;{{=it.birthDay}}</div>
+		<div class="col-xs-3">&nbsp;{{=it.address}}</div>
+		<div class="col-xs-1">&nbsp;<span class="glyphicon glyphicon-trash delete-contact" aria-hidden="true" title="delete me" data-dismiss="alert" ></span></div>
+	</div>
+</script>
+
+<script id="contact-form-tmpl" type="text/template">
+	<div class="input-group">
+		<label for="cf-id" class="contact-form-label">ID</label>
+		<input type="text" id="cf-id" class="" placeholder="" value='{{=it.employeeId}}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-name" class="contact-form-label">Name</label>
+		<input type="text" id="cf-name" class="" placeholder="" value='{{=it.name}}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-department " class="contact-form-label">Department </label>
+		<input type="text" id="cf-department" class="" placeholder="" value='{{=it.department }}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-extno" class="contact-form-label">Extension Number</label>
+		<input type="text" id="cf-extno" class="" placeholder="" value='{{=it.extNo}}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-email" class="contact-form-label">Email</label>
+		<input type="text" id="cf-email" class="" placeholder="" value='{{=it.email}}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-mobileno" class="contact-form-label">Mobile Number</label>
+		<input type="text" id="cf-mobileno" class="" placeholder="" value='{{=it.mobileNo}}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-birth" class="contact-form-label">Birthday</label>
+		<input type="text" id="cf-birth" class="" placeholder="" value='{{=it.birthDay}}'>
+	</div>
+	<div class="input-group">
+		<label for="cf-address" class="contact-form-label">Address</label>
+		<input type="text" id="cf-address" class="" placeholder="" value='{{=it.address}}'>
+	</div>
+</script>
