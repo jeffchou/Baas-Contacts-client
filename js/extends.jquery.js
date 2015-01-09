@@ -48,7 +48,7 @@
 	};
 
 	$.notify = function(msg) {
-		BaasContact.Views.Notify(msg);
+		BaasContact.Views.Notify.show(msg);
 	};
 
 	// add more jQuery plugins
