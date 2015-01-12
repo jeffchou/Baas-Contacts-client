@@ -4,7 +4,7 @@
     <property name="basedir" value="." />
 	
 	<target name="output_version">
-		<echo message="Version: ${env.BUILD_NUMBER} - ${env.VERSION_NUMBER}" file="${basedir}/VERSION" />
+		<echo message="Version: ${env.VERSION_NUMBER}" file="${basedir}/VERSION" />
 	</target>
 	
 </project>
