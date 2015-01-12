@@ -12,10 +12,10 @@ $(document).ready(function() {
 	
 	// initial BaasBox
 	// TODO: these should be decide in a config.
-	BaasBox.setEndPoint("http://172.16.127.52:9000");
+	BaasBox.setEndPoint("http://172.16.252.102:9000");
 	BaasBox.appcode = "1234567890";
 	
-	// initail account
+	// initialize account
 	var user = BaasBox.getCurrentUser();
 	if (user) {
         loginSuccess(user);
@@ -32,6 +32,20 @@ $(document).ready(function() {
     
 	if (DEBUG) {
 		initializeImport();
+
+		//$('[data-toggle="tooltip"]').tooltip();
+		$("#p-c-add").tooltip();
+
+		// click to let all REGISTERED user access it
+		$("#publish-contacts").tooltip().click(function () {
+			BaasBox.loadCollection(CONTACK_COLLECTION)
+				.done(function(contacts) {
+					for (var i = 0; i < contacts.length; i++) {
+						BaasBox.grantRoleAccessToObject(CONTACK_COLLECTION, contacts[i].id, BaasBox.READ_PERMISSION, BaasBox.REGISTERED_ROLE);
+						BaasBox.grantRoleAccessToObject(CONTACK_COLLECTION, contacts[i].id, BaasBox.UPDATE_PERMISSION, BaasBox.REGISTERED_ROLE);
+					}
+				})
+		});
 	}
 
 	if (DEBUG && !user) {
@@ -142,7 +156,7 @@ var loginSuccess = function(userInfo) {
 	$("#account-name").text(user.username);
 
 	checkAndLoadMyProfile();
-    showProfile();
+	$("#nav-profile").click();
     registerProfileEvents();
 };
 
@@ -166,87 +180,9 @@ var checkAndLoadMyProfile = function() {
         });
 };
 
-var renderProfile = function(userInfo) {
-    $.print("userInfo:");
-    $.print(userInfo);
-    $("#profile-name").text(userInfo.user.name);
-    $("#profile-intro").text(userInfo.user.intro);
-    var joinDate = new Date(userInfo.signUpDate);
-    $("#prfile-join-date").text(joinDate.toLocaleDateString());
-    if (userInfo.visibleByAnonymousUsers)
-        displayProfileImg(userInfo.visibleByAnonymousUsers.profileImg);
-    
-    var rawInfo = {};
-    for(var key in userInfo) {
-        if (key.indexOf("visibleBy") > -1) {
-            $.extend(rawInfo, userInfo[key]);
-        }
-    }
-    
-    var text = "<p>";
-    for(var key in rawInfo) {
-        text += key + " : " + rawInfo[key] + " <br />";
-    }
-    text += "</p>";
-    $("#profile-intro").html(text);
-};
-
-var registerProfileEvents = function() {
-    var $upload = $("#upload-face-img");
-    $upload.hover(
-        function() {
-            $(this).find("div.float-buttom").fadeTo(200, 0.5);
-        },function() {
-            $(this).find("div.float-buttom").fadeTo(200, 0.0);
-        });
-    
-    $upload.find("input").on("change", uploadImg);
-}
-
-var updateProfileImg = function (imgId) {
-    userInfo.visibleByAnonymousUsers.profileImg = imgId;
-    BaasBox.updateUserProfile(userInfo);
-};
-
-var uploadImg = function(e) {
-    var files = e.target.files;
-    if (files.length < 0) return;
-    var file = files[0];
-    if (!file.type.match('image.*')) {
-        $.notify(file.name + " is not a image");
-        return;
-    }
-    
-    var formData = new FormData();
-    formData.append("upload", file, file.name);
-    
-    $.notify("Uploading " + file.name + "...");
-    BaasBox.uploadFile(formData)
-        .done(function(res){
-            $.notify("Upload " + file.name + " success.");
-            var info = JSON.parse(res);
-            var imgId = info.data.id;
-            displayProfileImg(imgId);
-            updateProfileImg(imgId);
-        })
-        .fail(function(error){
-            var info = JSON.parse(error.responseText);
-            var message = info.message;
-            $.notify("Error on uploading image. message: " + message);
-        });
-}
-
-var displayProfileImg = function(imgId){
-    if (!imgId) return;
-    BaasBox.fetchFile(imgId, true)
-		.done(function(res){
-			$("#profile-face-thumb img").attr("src", this.url);
-		});
-}
-
 var logout = function() {
 	BaasContact.Views.Modes.goLogon();
-}
+};
 
 var composeContactHtml = (function(){
 	var contactTmpl = $("#contact-tmpl").html();
@@ -256,7 +192,7 @@ var composeContactHtml = (function(){
 var renderContact = function(contact) {
 	var contactHtml = composeContactHtml(contact);
 	return $(contactHtml).data("contact", contact);
-}
+};
 
 
 //var renderContactForm = function(contact) {
@@ -336,7 +272,7 @@ var loadContacts = function() {
 				$.print("load contact failed");
 				$.print(err);
 		});
-}
+};
 
 function createBlankContact() {
 	return {
@@ -379,7 +315,7 @@ function registerContactsEvents() {
 	
 	$('#add-contact-form').on('show.bs.modal', function (e) {
 		//debugger;
-	})
+	});
 	
 	// open add form 
 	$("#c-add").click(function() {
@@ -432,6 +368,7 @@ function registerContactsEvents() {
 			});
 			return;
 		}
+		//if ($target is )
 		
 		$.print(contact);
 		putContactData(contact);
