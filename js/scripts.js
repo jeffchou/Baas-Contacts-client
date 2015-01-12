@@ -12,7 +12,7 @@ $(document).ready(function() {
 	
 	// initial BaasBox
 	// TODO: these should be decide in a config.
-	BaasBox.setEndPoint("http://172.16.127.52:9000");
+	BaasBox.setEndPoint("http://172.16.252.102:9000");
 	BaasBox.appcode = "1234567890";
 	
 	// initialize account
@@ -32,6 +32,20 @@ $(document).ready(function() {
     
 	if (DEBUG) {
 		initializeImport();
+
+		//$('[data-toggle="tooltip"]').tooltip();
+		$("#p-c-add").tooltip();
+
+		// click to let all REGISTERED user access it
+		$("#publish-contacts").tooltip().click(function () {
+			BaasBox.loadCollection(CONTACK_COLLECTION)
+				.done(function(contacts) {
+					for (var i = 0; i < contacts.length; i++) {
+						BaasBox.grantRoleAccessToObject(CONTACK_COLLECTION, contacts[i].id, BaasBox.READ_PERMISSION, BaasBox.REGISTERED_ROLE);
+						BaasBox.grantRoleAccessToObject(CONTACK_COLLECTION, contacts[i].id, BaasBox.UPDATE_PERMISSION, BaasBox.REGISTERED_ROLE);
+					}
+				})
+		});
 	}
 
 	if (DEBUG && !user) {
@@ -142,7 +156,7 @@ var loginSuccess = function(userInfo) {
 	$("#account-name").text(user.username);
 
 	checkAndLoadMyProfile();
-    showProfile();
+	$("#nav-profile").click();
     registerProfileEvents();
 };
 
@@ -178,7 +192,7 @@ var composeContactHtml = (function(){
 var renderContact = function(contact) {
 	var contactHtml = composeContactHtml(contact);
 	return $(contactHtml).data("contact", contact);
-}
+};
 
 
 //var renderContactForm = function(contact) {
@@ -301,7 +315,7 @@ function registerContactsEvents() {
 	
 	$('#add-contact-form').on('show.bs.modal', function (e) {
 		//debugger;
-	})
+	});
 	
 	// open add form 
 	$("#c-add").click(function() {
@@ -354,6 +368,7 @@ function registerContactsEvents() {
 			});
 			return;
 		}
+		//if ($target is )
 		
 		$.print(contact);
 		putContactData(contact);
