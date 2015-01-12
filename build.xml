@@ -1,0 +1,6 @@
+<project name="builder" default="output_version">
+    <property name="basedir" value="." />
+	<target name="output_version">
+		<echo message="Version: ${BUILD_NUMBER}" file="${basedir}/VERSION"/>
+	</target>
+</project>
