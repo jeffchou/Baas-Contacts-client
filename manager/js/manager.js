@@ -179,6 +179,10 @@ var loadContacts = function() {
 	$.print(searchBy);
 	$.print(searchKey);
 	
+	if (!searchKey) {
+		searchKey="";//code
+	}
+	
 	if (searchKey === "") {
 		loadAllContacts();
 		return;
