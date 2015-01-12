@@ -12,7 +12,7 @@ $(document).ready(function() {
 	
 	// initial BaasBox
 	// TODO: these should be decide in a config.
-	BaasBox.setEndPoint("http://172.16.252.102:9000");
+	BaasBox.setEndPoint("http://172.16.127.52:9000");
 	BaasBox.appcode = "1234567890";
 	
 	// initail account
@@ -173,7 +173,8 @@ var renderProfile = function(userInfo) {
     $("#profile-intro").text(userInfo.user.intro);
     var joinDate = new Date(userInfo.signUpDate);
     $("#prfile-join-date").text(joinDate.toLocaleDateString());
-    displayProfileImg(userInfo.visibleByAnonymousUsers.profileImg);
+    if (userInfo.visibleByAnonymousUsers)
+        displayProfileImg(userInfo.visibleByAnonymousUsers.profileImg);
     
     var rawInfo = {};
     for(var key in userInfo) {
