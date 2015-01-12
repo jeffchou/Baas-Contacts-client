@@ -44,6 +44,9 @@ $(document).ready(function(){
 	loadHTML("./main_frame.html",$("#main_frame"));
 	$.print("next main_frame");
 	
+	loadHTML("../VERSION",$("#version_info"));
+	
+	
 	// initial BaasBox
 	// TODO: these should be decide in a config.
 	//BaasBox.setEndPoint("http://172.16.252.102:9000");
@@ -239,9 +242,6 @@ function registerContactsEvents() {
 	var composeContactFormHtml = doT.template($("#contact-form-tmpl").html());	
 	
 	var putContactData = function(contact) {
-		
-		$.print("composeContactFormHtml="+composeContactFormHtml);
-		$.print("contact="+JSON.stringify( contact));
 
 		var contactFormHtml = composeContactFormHtml(contact);
 		$("#edit-contact-form").empty().append(contactFormHtml);
@@ -473,4 +473,17 @@ function registerUsersEvents() {
 
 		$("#reset-password-confirm").modal('hide');
 	});
+	
+	
+	$("#menu_dashboard").click(function(event) {
+		$.print("menu_dashboard clicked");
+	});
+	
+	$("#menu_contacts").click(function(event) {
+		$.print("menu_contacts clicked");
+		loadAllContacts();
+	});
+	
 }
+
+
