@@ -66,7 +66,7 @@ var uploadImg = function(e) {
             var message = info.message;
             $.notify("Error on uploading image. message: " + message);
         });
-}
+};
 
 var displayProfileImg = function(imgId){
     if (!imgId) return;
@@ -74,4 +74,4 @@ var displayProfileImg = function(imgId){
         .done(function(res){
             $("#profile-face-thumb img").attr("src", this.url);
         });
-}
+};

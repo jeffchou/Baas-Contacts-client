@@ -168,7 +168,7 @@ var checkAndLoadMyProfile = function() {
 
 var logout = function() {
 	BaasContact.Views.Modes.goLogon();
-}
+};
 
 var composeContactHtml = (function(){
 	var contactTmpl = $("#contact-tmpl").html();
@@ -258,7 +258,7 @@ var loadContacts = function() {
 				$.print("load contact failed");
 				$.print(err);
 		});
-}
+};
 
 function createBlankContact() {
 	return {
