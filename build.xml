@@ -1,5 +1,6 @@
 <project name="builder" default="output_version">
 	
+	<property environment="env"/>
     <property name="basedir" value="." />
 	
 	<target name="output_version">
