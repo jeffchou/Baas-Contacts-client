@@ -166,6 +166,16 @@ var checkAndLoadMyProfile = function() {
         .done(function(res){
             if (res.result === "ok") {
                 userInfo = res.data;
+				// todo: cover user data by a Class
+				userInfo.isAdmin = function() {
+					var roles = this.user.roles;
+					for (var i = 0; i < roles.length; i++) {
+						if (roles[i].name == BaasBox.ADMINISTRATOR_ROLE) {
+							return true;
+						}
+					}
+					return false;
+				};
                 renderProfile(userInfo);
             } else {
                 $.notify("Login error");
@@ -191,7 +201,15 @@ var composeContactHtml = (function(){
 
 var renderContact = function(contact) {
 	var contactHtml = composeContactHtml(contact);
-	return $(contactHtml).data("contact", contact);
+	var $contact = $(contactHtml).data("contact", contact);
+	if (userInfo.isAdmin()) {	// todo: move it to other place
+		if (!contact.userId) {
+			$contact.find(".bind-user").show();
+		} else {
+			$contact.find(".user-info").addClass("active-user");
+		}
+	}
+	return $contact;
 };
 
 
@@ -228,12 +246,12 @@ var loadAllContacts = function() {
 				$.print("load contact failed");
 				$.print(err);
 		});
-}
+};
 
 var loadContacts = function() {
-	var searchBy = $('input[name=optionsRadios]:checked', '#contact-filter').val(),
+	var searchBy = $('input[name=optionsRadios]:checked', '#contacts-search-panel').val(),
 		searchKey = $("#search-contacts-text").val();
-		
+
 	$.print(searchBy);
 	$.print(searchKey);
 	
@@ -360,15 +378,29 @@ function registerContactsEvents() {
 						loadContacts();
 					})
 					.fail(function(err) {
-						alert("delete contact failed");
-						$.print("delete contact failed");
+						alert("delete contact failed, msg: " + err.responseJSON.message);
+						$.print("delete contact failed, msg: " + err.responseJSON.message);
 						$.print(err);
 					});
 				$confirm.modal('hide');
 			});
 			return;
 		}
-		//if ($target is )
+		if ($target.is(".bind-user")) {
+			var n = contact.name;
+			var seed = n[0] + n[1] + n[2];
+			seed = seed.toLowerCase();
+			$.get("http://172.16.252.102:9000/users?where=any().toLowerCase()+like+%27%25" + seed + "%25%27")
+				.done(function(res) {
+					var users = res.data;
+					if (users.length == 0) {
+
+					}
+
+
+				});
+			return;
+		}
 		
 		$.print(contact);
 		putContactData(contact);
@@ -395,6 +427,6 @@ function registerContactsEvents() {
 		});
 	})
 	.on("mouseover", "div.row", function(e) {
-		//$(this).tooltip();
+
 	});
 }
