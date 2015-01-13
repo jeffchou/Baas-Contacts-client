@@ -13,7 +13,7 @@
 	text-align: center;
 }
 
-.contacts-search {
+#contacts-search-panel {
 	display: inline-block;
 	float: right;
 }

@@ -246,12 +246,12 @@ var loadAllContacts = function() {
 				$.print("load contact failed");
 				$.print(err);
 		});
-}
+};
 
 var loadContacts = function() {
-	var searchBy = $('input[name=optionsRadios]:checked', '#contact-filter').val(),
+	var searchBy = $('input[name=optionsRadios]:checked', '#contacts-search-panel').val(),
 		searchKey = $("#search-contacts-text").val();
-		
+
 	$.print(searchBy);
 	$.print(searchKey);
 	
@@ -378,8 +378,8 @@ function registerContactsEvents() {
 						loadContacts();
 					})
 					.fail(function(err) {
-						alert("delete contact failed");
-						$.print("delete contact failed");
+						alert("delete contact failed, msg: " + err.responseJSON.message);
+						$.print("delete contact failed, msg: " + err.responseJSON.message);
 						$.print(err);
 					});
 				$confirm.modal('hide');
@@ -387,7 +387,18 @@ function registerContactsEvents() {
 			return;
 		}
 		if ($target.is(".bind-user")) {
-			$.print("TOBIND")
+			var n = contact.name;
+			var seed = n[0] + n[1] + n[2];
+			seed = seed.toLowerCase();
+			$.get("http://172.16.252.102:9000/users?where=any().toLowerCase()+like+%27%25" + seed + "%25%27")
+				.done(function(res) {
+					var users = res.data;
+					if (users.length == 0) {
+
+					}
+
+
+				});
 			return;
 		}
 		
