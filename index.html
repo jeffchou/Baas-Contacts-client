@@ -94,7 +94,9 @@
                         </div>
                     </div>
                 </div>
-                
+                <div class="row bg-info">
+
+				</div>
 			</div>
 			<div id="post-panel" class="well">
 				to be post
@@ -323,13 +325,20 @@
 	<div class="row">
 		<div class="col-xs-1 off">&nbsp;{{=it.employeeId}}</div>
 		<div class="col-xs-1">&nbsp;{{=it.department}}</div>
-		<div class="col-xs-2">&nbsp;{{=it.name}}</div>
+		<div class="col-xs-2">
+			<span class="user-info">
+			&nbsp;{{=it.name}}
+			</span>
+		</div>
 		<div class="col-xs-1">&nbsp;{{=it.extNo}}</div>
 		<div class="col-xs-2">&nbsp;{{=it.email}}</div>
 		<div class="col-xs-1">&nbsp;{{=it.mobileNo}}</div>
 		<div class="col-xs-1">&nbsp;{{=it.birthDay}}</div>
 		<div class="col-xs-3">&nbsp;{{=it.address}}</div>
-		<div class="col-xs-1">&nbsp;<span class="glyphicon glyphicon-trash delete-contact" aria-hidden="true" title="delete me" data-dismiss="alert" ></span></div>
+		<div class="col-xs-1">&nbsp;
+			<span class="glyphicon glyphicon-trash delete-contact" aria-hidden="true" title="delete me" data-dismiss="alert" ></span>
+			<span class="glyphicon glyphicon-user bind-user off" aria-hidden="true" title="bind user" data-dismiss="alert" ></span>
+		</div>
 	</div>
 </script>
 

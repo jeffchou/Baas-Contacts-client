@@ -17,8 +17,11 @@ var renderProfile = function(userInfo) {
     $("#profile-intro").text(userInfo.user.intro);
     var joinDate = new Date(userInfo.signUpDate);
     $("#prfile-join-date").text(joinDate.toLocaleDateString());
-    if (userInfo.visibleByAnonymousUsers)
+    if (userInfo.visibleByAnonymousUsers) {
         displayProfileImg(userInfo.visibleByAnonymousUsers.profileImg);
+
+        bindContact(userInfo);
+    }
 
     var rawInfo = {};
     for(var key in userInfo) {
@@ -26,7 +29,6 @@ var renderProfile = function(userInfo) {
             $.extend(rawInfo, userInfo[key]);
         }
     }
-
     var text = "<p>";
     for(var key in rawInfo) {
         text += key + " : " + rawInfo[key] + " <br />";
@@ -74,4 +76,11 @@ var displayProfileImg = function(imgId){
         .done(function(res){
             $("#profile-face-thumb img").attr("src", this.url);
         });
+};
+
+var bindContact = function(userInfo) {
+    var publicInfo = userInfo.visibleByAnonymousUsers;
+    if (!publicInfo.contactId) {
+        $.notify("Welcome new comer: " + userInfo.user.name);
+    }
 };

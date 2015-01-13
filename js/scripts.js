@@ -166,6 +166,16 @@ var checkAndLoadMyProfile = function() {
         .done(function(res){
             if (res.result === "ok") {
                 userInfo = res.data;
+				// todo: cover user data by a Class
+				userInfo.isAdmin = function() {
+					var roles = this.user.roles;
+					for (var i = 0; i < roles.length; i++) {
+						if (roles[i].name == BaasBox.ADMINISTRATOR_ROLE) {
+							return true;
+						}
+					}
+					return false;
+				};
                 renderProfile(userInfo);
             } else {
                 $.notify("Login error");
@@ -191,7 +201,15 @@ var composeContactHtml = (function(){
 
 var renderContact = function(contact) {
 	var contactHtml = composeContactHtml(contact);
-	return $(contactHtml).data("contact", contact);
+	var $contact = $(contactHtml).data("contact", contact);
+	if (userInfo.isAdmin()) {	// todo: move it to other place
+		if (!contact.userId) {
+			$contact.find(".bind-user").show();
+		} else {
+			$contact.find(".user-info").addClass("active-user");
+		}
+	}
+	return $contact;
 };
 
 
@@ -368,7 +386,10 @@ function registerContactsEvents() {
 			});
 			return;
 		}
-		//if ($target is )
+		if ($target.is(".bind-user")) {
+			$.print("TOBIND")
+			return;
+		}
 		
 		$.print(contact);
 		putContactData(contact);
@@ -395,6 +416,6 @@ function registerContactsEvents() {
 		});
 	})
 	.on("mouseover", "div.row", function(e) {
-		//$(this).tooltip();
+
 	});
 }
