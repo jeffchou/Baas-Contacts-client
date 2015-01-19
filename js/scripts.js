@@ -12,7 +12,7 @@ $(document).ready(function() {
 	
 	// initial BaasBox
 	// TODO: these should be decide in a config.
-	BaasBox.setEndPoint("http://172.16.252.102:9000");
+	BaasBox.setEndPoint("http://172.16.127.52:9000");
 	BaasBox.appcode = "1234567890";
 	
 	// initialize account
@@ -138,7 +138,33 @@ $("#nav-contacts").click(function() {
 	$this.parent().find("li").removeClass('active');
 	$this.addClass('active');
 });
+//simon-change password start
+$("#change-password").click(function() {
+    $("#signin-form").hide();
+    $("#app").hide();
+    $("#change-password-form").fadeIn();
+    $("#change-password-old").val("");
+    $("#change-password-new").val("");
+});
 
+$("#change-password-btn").click(function(event) {    
+    BaasBox.changePassword($("#change-password-old").val(), $("#change-password-new").val())
+    .done(function(res){
+        $("#change-password-form").hide();
+        logout();
+        $.print("change password success");
+    })
+    .fail(function(err){
+	    alert("password isn't correct");
+        $.print("change password fail");
+    });
+});
+
+$("#cancel-btn").click(function(event) {
+    BaasContact.Views.Modes.goApp();
+    $("#change-password-form").hide();
+});
+//simon-change password end
 var showProfile = function() {
 	BaasContact.Views.Profile.show();
     
