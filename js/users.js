@@ -133,13 +133,37 @@ function registerUsersEvents() {
         $("#list-user-form").fadeIn();
         $("#signin-form").hide();
 		$("#app").hide();
-		
-        BaasBox.fetchUsers()
+
+		BaasContact.Models.Users.loadUsers();
+    });
+    
+    $("#active-user-list").on("click", "button", function(e){
+        var $user = $(this).closest("li");
+        $.print($user.data());
+        var name = $user.data("name");
+        
+        BaasContact.Models.Users.suspendUser(name);
+    });
+    
+    $("#suspended-user-list").on("click", "button", function(e){
+        var $user = $(this).closest("li");
+        $.print($user.data());
+        var name = $user.data("name");
+        
+		BaasContact.Models.Users.activateUser(name);
+    });
+}
+
+BaasContact.Models.Users = (function() {
+	var allUsers = {};
+	var loadUsers = function () {
+		 BaasBox.fetchUsers()
             .done(function(res){
-            
+            	
                 // data
                 allUsers = [];
-                for(var i = 0; i < res.data.length; i++){
+
+                for (var i = 0; i < res.data.length; i++){
                     var isActive, 
                         status = res.data[i].user.status;
                     
@@ -154,85 +178,81 @@ function registerUsersEvents() {
                         isActive = false;
                         if(DEBUG){
                             $.notify("User status is: " + status);
-}
+						}
                         break;
                     }
                     
+                    var name = res.data[i].user.name; 
                     var user = {
-                        name: res.data[i].user.name,
+                        name: name,
                         isActive: isActive
                     }
-                    allUsers.push(user);
+                    //allUsers.push(user);
+                    allUsers[name] = user;
                 }
                 
                 // view
-                renderUsers(allUsers);
+                BaasContact.Views.Users.renderUsers(allUsers);
             })
-            .fail(function (err) {
-				//var errInfo = JSON.parse(err.responseText);
-				var errMsg = JSON.stringify(err);
-				$.print(errMsg);
-				$.notify(errMsg);
-			});
-    });
-    
-    $("#active-user-list").on("click", "button", function(e){
-        var $user = $(this).closest("li");
-        $.print($user.data());
-        var name = $user.data("name");
-        
-        $.ajax({
-            method: "PUT",
-            url: BaasBox.endPoint + "/admin/user/suspend/" + name
-        }).done(function(res){
-            $.print(res);
-             $user.remove().appendTo("#suspended-user-list").find("button").text("Suspend");
-        }).fail(function (err) {
-            //var errInfo = JSON.parse(err.responseText);
-            var errMsg = JSON.stringify(err);
-            $.print(errMsg);
-            $.notify(errMsg);
-        });
-        
-       
-    });
-    
-    $("#suspended-user-list").on("click", "button", function(e){
-        var $user = $(this).closest("li");
-        $.print($user.data());
-        var name = $user.data("name");
-        
-        $.ajax({
-            method: "PUT",
-            url: BaasBox.endPoint + "/admin/user/activate/" + name
-        }).done(function(res){
-            $.print(res);
-            $user.remove().appendTo("#active-user-list").find("button").text("Active");
-        }).fail(function (err) {
-            //var errInfo = JSON.parse(err.responseText);
-            var errMsg = JSON.stringify(err);
-            $.print(errMsg);
-            $.notify(errMsg);
-        });
-    });
-}
+            .fail(BaasContact.Views.Error.log);
+	};
+	var suspendUser = function(name) {
+		BaasBoxEx.suspendUser(name)
+	        .done(function(res){
+	        	allUsers[name].isActive = false;
+				//BaasContact.Views.Users.removeUser(name);
+				BaasContact.Views.Users.renderUsers(allUsers);
+	        })
+	        .fail(BaasContact.Views.Error.log);
+	};
+	var activateUser = function(name) {
+		BaasBoxEx.activateUser(name)
+			.done(function(res){
+	            allUsers[name].isActive = true;
+	            //$user.remove().appendTo("#active-user-list").find("button").text("Active");
+	            BaasContact.Views.Users.renderUsers(allUsers);
+	        }).fail(BaasContact.Views.Error.log);
+    };
+	return {
+		loadUsers: loadUsers,
+		suspendUser: suspendUser,
+		activateUser: activateUser
+	};
+})();
 
-var renderUsers = function(users) {
-    var $active = $("#active-user-list"); 
-    var $suspend = $("#suspended-user-list");
-    
-    $active.empty();
-    $suspend.empty();
-    for (var i = 0; i < users.length; i++){
-        if (users[i].isActive){
-            var $user = $('<li class="list-group-item">&nbsp;' + users[i].name + '<button class="list-users-right">Activate</button></li>');
-            $user.data("name", users[i].name);
-            $active.append($user);
-        } else {
-            var $user = $('<li class="list-group-item">&nbsp;' + users[i].name + '<button class="list-users-right">Suspend</button></li>');
-            $user.data("name", users[i].name);
-            $suspend.append($user);
-        }
-    }
+BaasContact.Views.Error = {};
+BaasContact.Views.Error.log = function(err) {
+	var errMsg = JSON.stringify(err);
+	$.print(errMsg);
+	$.notify(errMsg);
 };
 
+BaasContact.Views.Users = {
+	renderUsers : function(users) {
+	    var $active = $("#active-user-list"); 
+	    var $suspend = $("#suspended-user-list");
+	    
+	    $active.empty();
+	    $suspend.empty();
+
+	    //for (var i = 0; i < users.length; i++){
+    	for (var i in users) {
+    		if (users.hasOwnProperty(i)) {
+    			$.print(i);
+		        if (users[i].isActive){
+		            var $user = $('<li class="list-group-item">&nbsp;' + users[i].name + '<button class="list-users-right">Suspend</button></li>');
+		            $user.data("name", users[i].name);
+		            $active.append($user);
+		        } else {
+		            var $user = $('<li class="list-group-item">&nbsp;' + users[i].name + '<button class="list-users-right">Activate</button></li>');
+		            $user.data("name", users[i].name);
+		            $suspend.append($user);
+		        }
+		    }
+	    }
+	},
+	removeUser : function(name) {
+		$.print(res);
+        $user.remove().appendTo("#suspended-user-list").find("button").text("Suspend");
+	}
+};

@@ -64,6 +64,9 @@ BaasContact.Views.Profile = {};
 BaasContact.Views.Notify = {};
 BaasContact.Views.Modes = {};
 
+BaasContact.Models = {};
+BaasContact.Models.Users = {};
+
 BaasContact.Views.Notify.show = function(msg) {
 	$("#message-sm").text(msg).fadeIn().delay(3500).fadeOut(function () {
 		$("#message-sm").clearQueue();
