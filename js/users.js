@@ -1,3 +1,4 @@
+var allUsers = [];
 function registerSigninEvents() {
 	$("#signin").click(function(e) {
 		$("#signin-error-panel").hide();
@@ -127,4 +128,111 @@ function registerUsersEvents() {
 
 		$("#reset-password-confirm").modal('hide');
 	});
+    
+    $("#user-list").click(function(event) {
+        $("#list-user-form").fadeIn();
+        $("#signin-form").hide();
+		$("#app").hide();
+		
+        BaasBox.fetchUsers()
+            .done(function(res){
+            
+                // data
+                allUsers = [];
+                for(var i = 0; i < res.data.length; i++){
+                    var isActive, 
+                        status = res.data[i].user.status;
+                    
+                    switch (status){
+                    case "ACTIVE":
+                        isActive = true;
+                        break;
+                    case "SUSPENDED":
+                        isActive = false;
+                        break;
+                    default:
+                        isActive = false;
+                        if(DEBUG){
+                            $.notify("User status is: " + status);
 }
+                        break;
+                    }
+                    
+                    var user = {
+                        name: res.data[i].user.name,
+                        isActive: isActive
+                    }
+                    allUsers.push(user);
+                }
+                
+                // view
+                renderUsers(allUsers);
+            })
+            .fail(function (err) {
+				//var errInfo = JSON.parse(err.responseText);
+				var errMsg = JSON.stringify(err);
+				$.print(errMsg);
+				$.notify(errMsg);
+			});
+    });
+    
+    $("#active-user-list").on("click", "button", function(e){
+        var $user = $(this).closest("li");
+        $.print($user.data());
+        var name = $user.data("name");
+        
+        $.ajax({
+            method: "PUT",
+            url: BaasBox.endPoint + "/admin/user/suspend/" + name
+        }).done(function(res){
+            $.print(res);
+             $user.remove().appendTo("#suspended-user-list").find("button").text("Suspend");
+        }).fail(function (err) {
+            //var errInfo = JSON.parse(err.responseText);
+            var errMsg = JSON.stringify(err);
+            $.print(errMsg);
+            $.notify(errMsg);
+        });
+        
+       
+    });
+    
+    $("#suspended-user-list").on("click", "button", function(e){
+        var $user = $(this).closest("li");
+        $.print($user.data());
+        var name = $user.data("name");
+        
+        $.ajax({
+            method: "PUT",
+            url: BaasBox.endPoint + "/admin/user/activate/" + name
+        }).done(function(res){
+            $.print(res);
+            $user.remove().appendTo("#active-user-list").find("button").text("Active");
+        }).fail(function (err) {
+            //var errInfo = JSON.parse(err.responseText);
+            var errMsg = JSON.stringify(err);
+            $.print(errMsg);
+            $.notify(errMsg);
+        });
+    });
+}
+
+var renderUsers = function(users) {
+    var $active = $("#active-user-list"); 
+    var $suspend = $("#suspended-user-list");
+    
+    $active.empty();
+    $suspend.empty();
+    for (var i = 0; i < users.length; i++){
+        if (users[i].isActive){
+            var $user = $('<li class="list-group-item">&nbsp;' + users[i].name + '<button class="list-users-right">Activate</button></li>');
+            $user.data("name", users[i].name);
+            $active.append($user);
+        } else {
+            var $user = $('<li class="list-group-item">&nbsp;' + users[i].name + '<button class="list-users-right">Suspend</button></li>');
+            $user.data("name", users[i].name);
+            $suspend.append($user);
+        }
+    }
+};
+
