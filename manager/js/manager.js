@@ -38,14 +38,20 @@ $(document).ready(function(){
 	$.print("ready start");
 	// start program here while the whole page is ready.
 	
-	loadHTML("./signin.html",$("#signin_panel"));
-	$.print("next signin_panel");
+	var pages={
+		"#signin_panel" : "./signin.html",
+		"#main_frame" : "./main_frame.html",
+		"#panel_dashboard" : "./panel_dashboard.html",
+		"#panel_contacts" : "./panel_contacts.html",
+		"#panel_export" : "./panel_export.html",
+		"#panel_import" : "./panel_import.html",
+		"#version_info" : "../VERSION"
+		
+	}
 	
-	loadHTML("./main_frame.html",$("#main_frame"));
-	$.print("next main_frame");
-	
-	loadHTML("../VERSION",$("#version_info"));
-	
+	for(var key in pages){ 
+       loadHTML(pages[key],$(key));
+	}
 	
 	// initial BaasBox
 	// TODO: these should be decide in a config.
@@ -161,7 +167,6 @@ var loadAllContacts = function() {
 	$.print("loadAllContacts...");
 	BaasBox.loadCollection(CONTACK_COLLECTION)
 		.done(function(contacts) {
-			console.info("contacts="+contacts);
 			refreshContactsList(contacts);
 		})
 		.fail(function(err) {
@@ -178,6 +183,10 @@ var loadContacts = function() {
 		
 	$.print(searchBy);
 	$.print(searchKey);
+	
+	if (!searchKey) {
+		searchKey="";//code
+	}
 	
 	if (searchKey === "") {
 		loadAllContacts();

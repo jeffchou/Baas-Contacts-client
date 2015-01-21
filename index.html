@@ -40,6 +40,7 @@
 						<ul class="dropdown-menu" role="menu">
 							<li class="divider"></li>
 							<li><a href="#" id="signout">Sign out</a></li>
+							<li><a href="#" id="change-password">change password</a></li>
 						</ul>
 					</div>
 						
@@ -318,6 +319,18 @@
 		<div class="alert alert-danger off" role="alert" id="signup-error-panel"></div>
 		<button class="btn btn-lg btn-primary btn-block" id="signin-gate">Sign in</button>
 	</div>
+</div>
+
+<div class="container off" id="change-password-form">
+	<div class="form-user" role="form">
+		<h1>Change Password</h1>
+		<strong>Old password</strong>
+		<input type="password" id="change-password-old" class="form-control" placeholder="Password" required>
+		<strong>New password</strong>
+		<input type="password" id="change-password-new" class="form-control" placeholder="New Password" required>
+		<button class="btn btn-lg btn-info btn-block" id="change-password-btn">ok</button>
+        <button class="btn btn-lg btn-info btn-block" id="cancel-btn">cancel</button>
+	</div>	
 </div>
 
 
