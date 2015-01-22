@@ -12,7 +12,7 @@ $(document).ready(function() {
 	
 	// initial BaasBox
 	// TODO: these should be decide in a config.
-	BaasBox.setEndPoint("http://172.16.252.102:9000");
+	BaasBox.setEndPoint("http://172.16.127.52:9000");
 	BaasBox.appcode = "1234567890";
 	
 	// initialize account
@@ -64,6 +64,9 @@ BaasContact.Views.Profile = {};
 BaasContact.Views.Notify = {};
 BaasContact.Views.Modes = {};
 
+BaasContact.Models = {};
+BaasContact.Models.Users = {}; 
+
 BaasContact.Views.Notify.show = function(msg) {
 	$("#message-sm").text(msg).fadeIn().delay(3500).fadeOut(function () {
 		$("#message-sm").clearQueue();
@@ -88,7 +91,32 @@ BaasContact.Views.Modes = (function() {
 			leave: function() {
 				$("#signin-form").hide();
 			}
-		}
+		},
+        "ChangePassword": {
+            enter: function() {
+				$("#change-password-form").show();
+			},
+			leave: function() {
+				$("#change-password-form").hide();
+			}
+		},
+        "ChangeUsername": {
+            enter: function() {
+				$("#change-username-form").show();
+			},
+			leave: function() {
+				$("#change-username-form").hide();
+			}
+		},
+        "ListUsers": {
+            enter: function() {
+				$("#list-user-form").show();
+			},
+			leave: function() {
+				$("#list-user-form").hide();
+			}
+		},
+        
 	};
 
 	var goApp = function() {
@@ -98,11 +126,25 @@ BaasContact.Views.Modes = (function() {
 	var goLogon = function() {
 		this.gotoState("Logon");
 	};
-
+    
+    var goChangePassword = function() {
+		this.gotoState("ChangePassword");
+	};
+    
+    var goChangeUsername = function() {
+		this.gotoState("ChangeUsername");
+	};
+    
+    var goListUsers = function() {
+		this.gotoState("ListUsers");
+    };
 	return {
 		States: States,
 		goApp: goApp,
-		goLogon: goLogon
+		goLogon: goLogon,
+        goChangePassword: goChangePassword,
+        goChangeUsername: goChangeUsername,
+        goListUsers     : goListUsers
 	};
 })();
 $.makeStateMachine(BaasContact.Views.Modes);
@@ -138,7 +180,36 @@ $("#nav-contacts").click(function() {
 	$this.parent().find("li").removeClass('active');
 	$this.addClass('active');
 });
+//simon-change password start
+$("#change-password").click(function() {
+    
+    BaasContact.Views.Modes.goChangePassword();
+    /*
+    $("#signin-form").hide();
+    $("#app").hide();
+    $("#change-password-form").fadeIn();*/
+    $("#change-password-old").val("");
+    $("#change-password-new").val("");
+});
 
+$("#change-password-btn").click(function(event) {    
+    BaasBox.changePassword($("#change-password-old").val(), $("#change-password-new").val())
+    .done(function(res){
+        $("#change-password-form").hide();
+        logout();
+        $.print("change password success");
+    })
+    .fail(function(err){
+	    alert("password isn't correct");
+        $.print("change password fail");
+    });
+});
+
+$("#cancel-btn").click(function(event) {
+    BaasContact.Views.Modes.goApp();
+    $("#change-password-form").hide();
+});
+//simon-change password end
 var showProfile = function() {
 	BaasContact.Views.Profile.show();
     
@@ -166,6 +237,16 @@ var checkAndLoadMyProfile = function() {
         .done(function(res){
             if (res.result === "ok") {
                 userInfo = res.data;
+				// todo: cover user data by a Class
+				userInfo.isAdmin = function() {
+					var roles = this.user.roles;
+					for (var i = 0; i < roles.length; i++) {
+						if (roles[i].name == BaasBox.ADMINISTRATOR_ROLE) {
+							return true;
+						}
+					}
+					return false;
+				};
                 renderProfile(userInfo);
             } else {
                 $.notify("Login error");
@@ -191,7 +272,15 @@ var composeContactHtml = (function(){
 
 var renderContact = function(contact) {
 	var contactHtml = composeContactHtml(contact);
-	return $(contactHtml).data("contact", contact);
+	var $contact = $(contactHtml).data("contact", contact);
+	if (userInfo.isAdmin()) {	// todo: move it to other place
+		if (!contact.userId) {
+			$contact.find(".bind-user").show();
+		} else {
+			$contact.find(".user-info").addClass("active-user");
+		}
+	}
+	return $contact;
 };
 
 
@@ -228,12 +317,12 @@ var loadAllContacts = function() {
 				$.print("load contact failed");
 				$.print(err);
 		});
-}
+};
 
 var loadContacts = function() {
-	var searchBy = $('input[name=optionsRadios]:checked', '#contact-filter').val(),
+	var searchBy = $('input[name=optionsRadios]:checked', '#contacts-search-panel').val(),
 		searchKey = $("#search-contacts-text").val();
-		
+
 	$.print(searchBy);
 	$.print(searchKey);
 	
@@ -360,15 +449,29 @@ function registerContactsEvents() {
 						loadContacts();
 					})
 					.fail(function(err) {
-						alert("delete contact failed");
-						$.print("delete contact failed");
+						alert("delete contact failed, msg: " + err.responseJSON.message);
+						$.print("delete contact failed, msg: " + err.responseJSON.message);
 						$.print(err);
 					});
 				$confirm.modal('hide');
 			});
 			return;
 		}
-		//if ($target is )
+		if ($target.is(".bind-user")) {
+			var n = contact.name;
+			var seed = n[0] + n[1] + n[2];
+			seed = seed.toLowerCase();
+			$.get("http://172.16.252.102:9000/users?where=any().toLowerCase()+like+%27%25" + seed + "%25%27")
+				.done(function(res) {
+					var users = res.data;
+					if (users.length == 0) {
+
+					}
+
+
+				});
+			return;
+		}
 		
 		$.print(contact);
 		putContactData(contact);
@@ -395,6 +498,6 @@ function registerContactsEvents() {
 		});
 	})
 	.on("mouseover", "div.row", function(e) {
-		//$(this).tooltip();
+
 	});
 }

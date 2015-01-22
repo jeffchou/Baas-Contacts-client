@@ -13,7 +13,7 @@
 	text-align: center;
 }
 
-.contacts-search {
+#contacts-search-panel {
 	display: inline-block;
 	float: right;
 }
@@ -44,10 +44,23 @@
 	border: 1px solid rgba(86,61,124,.2);
 }
 
-.delete-contact{
-	padding: 10px;
-	position: absolute;
+.delete-contact {
+	padding: 0 10px;
 }
 .delete-contact:hover {
 	color: Red;
+}
+
+.bind-user{
+	padding: 0 10px;
+}
+.bind-user:hover {
+	color: #0000ff;
+}
+
+.user-info.active-user{
+	font-weight: bold;
+}
+.user-info.active-user:hover {
+	color: #0000cc;
 }
