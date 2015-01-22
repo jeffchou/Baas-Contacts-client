@@ -130,10 +130,7 @@ function registerUsersEvents() {
 	});
     
     $("#user-list").click(function(event) {
-        $("#list-user-form").fadeIn();
-        $("#signin-form").hide();
-		$("#app").hide();
-
+        BaasContact.Views.Modes.goListUsers();
 		BaasContact.Models.Users.loadUsers();
     });
     
@@ -152,6 +149,21 @@ function registerUsersEvents() {
         
 		BaasContact.Models.Users.activateUser(name);
     });
+    
+    $("#change-username").click(function(event) {
+        BaasContact.Views.Modes.goChangeUsername();
+    });
+    
+    $("#change-username-btn").click(function(event) {
+        var newUser = $("#chagne-new-username").val();
+        BaasContact.Models.Users.changeUserName(newUser);
+        BaasContact.Views.Modes.goApp();
+    });
+    
+    $("#change-password-form-cancel-btn, #change-username-form-cancel-btn, #exit-user-list-btn").click(function(event) {
+        BaasContact.Views.Modes.goApp();
+    });
+        
 }
 
 BaasContact.Models.Users = (function() {
@@ -200,7 +212,6 @@ BaasContact.Models.Users = (function() {
 		BaasBoxEx.suspendUser(name)
 	        .done(function(res){
 	        	allUsers[name].isActive = false;
-				//BaasContact.Views.Users.removeUser(name);
 				BaasContact.Views.Users.renderUsers(allUsers);
 	        })
 	        .fail(BaasContact.Views.Error.log);
@@ -209,14 +220,22 @@ BaasContact.Models.Users = (function() {
 		BaasBoxEx.activateUser(name)
 			.done(function(res){
 	            allUsers[name].isActive = true;
-	            //$user.remove().appendTo("#active-user-list").find("button").text("Active");
 	            BaasContact.Views.Users.renderUsers(allUsers);
 	        }).fail(BaasContact.Views.Error.log);
     };
+    
+    var changeUserName = function(name) {
+        BaasBoxEx.changeUserName(name)
+            .done(function(res){
+	            $.print("change name success");
+	        }).fail(BaasContact.Views.Error.log);
+    };
+    
 	return {
-		loadUsers: loadUsers,
-		suspendUser: suspendUser,
-		activateUser: activateUser
+		loadUsers:        loadUsers,
+		suspendUser:      suspendUser,
+		activateUser:     activateUser,
+        changeUserName:   changeUserName
 	};
 })();
 

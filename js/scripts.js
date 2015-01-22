@@ -65,7 +65,7 @@ BaasContact.Views.Notify = {};
 BaasContact.Views.Modes = {};
 
 BaasContact.Models = {};
-BaasContact.Models.Users = {};
+BaasContact.Models.Users = {}; 
 
 BaasContact.Views.Notify.show = function(msg) {
 	$("#message-sm").text(msg).fadeIn().delay(3500).fadeOut(function () {
@@ -91,7 +91,32 @@ BaasContact.Views.Modes = (function() {
 			leave: function() {
 				$("#signin-form").hide();
 			}
-		}
+		},
+        "ChangePassword": {
+            enter: function() {
+				$("#change-password-form").show();
+			},
+			leave: function() {
+				$("#change-password-form").hide();
+			}
+		},
+        "ChangeUsername": {
+            enter: function() {
+				$("#change-username-form").show();
+			},
+			leave: function() {
+				$("#change-username-form").hide();
+			}
+		},
+        "ListUsers": {
+            enter: function() {
+				$("#list-user-form").show();
+			},
+			leave: function() {
+				$("#list-user-form").hide();
+			}
+		},
+        
 	};
 
 	var goApp = function() {
@@ -101,11 +126,25 @@ BaasContact.Views.Modes = (function() {
 	var goLogon = function() {
 		this.gotoState("Logon");
 	};
-
+    
+    var goChangePassword = function() {
+		this.gotoState("ChangePassword");
+	};
+    
+    var goChangeUsername = function() {
+		this.gotoState("ChangeUsername");
+	};
+    
+    var goListUsers = function() {
+		this.gotoState("ListUsers");
+    };
 	return {
 		States: States,
 		goApp: goApp,
-		goLogon: goLogon
+		goLogon: goLogon,
+        goChangePassword: goChangePassword,
+        goChangeUsername: goChangeUsername,
+        goListUsers     : goListUsers
 	};
 })();
 $.makeStateMachine(BaasContact.Views.Modes);
@@ -143,9 +182,12 @@ $("#nav-contacts").click(function() {
 });
 //simon-change password start
 $("#change-password").click(function() {
+    
+    BaasContact.Views.Modes.goChangePassword();
+    /*
     $("#signin-form").hide();
     $("#app").hide();
-    $("#change-password-form").fadeIn();
+    $("#change-password-form").fadeIn();*/
     $("#change-password-old").val("");
     $("#change-password-new").val("");
 });

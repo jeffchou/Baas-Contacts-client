@@ -40,8 +40,9 @@
 						<ul class="dropdown-menu" role="menu">
 							<li class="divider"></li>
 							<li><a href="#" id="signout">Sign out</a></li>
-							<li><a href="#" id="change-password">change password</a></li>
-                            <li><a href="#" id="user-list">user list</a></li>
+							<li><a href="#" id="change-password">Change password</a></li>
+                            <li><a href="#" id="user-list">User list</a></li>
+                            <li><a href="#" id="change-username">Change user name</a></li>
 						</ul>
 					</div>
 						
@@ -329,8 +330,8 @@
 		<input type="password" id="change-password-old" class="form-control" placeholder="Password" required>
 		<strong>New password</strong>
 		<input type="password" id="change-password-new" class="form-control" placeholder="New Password" required>
-		<button class="btn btn-lg btn-info btn-block" id="change-password-btn">ok</button>
-        <button class="btn btn-lg btn-info btn-block" id="cancel-btn">cancel</button>
+		<button type="button" class="btn btn-lg btn-info btn-block" id="change-password-btn">ok</button>
+        <button type="button" class="btn btn-lg btn-info btn-block" id="change-password-form-cancel-btn">cancel</button>
 	</div>	
 </div>
 
@@ -344,9 +345,19 @@
         <ul class="list-group col-md-5 list-users-right"  id="suspended-user-list">
             
         </ul>
-    </div>    
+    </div>
+    <button type="button" class="btn btn-lg btn-info btn-block" id="exit-user-list-btn">Back</button>
 </div>
     
+<div class="container off" id="change-username-form">
+    <div class="form-user" role="form">
+        <h1 style="text-align:center">change user name</h1>
+        <strong>Enter New name</strong>
+        <input type="text" id="chagne-new-username">
+        <button type="button" class="btn btn-lg btn-info btn-block" id="change-username-btn">ok</button>
+        <button type="button" class="btn btn-lg btn-info btn-block" id="change-username-form-cancel-btn">cancel</button>
+    </div>
+</div>>
 
 <script id="contact-tmpl" type="text/template">
 	<div class="row">
