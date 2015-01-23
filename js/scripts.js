@@ -29,6 +29,7 @@ $(document).ready(function() {
 	registerContactsEvents();
 	registerSigninEvents();
 	registerUsersEvents();
+	registerPersonEvents();
     
 	if (DEBUG) {
 		initializeImport();
@@ -52,7 +53,7 @@ $(document).ready(function() {
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
 
-		$("#signin").click();
+		//$("#signin").click();
 	}
 });
 
@@ -224,41 +225,10 @@ var loginSuccess = function(userInfo) {
 	BaasContact.Views.Modes.goApp();
     
 	$("#search-text").focus();
-	$("#account-name").text(user.username);
-
-	checkAndLoadMyProfile();
+    BaasContact.Views.Person.renderAccountName(user.username);
+    BaasContact.Models.Person.loadMySelf();
+	
 	$("#nav-profile").click();
-    registerProfileEvents();
-};
-
-var userInfo;
-var checkAndLoadMyProfile = function() {
-    BaasBox.fetchCurrentUser()
-        .done(function(res){
-            if (res.result === "ok") {
-                userInfo = res.data;
-				// todo: cover user data by a Class
-				userInfo.isAdmin = function() {
-					var roles = this.user.roles;
-					for (var i = 0; i < roles.length; i++) {
-						if (roles[i].name == BaasBox.ADMINISTRATOR_ROLE) {
-							return true;
-						}
-					}
-					return false;
-				};
-                renderProfile(userInfo);
-            } else {
-                $.notify("Login error");
-                $.print(data);
-                logout();    
-            }
-        })
-        .fail(function(){
-            // an error of login
-            $.notify("Your login has expired");
-            logout();
-        });
 };
 
 var logout = function() {
@@ -327,7 +297,7 @@ var loadContacts = function() {
 	$.print(searchKey);
 	
 	if (searchKey === "") {
-		loadAllContacts();
+	   	loadAllContacts();
 		return;
 	}
 	

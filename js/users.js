@@ -239,6 +239,7 @@ BaasContact.Models.Users = (function() {
 	};
 })();
 
+
 BaasContact.Views.Error = {};
 BaasContact.Views.Error.log = function(err) {
 	var errMsg = JSON.stringify(err);
@@ -274,4 +275,181 @@ BaasContact.Views.Users = {
 		$.print(res);
         $user.remove().appendTo("#suspended-user-list").find("button").text("Suspend");
 	}
+};
+
+var registerPersonEvents = function() {
+    var $upload = $("#upload-face-img");
+    $upload.hover(
+        function() {
+            $(this).find("div.float-buttom").fadeTo(200, 0.5);
+        },function() {
+            $(this).find("div.float-buttom").fadeTo(200, 0.0);
+        });
+
+    $upload.find("input").on("change", uploadImg);
+};
+var uploadImg = function(e) {
+    var files = e.target.files;
+    if (files.length < 0) return;
+    var file = files[0];
+    if (!file.type.match('image.*')) {
+        $.notify(file.name + " is not a image");
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append("upload", file, file.name);
+
+    $.notify("Uploading " + file.name + "...");
+    BaasContact.Models.Person.updatePersonalPortrait(formData);
+};
+
+
+BaasContact.Models.Person = (function () {
+    // class Person
+    var Person = function(data) {
+        this.data = data;
+    };
+    var PersonPrototype = Person.prototype;
+    PersonPrototype.isAdmin = function() {
+        var roles = this.data.user.roles;
+        for (var i = 0; i < roles.length; i++) {
+            if (roles[i].name == BaasBox.ADMINISTRATOR_ROLE) {
+                return true;
+            }
+        }
+        return false;
+    };
+    PersonPrototype.setPortrait = function(imgId) {
+        this.data.visibleByAnonymousUsers.portraitImg = imgId;
+    } 
+    PersonPrototype.getPortrait = function() { return this.data.visibleByAnonymousUsers.portraitImg; };
+    
+    // data
+    var me = new Person();
+    
+    // methods
+    var loadMySelf = function(){
+        BaasBox.fetchCurrentUser()
+            .done(function(res){
+                if (res.result === "ok") {
+                    var person = new Person(res.data);
+                    setMySelf(person);
+                } else {
+                    $.notify("Login error");
+                    $.print(data);
+                    logout();    
+                }
+            })
+            .fail(function(){
+                // an error of login
+                $.notify("Your login has expired");
+                logout();
+            });
+    };
+    var setMySelf = function(person){
+        me = person;
+        BaasContact.Views.Person.renderPerson(me);
+    };
+    
+    var _updateMySelf = function() {
+        return BaasBox.updateUserProfile(me.data);
+    };
+    
+    var updatePersonalPortrait = function(formData) {
+        _updateFile(formData)
+            .done(function(res) {
+                var info = JSON.parse(res);
+                var imgId = info.data.id;
+                
+                me.setPortrait(imgId);
+                return _updateMySelf();
+            })
+            .done(function(res){
+                BaasContact.Views.Person.displayPortraitImg(me.getPortrait());
+            })
+            .fail(function(error){
+                var info = JSON.parse(error.responseText);
+                var message = info.message;
+                $.notify("Error on uploading image. message: " + message);
+            });
+    };
+    
+    var _updateFile = function(formData) {
+        return BaasBox.uploadFile(formData);
+    };
+    
+    var updateProfileImg = function (imgId) {
+        me.data.visibleByAnonymousUsers.profileImg = imgId;
+        BaasBox.updateUserProfile(userInfo);
+    };
+    
+    return {
+        loadMySelf: loadMySelf,
+        updatePersonalPortrait: updatePersonalPortrait
+    };
+}());
+
+BaasContact.Views.Person = (function () {
+    var renderAccountName = function(name){
+        $("#account-name").text(name);
+    };
+    
+    var displayPortraitImg = function(imgId){
+        if (!imgId) return;
+        BaasBox.fetchFile(imgId, true)
+            .done(function(res){
+                $("#profile-face-thumb img").attr("src", this.url);
+            });
+    };
+    
+    var _clearPortraitImg = function() {
+        $("#profile-face-thumb img").attr("src", "");
+    };
+    
+    var renderPerson = function(person) {
+        // todo use class Person's methods
+        var personInfo = person.data;
+        $.print("personInfo:");
+        $.print(personInfo);
+        
+        $("#profile-name").text(personInfo.user.name);
+        $("#profile-intro").text(personInfo.user.intro);
+        
+        var joinDate = new Date(personInfo.signUpDate);
+        $("#prfile-join-date").text(joinDate.toLocaleDateString());
+        
+        if (personInfo.visibleByAnonymousUsers) {
+            displayPortraitImg(person.getPortrait());
+            bindContact(personInfo); // this is a todo
+        } else {
+            _clearPortraitImg();
+        }
+
+        var rawInfo = {};
+        for(var key in personInfo) {
+            if (key.indexOf("visibleBy") > -1) {
+                $.extend(rawInfo, personInfo[key]);
+            }
+        }
+        var text = "<p>";
+        for(var key in rawInfo) {
+            text += key + " : " + rawInfo[key] + " <br />";
+        }
+        text += "</p>";
+        $("#profile-intro").html(text);
+    }
+    
+    return {
+        renderAccountName: renderAccountName,
+        renderPerson: renderPerson,
+        displayPortraitImg: displayPortraitImg
+    };
+}());
+
+var bindContact = function(userInfo) {
+    var publicInfo = userInfo.visibleByAnonymousUsers;
+    if (!publicInfo.contactId) {
+        $.notify("Welcome new comer: " + userInfo.user.name);
+    }
 };
