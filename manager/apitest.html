@@ -40,8 +40,8 @@
 				console.info("url="+url);
 
 				var data={
-					username: "randy",
-					password: "123456"
+					username: $("#inputAccount").val(),
+					password: $("#inputPassword").val()
 				};
 
 				 jQuery.ajax({
@@ -52,10 +52,20 @@
 			        success: function(result) {
 	                	sessionToken=result.data['X-BB-SESSION'];
 	                	console.info("sessionToken="+sessionToken);
+	                	$("#sessionToken").removeClass("alert-warning");
+	                	$("#sessionToken").addClass("alert-success");
 	                	$("#sessionToken").html("Session Token: "+sessionToken);
 	     			},
 					error:function(jqXHR, ajaxOptions, thrownError){
 						console.error("status="+jqXHR.status+"response="+jqXHR.responseText);
+						var result=JSON.parse(jqXHR.responseText);
+						var message=result.message;
+						if(!message) {
+							message="unknown";
+						}
+
+						$("#sessionToken").addClass("alert-warning");
+						$("#sessionToken").html("Message: "+message);
 					}
 			    });
 
@@ -128,21 +138,49 @@
 
 	<div class="container">
 		<div class="panel">
-		<button type="button" class="btn btn-primary" id="login">Login</button>
-		<button type="button" class="btn btn-primary" id="contacts">Contacts</button>
-		<button type="button" class="btn btn-primary" id="contact_by_id">Contact By ID</button>
-		<input id="search_id" type="text" class="form-control" placeholder="search contact ID" />
-	</div>
 
-	<div class="panel" id="sessionToken">
-		Session Token:
-	</div>
-	<div class="panel panel-primary">
-		<div class="panel-body" id="panel_body" style="min-height: 10px; max-height: 480px; overflow: auto;">
-			<pre class="panel" id="gird_data"></pre>
+			<div class="row ">
+				<div class="col-md-3">
+
+					<label for="inputAccount" class="sr-only">Account</label>
+					<input type="text" id="inputAccount" class="form-control" placeholder="User Account" required autofocus>
+					<label for="inputPassword" class="sr-only">Password</label>
+					<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+				</div>
+				<div class="col-md-9">
+					<button type="button" class="btn btn-primary" id="login">Login</button>
+				</div>				
+			</div>
+
+			<div class="row ">
+				<div class="col-md-12">
+				<div class="panel" id="sessionToken">
+					Session Token:
+				</div>
+				</div>
+			</div>
+
+			<div class="row ">
+				<div class="col-md-2">
+					<button type="button" class="btn btn-primary" id="contacts">List all contacts</button>
+				</div>
+				<div class="col-md-2">
+					<button type="button" class="btn btn-primary" id="contact_by_id">Get contact by ID</button>
+				</div>
+				<div class="col-md-8">
+					<input id="search_id" type="text" class="form-control" placeholder="search contact ID" />
+				</div>
+			</div>
+		
 		</div>
+
+
+		<div class="panel panel-primary">
+			<div class="panel-body" id="panel_body" style="min-height: 10px; max-height: 480px; overflow: auto;">
+				<pre class="panel" id="gird_data"></pre>
+			</div>
+		</div>
+
 	</div>
-
-
 </body>
 </html>
