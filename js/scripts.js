@@ -53,7 +53,7 @@ $(document).ready(function() {
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
 
-		$("#signin").click();
+		//$("#signin").click();
 	}
 });
 
@@ -224,6 +224,8 @@ var showProfile = function() {
 $("#nav-profile").click(showProfile);
 
 var loginSuccess = function(userInfo) {
+
+	$.print("# loginSuccess");
 	BaasContact.Views.Modes.goApp();
     
 	$("#search-text").focus();

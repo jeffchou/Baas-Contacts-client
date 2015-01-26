@@ -21,12 +21,15 @@ function registerSigninEvents() {
 				$("#signin-error-panel").fadeIn();
 			});
 	});
-	
-	$("#inputAccount, #inputPassword").keyup(function(event){
+
+    /* confused: the keycode check for enter then signin is not needed somehow after some? version.
+	$("#inputAccount, #inputPassword").keyup(function(event) {
 		if(event.keyCode == 13) { // 13 means "enter"
+            $.print("# enter !!!");
 			$("#signin").click();
 		}
 	});
+	*/
 	
 	$("#signout").click(function(){
 		BaasBox.logout();
@@ -321,7 +324,9 @@ BaasContact.Models.Person = (function () {
     };
     PersonPrototype.getPortrait = function() { return this.data.visibleByAnonymousUsers.portraitImg; };
     PersonPrototype.getPublicInfo = function() { return this.data.visibleByAnonymousUsers; };
-    PersonPrototype.getName = function() { return this.data.user.name; };
+    PersonPrototype.getName = function() { return this.data.visibleByTheUser.name; };
+    PersonPrototype.getEmail = function() { return this.data.visibleByTheUser.email; };
+    PersonPrototype.getAccount = function() { return this.data.user.name; };
 
     // data
     var me = new Person();
@@ -345,8 +350,31 @@ BaasContact.Models.Person = (function () {
                 logout();
             });
     };
+
+    var bindContact = function() {
+        var publicInfo = me.getPublicInfo();
+        if (publicInfo && typeof publicInfo.contactId === "undefined") {
+            var info = {
+                email: me.getEmail(),
+                name: me.getName()
+            };
+            BaasContact.Models.Contacts.createContact(info)
+                .done(function(res) {
+                    var id = res.id;
+                    publicInfo.contactId = id;
+                    _updateMySelf();
+                })
+                .fail(function(error){
+                    var info = JSON.parse(error.responseText);
+                    var message = info.message;
+                    $.notify("Error on crea image. message: " + message);
+                });
+        }
+    };
+
     var setMySelf = function(person){
         me = person;
+        bindContact();
         BaasContact.Views.Person.renderPerson(me);
     };
     
@@ -448,6 +476,6 @@ var bindContact = function(userInfo) {
     var me = BaasContact.Models.Person.getMySelf();
     var publicInfo = BaasContact.Models.Person.getMySelf().getPublicInfo();
     if (!publicInfo.contactId) {
-        $.notify("Welcome new comer: " + me.getName());
+        $.notify("Welcome new comer: " + me.getAccount());
     }
 };
