@@ -53,7 +53,7 @@ $(document).ready(function() {
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
 
-		//$("#signin").click();
+		$("#signin").click();
 	}
 });
 
@@ -225,7 +225,7 @@ var loginSuccess = function(userInfo) {
 	BaasContact.Views.Modes.goApp();
     
 	$("#search-text").focus();
-    BaasContact.Views.Person.renderAccountName(user.username);
+    BaasContact.Views.Person.renderAccountName(userInfo.username);
     BaasContact.Models.Person.loadMySelf();
 	
 	$("#nav-profile").click();
@@ -243,7 +243,7 @@ var composeContactHtml = (function(){
 var renderContact = function(contact) {
 	var contactHtml = composeContactHtml(contact);
 	var $contact = $(contactHtml).data("contact", contact);
-	if (userInfo.isAdmin()) {	// todo: move it to other place
+	if (BaasContact.Models.Person.getMySelf().isAdmin()) {	// todo: move it to other place
 		if (!contact.userId) {
 			$contact.find(".bind-user").show();
 		} else {

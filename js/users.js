@@ -324,7 +324,9 @@ BaasContact.Models.Person = (function () {
         this.data.visibleByAnonymousUsers.portraitImg = imgId;
     } 
     PersonPrototype.getPortrait = function() { return this.data.visibleByAnonymousUsers.portraitImg; };
-    
+    PersonPrototype.getPublicInfo = function() { return this.data.visibleByAnonymousUsers; };
+    PersonPrototype.getName = function() { return this.data.user.name; };
+
     // data
     var me = new Person();
     
@@ -381,12 +383,16 @@ BaasContact.Models.Person = (function () {
     
     var updateProfileImg = function (imgId) {
         me.data.visibleByAnonymousUsers.profileImg = imgId;
-        BaasBox.updateUserProfile(userInfo);
+        BaasBox.updateUserProfile(me.data);
     };
+    
+    var getMySelf = function() { return me; }
     
     return {
         loadMySelf: loadMySelf,
-        updatePersonalPortrait: updatePersonalPortrait
+        getMySelf: getMySelf,
+        updatePersonalPortrait: updatePersonalPortrait,
+        Person: Person
     };
 }());
 
@@ -448,8 +454,9 @@ BaasContact.Views.Person = (function () {
 }());
 
 var bindContact = function(userInfo) {
-    var publicInfo = userInfo.visibleByAnonymousUsers;
+    var me = BaasContact.Models.Person.getMySelf();
+    var publicInfo = BaasContact.Models.Person.getMySelf().getPublicInfo();
     if (!publicInfo.contactId) {
-        $.notify("Welcome new comer: " + userInfo.user.name);
+        $.notify("Welcome new comer: " + me.getName());
     }
 };
