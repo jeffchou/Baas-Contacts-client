@@ -17,7 +17,7 @@ function registerSigninEvents() {
 				//$("#inputAccount").val("");
 				//$("#inputPassword").val("");
 			})
-			.fail(function (err) {
+			.fail(function () {
 				$("#signin-error-panel").fadeIn();
 			});
 	});
@@ -36,14 +36,14 @@ function registerSigninEvents() {
 }
 
 function registerUsersEvents() {
-	$("#signup-gate").click(function(event) {
+	$("#signup-gate").click(function() {
 		$("#signin-error-panel").hide('slideUp');
 		$("#signin-form").fadeOut(function() {
 			$("#signup-form").fadeIn();
 		});
 	});
 
-	$("#signin-gate").click(function(event) {
+	$("#signin-gate").click(function() {
 		$("#signin-error-panel").hide('slideUp');
 		$("#signup-form").fadeOut(function() {
 			$("#signin-form").fadeIn();
@@ -51,7 +51,7 @@ function registerUsersEvents() {
 	});
 
 	// TODO: check need refactory to one place
-	$("#new-account").on("change", function(e){
+	$("#new-account").on("change", function(){
 		var user = $("#new-account").val();
 		$.get(BaasBox.endPoint + "/plugin/users.exist?username=" + user)
 			.done(function(res){
@@ -71,7 +71,7 @@ function registerUsersEvents() {
 			password2 = $("#re-password").val(),
 			userInfo = {
 				name: $("#new-name").val(),
-				email: $("#new-email").val(),
+				email: $("#new-email").val()
 			}; 
 		
 		// TODO: better checks
@@ -100,22 +100,21 @@ function registerUsersEvents() {
 			.fail(function (err) {
 				var errInfo = JSON.parse(err.responseText);
 				$("#signup-error-panel").text("Error: " + errInfo.message).fadeIn();
-				$("#signup-error-panel").fadeIn();
 			});
 	});
 
-	$("#forgot-password").click(function(event) {
-		var user = $("#inputAccount").val();
+    $("#forgot-password").click(function () {
+        var user = $("#inputAccount").val();
 
 		$("#reset-password-confirm").modal();
 		$("#reset-password-account").val(user);
 	});
 
-	$("#reset-password").click(function(event) {
+	$("#reset-password").click(function() {
 		var user = $("#reset-password-account").val();
 		// same as BaasBox.resetPassword();
 		$.get(BaasBox.endPoint + '/user/' + user + '/password/reset')
-			.done(function(res) {
+			.done(function() {
 				$.print("resetPassword mail send");
 				$.notify("resetPassword mail send");
 			})
@@ -129,12 +128,12 @@ function registerUsersEvents() {
 		$("#reset-password-confirm").modal('hide');
 	});
     
-    $("#user-list").click(function(event) {
+    $("#user-list").click(function() {
         BaasContact.Views.Modes.goListUsers();
 		BaasContact.Models.Users.loadUsers();
     });
     
-    $("#active-user-list").on("click", "button", function(e){
+    $("#active-user-list").on("click", "button", function(){
         var $user = $(this).closest("li");
         $.print($user.data());
         var name = $user.data("name");
@@ -142,7 +141,7 @@ function registerUsersEvents() {
         BaasContact.Models.Users.suspendUser(name);
     });
     
-    $("#suspended-user-list").on("click", "button", function(e){
+    $("#suspended-user-list").on("click", "button", function(){
         var $user = $(this).closest("li");
         $.print($user.data());
         var name = $user.data("name");
@@ -150,19 +149,20 @@ function registerUsersEvents() {
 		BaasContact.Models.Users.activateUser(name);
     });
     
-    $("#change-username").click(function(event) {
+    $("#change-username").click(function() {
         BaasContact.Views.Modes.goChangeUsername();
     });
     
-    $("#change-username-btn").click(function(event) {
+    $("#change-username-btn").click(function() {
         var newUser = $("#chagne-new-username").val();
         BaasContact.Models.Users.changeUserName(newUser);
         BaasContact.Views.Modes.goApp();
     });
     
-    $("#change-password-form-cancel-btn, #change-username-form-cancel-btn, #exit-user-list-btn").click(function(event) {
-        BaasContact.Views.Modes.goApp();
-    });
+    $("#change-password-form-cancel-btn, #change-username-form-cancel-btn, #exit-user-list-btn")
+        .click(function() {
+            BaasContact.Views.Modes.goApp();
+        });
         
 }
 
@@ -194,13 +194,13 @@ BaasContact.Models.Users = (function() {
                         break;
                     }
                     
-                    var name = res.data[i].user.name; 
-                    var user = {
+                    var name = res.data[i].user.name;
+
+                    //allUsers.push(user);
+                    allUsers[name] = {
                         name: name,
                         isActive: isActive
-                    }
-                    //allUsers.push(user);
-                    allUsers[name] = user;
+                    };
                 }
                 
                 // view
@@ -210,7 +210,7 @@ BaasContact.Models.Users = (function() {
 	};
 	var suspendUser = function(name) {
 		BaasBoxEx.suspendUser(name)
-	        .done(function(res){
+	        .done(function(){
 	        	allUsers[name].isActive = false;
 				BaasContact.Views.Users.renderUsers(allUsers);
 	        })
@@ -218,7 +218,7 @@ BaasContact.Models.Users = (function() {
 	};
 	var activateUser = function(name) {
 		BaasBoxEx.activateUser(name)
-			.done(function(res){
+			.done(function(){
 	            allUsers[name].isActive = true;
 	            BaasContact.Views.Users.renderUsers(allUsers);
 	        }).fail(BaasContact.Views.Error.log);
@@ -226,7 +226,7 @@ BaasContact.Models.Users = (function() {
     
     var changeUserName = function(name) {
         BaasBoxEx.changeUserName(name)
-            .done(function(res){
+            .done(function(){
 	            $.print("change name success");
 	        }).fail(BaasContact.Views.Error.log);
     };
@@ -258,22 +258,18 @@ BaasContact.Views.Users = {
 	    //for (var i = 0; i < users.length; i++){
     	for (var i in users) {
     		if (users.hasOwnProperty(i)) {
-    			$.print(i);
+                var $user;
 		        if (users[i].isActive){
-		            var $user = $('<li class="list-group-item">&nbsp;' + users[i].name + '<button class="list-users-right">Suspend</button></li>');
+		            $user = $('<li class="list-group-item">&nbsp;' + users[i].name + '<button class="list-users-right">Suspend</button></li>');
 		            $user.data("name", users[i].name);
 		            $active.append($user);
 		        } else {
-		            var $user = $('<li class="list-group-item">&nbsp;' + users[i].name + '<button class="list-users-right">Activate</button></li>');
+		            $user = $('<li class="list-group-item">&nbsp;' + users[i].name + '<button class="list-users-right">Activate</button></li>');
 		            $user.data("name", users[i].name);
 		            $suspend.append($user);
 		        }
 		    }
 	    }
-	},
-	removeUser : function(name) {
-		$.print(res);
-        $user.remove().appendTo("#suspended-user-list").find("button").text("Suspend");
 	}
 };
 
@@ -322,7 +318,7 @@ BaasContact.Models.Person = (function () {
     };
     PersonPrototype.setPortrait = function(imgId) {
         this.data.visibleByAnonymousUsers.portraitImg = imgId;
-    } 
+    };
     PersonPrototype.getPortrait = function() { return this.data.visibleByAnonymousUsers.portraitImg; };
     PersonPrototype.getPublicInfo = function() { return this.data.visibleByAnonymousUsers; };
     PersonPrototype.getName = function() { return this.data.user.name; };
@@ -367,7 +363,7 @@ BaasContact.Models.Person = (function () {
                 me.setPortrait(imgId);
                 return _updateMySelf();
             })
-            .done(function(res){
+            .done(function(){
                 BaasContact.Views.Person.displayPortraitImg(me.getPortrait());
             })
             .fail(function(error){
@@ -381,12 +377,7 @@ BaasContact.Models.Person = (function () {
         return BaasBox.uploadFile(formData);
     };
     
-    var updateProfileImg = function (imgId) {
-        me.data.visibleByAnonymousUsers.profileImg = imgId;
-        BaasBox.updateUserProfile(me.data);
-    };
-    
-    var getMySelf = function() { return me; }
+    var getMySelf = function() { return me; };
     
     return {
         loadMySelf: loadMySelf,
@@ -400,52 +391,52 @@ BaasContact.Views.Person = (function () {
     var renderAccountName = function(name){
         $("#account-name").text(name);
     };
-    
+
     var displayPortraitImg = function(imgId){
         if (!imgId) return;
         BaasBox.fetchFile(imgId, true)
-            .done(function(res){
+            .done(function(){
                 $("#profile-face-thumb img").attr("src", this.url);
             });
     };
-    
+
     var _clearPortraitImg = function() {
         $("#profile-face-thumb img").attr("src", "");
     };
-    
+
     var renderPerson = function(person) {
         // todo use class Person's methods
         var personInfo = person.data;
         $.print("personInfo:");
         $.print(personInfo);
-        
+
         $("#profile-name").text(personInfo.user.name);
         $("#profile-intro").text(personInfo.user.intro);
-        
+
         var joinDate = new Date(personInfo.signUpDate);
         $("#prfile-join-date").text(joinDate.toLocaleDateString());
-        
-        if (personInfo.visibleByAnonymousUsers) {
+
+        if (person.getPublicInfo()) {
             displayPortraitImg(person.getPortrait());
-            bindContact(personInfo); // this is a todo
         } else {
             _clearPortraitImg();
         }
 
         var rawInfo = {};
-        for(var key in personInfo) {
+        var key;
+        for(key in personInfo) {
             if (key.indexOf("visibleBy") > -1) {
                 $.extend(rawInfo, personInfo[key]);
             }
         }
         var text = "<p>";
-        for(var key in rawInfo) {
+        for(key in rawInfo) {
             text += key + " : " + rawInfo[key] + " <br />";
         }
         text += "</p>";
         $("#profile-intro").html(text);
-    }
-    
+    };
+
     return {
         renderAccountName: renderAccountName,
         renderPerson: renderPerson,

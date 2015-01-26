@@ -116,7 +116,7 @@ BaasContact.Views.Modes = (function() {
 			leave: function() {
 				$("#list-user-form").hide();
 			}
-		},
+		}
         
 	};
 
@@ -195,15 +195,17 @@ $("#change-password").click(function() {
 
 $("#change-password-btn").click(function(event) {    
     BaasBox.changePassword($("#change-password-old").val(), $("#change-password-new").val())
-    .done(function(res){
-        $("#change-password-form").hide();
-        logout();
-        $.print("change password success");
-    })
-    .fail(function(err){
-	    alert("password isn't correct");
-        $.print("change password fail");
-    });
+		.done(function(res) {
+			$("#change-password-form").hide();
+			logout();
+			$.notify("Your password is changed, please signin again");
+
+			$.print("change password success");
+		})
+		.fail(function(err){
+			alert("password isn't correct");
+			$.print("change password fail");
+		});
 });
 
 $("#cancel-btn").click(function(event) {
