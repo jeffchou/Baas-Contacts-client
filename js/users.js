@@ -140,7 +140,6 @@ function registerUsersEvents() {
         var $user = $(this).closest("li");
         $.print($user.data());
         var name = $user.data("name");
-        
         BaasContact.Models.Users.suspendUser(name);
     });
     
@@ -148,10 +147,28 @@ function registerUsersEvents() {
         var $user = $(this).closest("li");
         $.print($user.data());
         var name = $user.data("name");
-        
 		BaasContact.Models.Users.activateUser(name);
     });
     
+    $("#active-user-list, #suspended-user-list").on("click", "a", function() {
+        var $user = $(this).closest("li");
+        $.print($user.data());
+        var name = $user.data("name");
+        BaasBox.fetchUserProfile(name)
+            .done(function(res){
+                if (res.result === "ok") {
+                    var person = new BaasContact.Models.Person.Person(res.data);
+                    BaasContact.Views.Person.renderPerson(person);
+                }
+                $.print(res);
+            })
+            .fail(function(){
+                // an error of login
+                .fail(BaasContact.Views.Error.log);
+            });
+        BaasContact.Views.Modes.goApp();
+    });
+
     $("#change-username").click(function() {
         BaasContact.Views.Modes.goChangeUsername();
     });
@@ -163,10 +180,9 @@ function registerUsersEvents() {
     });
     
     $("#change-password-form-cancel-btn, #change-username-form-cancel-btn, #exit-user-list-btn")
-        .click(function() {
-            BaasContact.Views.Modes.goApp();
-        });
-        
+    .click(function() {
+        BaasContact.Views.Modes.goApp();
+    });
 }
 
 BaasContact.Models.Users = (function() {
@@ -211,6 +227,7 @@ BaasContact.Models.Users = (function() {
             })
             .fail(BaasContact.Views.Error.log);
 	};
+
 	var suspendUser = function(name) {
 		BaasBoxEx.suspendUser(name)
 	        .done(function(){
@@ -219,14 +236,16 @@ BaasContact.Models.Users = (function() {
 	        })
 	        .fail(BaasContact.Views.Error.log);
 	};
+
 	var activateUser = function(name) {
 		BaasBoxEx.activateUser(name)
 			.done(function(){
 	            allUsers[name].isActive = true;
 	            BaasContact.Views.Users.renderUsers(allUsers);
-	        }).fail(BaasContact.Views.Error.log);
+	        })
+            .fail(BaasContact.Views.Error.log);
     };
-    
+
     var changeUserName = function(name) {
         BaasBoxEx.changeUserName(name)
             .done(function(){
@@ -263,11 +282,11 @@ BaasContact.Views.Users = {
     		if (users.hasOwnProperty(i)) {
                 var $user;
 		        if (users[i].isActive){
-		            $user = $('<li class="list-group-item">&nbsp;' + users[i].name + '<button class="list-users-right">Suspend</button></li>');
+		            $user = $('<li class="list-group-item"><a>&nbsp;'+users[i].name + '</a><button class="list-users-right">Suspend</button></li>');
 		            $user.data("name", users[i].name);
 		            $active.append($user);
 		        } else {
-		            $user = $('<li class="list-group-item">&nbsp;' + users[i].name + '<button class="list-users-right">Activate</button></li>');
+		            $user = $('<li class="list-group-item"><a>&nbsp;' + users[i].name + '</a><button class="list-users-right">Activate</button></li>');
 		            $user.data("name", users[i].name);
 		            $suspend.append($user);
 		        }
@@ -287,6 +306,7 @@ var registerPersonEvents = function() {
 
     $upload.find("input").on("change", uploadImg);
 };
+
 var uploadImg = function(e) {
     var files = e.target.files;
     if (files.length < 0) return;
@@ -444,9 +464,11 @@ BaasContact.Views.Person = (function () {
         var joinDate = new Date(personInfo.signUpDate);
         $("#prfile-join-date").text(joinDate.toLocaleDateString());
 
-        if (person.getPublicInfo()) {
+        if (person.getPublicInfo() && (typeof person.getPortrait() !== "undefined")) {
+            $.print("displayPortraitImg");
             displayPortraitImg(person.getPortrait());
         } else {
+            $.print("clean image");
             _clearPortraitImg();
         }
 
