@@ -161,11 +161,9 @@ function registerUsersEvents() {
                     BaasContact.Views.Person.renderPerson(person);
                 }
                 $.print(res);
-            })
-            .fail(function(){
-                // an error of login
-                .fail(BaasContact.Views.Error.log);
-            });
+            })              
+            .fail(BaasContact.Views.Error.log);
+            
         BaasContact.Views.Modes.goApp();
     });
 
