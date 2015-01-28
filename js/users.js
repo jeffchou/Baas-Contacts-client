@@ -310,7 +310,7 @@ var uploadImg = function(e) {
     if (files.length < 0) return;
     var file = files[0];
     if (!file.type.match('image.*')) {
-        $.notify(file.name + " is not a image");
+        $.notify("file [" + file.name + "] is not a image");
         return;
     }
 
@@ -378,8 +378,7 @@ BaasContact.Models.Person = (function () {
             };
             BaasContact.Models.Contacts.createContact(info)
                 .done(function(res) {
-                    var id = res.id;
-                    publicInfo.contactId = id;
+                    publicInfo.contactId = res.id;
                     _updateMySelf();
                 })
                 .fail(function(error){
@@ -401,7 +400,7 @@ BaasContact.Models.Person = (function () {
     };
     
     var updatePersonalPortrait = function(formData) {
-        _updateFile(formData)
+        _uploadPublicFile(formData)
             .done(function(res) {
                 var info = JSON.parse(res);
                 var imgId = info.data.id;
@@ -415,12 +414,29 @@ BaasContact.Models.Person = (function () {
             .fail(function(error){
                 var info = JSON.parse(error.responseText);
                 var message = info.message;
+
                 $.notify("Error on uploading image. message: " + message);
+                $.print("-----------------");
+                $.print("error: ");
+                $.print(error);
+                $.print("info: ");
+                $.print(info);
             });
     };
-    
-    var _updateFile = function(formData) {
+
+    var _uploadFile = function (formData) {
         return BaasBox.uploadFile(formData);
+    };
+    
+    var _uploadPublicFile = function (formData) {
+        var publicSetting = {
+          "read": {
+              "roles": [BaasBox.ANONYMOUS_ROLE]
+          }
+        };
+        formData.append("acl", JSON.stringify(publicSetting));
+        formData.append("attachedData", "");    // this is for prevent BassBox bug.
+        return _uploadFile(formData);
     };
     
     var getMySelf = function() { return me; };
