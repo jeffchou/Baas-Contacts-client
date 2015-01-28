@@ -181,6 +181,27 @@ function registerUsersEvents() {
     .click(function() {
         BaasContact.Views.Modes.goApp();
     });
+
+    $("#collection").click(function() {
+        BaasContact.Views.Modes.goCollections();
+    });
+
+    $("#list-collections-btn").click(function() {
+        BaasContact.Models.Collections.getCollections();
+    });
+    $("#collection-list").on("click","li", function() {
+        var collection_name = $(this).data("collection");
+    });
+
+    $("#add-collection-btn").click(function() {
+        //var newCollectionName = $("#new-collection-username").val();
+        //$.print(newCollectionName);
+        BaasContact.Models.Collections.addCollection($("#new-collection-username").val());
+    });
+
+    $("#del-collection-btn").click(function() {
+        BaasContact.Models.Collections.deleteCollection($("#new-collection-username").val());
+    });
 }
 
 BaasContact.Models.Users = (function() {
@@ -491,6 +512,78 @@ BaasContact.Views.Person = (function () {
         displayPortraitImg: displayPortraitImg
     };
 }());
+
+
+BaasContact.Models.Collections = (function() {
+    var collections = [];
+
+    var _saveAllCollections = function(data) {
+        collections = [];
+        for(var i = 0; i < data.data.collections_details.length; i++) {
+            collections[i] = data.data.collections_details[i].name;
+        }
+        BaasContact.Views.Collections.refreshCollections();
+        BaasContact.Views.Collections.renderCollections(collections);
+    };
+
+    var getCollections = function() {
+        BaasBoxEx.getCollections()
+        .done(function(res) {
+            _saveAllCollections(res.data);
+        })
+        .fail(function(error) {
+            $.print("getCollections fail!!");
+        });
+    };
+
+    var addCollection = function(collection_name) {
+        BaasBox.createCollection(collection_name)
+        .done(function(res) {
+            getCollections();
+        })
+        .fail(function(error) {
+            $.print("createCollections fail!!");
+        });
+    };
+
+    var deleteCollection = function(collection_name) {
+        BaasBox.deleteCollection(collection_name)
+        .done(function(res) {
+            getCollections();
+        })
+        .fail(function(error) {
+            $.print("deleteCollection fail!!");
+        });
+    };
+    return {
+        getCollections   :  getCollections,
+        addCollection    :  addCollection,
+        deleteCollection :  deleteCollection
+    };
+}());
+
+BaasContact.Views.Collections = (function () {
+    var renderCollections = function(data) {
+        var $collection = $("#collection-list");
+        var $content;
+        for (var i = 0; i < data.length ; i++) {
+            $content = $('<li>' + data[i] + '</li>');
+            $content.data("collection", data[i]);
+            $collection.append($content);
+        }
+    };
+
+    var refreshCollections = function () {
+        var $collection = $("#collection-list");
+        $collection.empty();
+    };
+
+    return {
+        renderCollections:   renderCollections,
+        refreshCollections: refreshCollections
+    };
+}());
+
 
 var bindContact = function(userInfo) {
     var me = BaasContact.Models.Person.getMySelf();

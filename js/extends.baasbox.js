@@ -23,5 +23,13 @@ var BaasBoxEx = {};
             contentType: 'application/json'
         });
     };
+
+	BaasBoxEx.getCollections = function() {
+		return $.ajax({
+			method: "GET",
+			url: BaasBox.endPoint + "/admin/dbStatistics"
+		});
+	};
+
 	// add more BaasBox extensions
 } (BaasBoxEx, window));

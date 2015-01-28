@@ -54,7 +54,7 @@ $(document).ready(function() {
 		$("#inputPassword").val("admin");
 
 		//$("#signin").click();
-	}
+        }
 });
 
 BaasContact.Views = {};
@@ -116,8 +116,15 @@ BaasContact.Views.Modes = (function() {
 			leave: function() {
 				$("#list-user-form").hide();
 			}
-		}
-        
+		},
+        "Collections":{
+            enter: function() {
+				$("#collection-form").show();
+			},
+			leave: function() {
+				$("#collection-form").hide();
+			}
+        }
 	};
 
 	var goApp = function() {
@@ -139,13 +146,19 @@ BaasContact.Views.Modes = (function() {
     var goListUsers = function() {
 		this.gotoState("ListUsers");
     };
+
+    var goCollections = function() {
+        this.gotoState("Collections");
+    };
+
 	return {
 		States: States,
 		goApp: goApp,
 		goLogon: goLogon,
         goChangePassword: goChangePassword,
         goChangeUsername: goChangeUsername,
-        goListUsers     : goListUsers
+        goListUsers     : goListUsers,
+        goCollections   : goCollections
 	};
 })();
 $.makeStateMachine(BaasContact.Views.Modes);
