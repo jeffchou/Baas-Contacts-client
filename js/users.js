@@ -21,15 +21,6 @@ function registerSigninEvents() {
 				$("#signin-error-panel").fadeIn();
 			});
 	});
-
-    /* confused: the keycode check for enter then signin is not needed somehow after some? version.
-	$("#inputAccount, #inputPassword").keyup(function(event) {
-		if(event.keyCode == 13) { // 13 means "enter"
-            $.print("# enter !!!");
-			$("#signin").click();
-		}
-	});
-	*/
 	
 	$("#signout").click(function(){
 		BaasBox.logout();
@@ -184,13 +175,13 @@ function registerUsersEvents() {
 
     $("#collection").click(function() {
         BaasContact.Views.Modes.goCollections();
-    });
-
-    $("#list-collections-btn").click(function() {
         BaasContact.Models.Collections.getCollections();
     });
+    
     $("#collection-list").on("click","li", function() {
         var collection_name = $(this).data("collection");
+        BaasContact.Models.Collections.countDocuments(collection_name);
+        BaasContact.Views.Collections.showCurrentCollection(collection_name);
     });
 
     $("#add-collection-btn").click(function() {
@@ -544,37 +535,49 @@ BaasContact.Models.Collections = (function() {
 
     var getCollections = function() {
         BaasBoxEx.getCollections()
-        .done(function(res) {
-            _saveAllCollections(res.data);
-        })
-        .fail(function(error) {
-            $.print("getCollections fail!!");
-        });
+            .done(function(res) {
+                _saveAllCollections(res.data);
+            })
+            .fail(function(error) {
+                $.print("getCollections fail!!");
+            });
     };
 
     var addCollection = function(collection_name) {
         BaasBox.createCollection(collection_name)
-        .done(function(res) {
-            getCollections();
-        })
-        .fail(function(error) {
-            $.print("createCollections fail!!");
-        });
+            .done(function(res) {
+                getCollections();
+            })
+            .fail(function(error) {
+                $.print("createCollections fail!!");
+            });
     };
 
     var deleteCollection = function(collection_name) {
         BaasBox.deleteCollection(collection_name)
-        .done(function(res) {
-            getCollections();
-        })
-        .fail(function(error) {
-            $.print("deleteCollection fail!!");
-        });
+            .done(function(res) {
+                getCollections();
+            })
+            .fail(function(error) {
+                $.print("deleteCollection fail!!");
+            });
+    };
+
+    var countDocuments = function(collection_name) {
+        BaasBox.fetchObjectsCount(collection_name)
+            .done(function(res) {
+                $.print(res.data.count);
+                BaasContact.Views.Collections.showDocumentsNumber(res.data.count);
+            })
+            .fail(function(error) {
+                $.print("deleteCollection fail!!");
+            });      
     };
     return {
         getCollections   :  getCollections,
         addCollection    :  addCollection,
-        deleteCollection :  deleteCollection
+        deleteCollection :  deleteCollection,
+        countDocuments   :  countDocuments
     };
 }());
 
@@ -593,10 +596,22 @@ BaasContact.Views.Collections = (function () {
         var $collection = $("#collection-list");
         $collection.empty();
     };
+    
+    var showCurrentCollection = function(name) {
+        var $name = $("#collection-name");
+        $name.text(name);
+    };
+    
+    var showDocumentsNumber = function(number) {
+        var $number = $("#document_count");
+        $number.text(number);
+    }
 
     return {
-        renderCollections:   renderCollections,
-        refreshCollections: refreshCollections
+        renderCollections     :  renderCollections,
+        refreshCollections    :  refreshCollections,
+        showCurrentCollection :  showCurrentCollection,
+        showDocumentsNumber   :  showDocumentsNumber
     };
 }());
 
