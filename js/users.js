@@ -62,6 +62,16 @@ function registerCollectionEvents(){
         
         BaasContact.Models.Collections.revokeAccessToObject(collection, documentId, permission, permissionOn, target);
     });
+ 
+    
+    $("#update-field-btn").click(function(){
+        var collection = $("#collection-name").text(),
+            documentId = $("#acf-document").val(),
+            fieldname = $("#acf-name").val(),
+            data = $("#acf-data").val();
+        
+        BaasContact.Models.Collections.updateField(collection, documentId, fieldname, data); 
+    });
 
     $("#add-collection-btn").click(function() {
         //var newCollectionName = $("#new-collection-username").val();
@@ -652,6 +662,16 @@ BaasContact.Models.Collections = (function() {
                 $.notify(errMsg);
             });
     };
+  
+    var updateField = function(collection, documentId, fieldname, data) {
+        BaasBox.updateField(documentId, collection, fieldname, data)
+            .done(function(documents) {
+                loadAllDocuments(collection);
+            })
+            .fail(function(err) {
+                $.print("updateField fail!!");
+		    });
+    };
     
     return {
         getCollections   :  getCollections,
@@ -660,7 +680,8 @@ BaasContact.Models.Collections = (function() {
         countDocuments   :  countDocuments,
         loadAllDocuments :  loadAllDocuments,
         grantAccessToObject:    grantAccessToObject,
-        revokeAccessToObject:   revokeAccessToObject
+        revokeAccessToObject:   revokeAccessToObject,
+        updateField         :   updateField
     };
 }());
 
