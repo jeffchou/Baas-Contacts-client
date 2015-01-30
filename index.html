@@ -352,7 +352,7 @@
 </div>
 
 <div class="container off" id="collection-form">
-	<div class="row head-operations">
+	<div>
 		<h2><i class="fa fa-files-o fa-fw black"></i> Collections</h2>
 	</div>
     <div data-role="controlgroup" data-type="horizontal">
@@ -377,6 +377,19 @@
         </div>
     </div>
     
+    <div><h2>Documents content</h2></div>
+    <textarea id="documents-content" style="width: 470px; height: 107px;"></textarea>
+    
+    <div id="access-control-on-object">
+        Id: <input id="aco-document" /> 
+        Permission <input id="aco-permission" /> 
+        <input type="radio" name="permissions-on" value="role" checked> role </input>
+        <input type="radio" name="permissions-on" value="user"> user </input>
+        <input id="aco-target" />
+    
+        <button type="button" class="btn btn-primary btn-sm" id="grant-object-btn"> Grant access</button>
+        <button type="button" class="btn btn-primary btn-sm" id="revoke-object-btn"> Revoke access</button>
+    </div>
     <button type="button" class="btn btn-info btn-block" id="exit-collections-btn">Back</button>
 </div>
 

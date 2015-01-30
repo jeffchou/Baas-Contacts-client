@@ -29,6 +29,51 @@ function registerSigninEvents() {
 	
 }
 
+function registerCollectionEvents(){
+    $("#collection").click(function() {
+        BaasContact.Views.Modes.goCollections();
+        BaasContact.Models.Collections.getCollections();
+    });
+    
+    $("#collection-list").on("click","li", function() {
+        var collection_name = $(this).data("collection");
+        BaasContact.Models.Collections.countDocuments(collection_name);
+        BaasContact.Views.Collections.showCurrentCollection(collection_name);
+        BaasContact.Models.Collections.loadAllDocuments(collection_name);
+        $.print(collection_name);
+    });
+    
+    $("#grant-object-btn").click(function(){
+        var collection = $("#collection-name").text(),
+            documentId = $("#aco-document").val(),
+            permission = $("#aco-permission").val(),
+            permissionOn = $('input[name=permissions-on]:checked', '#access-control-on-object').val(),
+            target = $("#aco-target").val();
+        
+        BaasContact.Models.Collections.grantAccessToObject(collection, documentId, permission, permissionOn, target);
+    });
+    
+    $("#revoke-object-btn").click(function(){
+        var collection = $("#collection-name").text(),
+            documentId = $("#aco-document").val(),
+            permission = $("#aco-permission").val(),
+            permissionOn = $('input[name=permissions-on]:checked', '#access-control-on-object').val(),
+            target = $("#aco-target").val();
+        
+        BaasContact.Models.Collections.revokeAccessToObject(collection, documentId, permission, permissionOn, target);
+    });
+
+    $("#add-collection-btn").click(function() {
+        //var newCollectionName = $("#new-collection-username").val();
+        //$.print(newCollectionName);
+        BaasContact.Models.Collections.addCollection($("#new-collection-username").val());
+    });
+
+    $("#del-collection-btn").click(function() {
+        BaasContact.Models.Collections.deleteCollection($("#new-collection-username").val());
+    });
+}
+
 function registerUsersEvents() {
 	$("#signup-gate").click(function() {
 		$("#signin-error-panel").hide('slideUp');
@@ -171,27 +216,6 @@ function registerUsersEvents() {
     $("#change-password-form-cancel-btn, #change-username-form-cancel-btn, #exit-user-list-btn, #exit-collections-btn")
     .click(function() {
         BaasContact.Views.Modes.goApp();
-    });
-
-    $("#collection").click(function() {
-        BaasContact.Views.Modes.goCollections();
-        BaasContact.Models.Collections.getCollections();
-    });
-    
-    $("#collection-list").on("click","li", function() {
-        var collection_name = $(this).data("collection");
-        BaasContact.Models.Collections.countDocuments(collection_name);
-        BaasContact.Views.Collections.showCurrentCollection(collection_name);
-    });
-
-    $("#add-collection-btn").click(function() {
-        //var newCollectionName = $("#new-collection-username").val();
-        //$.print(newCollectionName);
-        BaasContact.Models.Collections.addCollection($("#new-collection-username").val());
-    });
-
-    $("#del-collection-btn").click(function() {
-        BaasContact.Models.Collections.deleteCollection($("#new-collection-username").val());
     });
 }
 
@@ -573,15 +597,76 @@ BaasContact.Models.Collections = (function() {
                 $.print("deleteCollection fail!!");
             });      
     };
+    
+    var loadAllDocuments =function(collection_name) {
+        BaasBox.loadCollection(collection_name)
+            .done(function(documents) {
+                BaasContact.Views.Collections.showDocuments(documents);
+                $.print(documents);
+            })
+            .fail(function(err) {
+                $.print("loadAllDocuments fail!!");
+		    });
+    };
+    
+    var grantAccessToObject = function(collection, documentId, permission, permissionOn, target) {
+        var res;
+        switch (permissionOn) {
+        case "role":
+            res = BaasBox.grantRoleAccessToObject(collection, documentId, permission, target);
+            break;
+        case "user":
+            res = BaasBox.grantUserAccessToObject(collection, documentId, permission, target);
+            break;
+        }
+        
+        res.done(function() {
+                $.notify("Granted!");
+            })
+            .fail(function (err) {
+                var errInfo = JSON.parse(err.responseText);
+                var errMsg = errInfo.message;
+                $.print(errMsg);
+                $.notify(errMsg);
+            });
+    };
+    
+    var revokeAccessToObject = function(collection, documentId, permission, permissionOn, target) {
+        var res;
+        switch (permissionOn) {
+        case "role":
+            res = BaasBox.revokeRoleAccessToObject(collection, documentId, permission, target);
+            break;
+        case "user":
+            res = BaasBox.revokeUserAccessToObject(collection, documentId, permission, target);
+            break;
+        }
+        
+        res.done(function() {
+                $.notify("Revoked!");
+            })
+            .fail(function (err) {
+                var errInfo = JSON.parse(err.responseText);
+                var errMsg = errInfo.message;
+                $.print(errMsg);
+                $.notify(errMsg);
+            });
+    };
+    
     return {
         getCollections   :  getCollections,
         addCollection    :  addCollection,
         deleteCollection :  deleteCollection,
-        countDocuments   :  countDocuments
+        countDocuments   :  countDocuments,
+        loadAllDocuments :  loadAllDocuments,
+        grantAccessToObject:    grantAccessToObject,
+        revokeAccessToObject:   revokeAccessToObject
     };
 }());
 
 BaasContact.Views.Collections = (function () {
+    
+    var jsEditor;
     var renderCollections = function(data) {
         var $collection = $("#collection-list");
         var $content;
@@ -605,13 +690,24 @@ BaasContact.Views.Collections = (function () {
     var showDocumentsNumber = function(number) {
         var $number = $("#document_count");
         $number.text(number);
-    }
-
+    };
+    
+    var initial = function() {
+        jsEditor = CodeMirror.fromTextArea($("#documents-content")[0]);
+    };
+    
+    var showDocuments = function(documents) {  
+        jsEditor.setValue(JSON.stringify(documents));
+        $.beautify(jsEditor);
+    };
+    
     return {
         renderCollections     :  renderCollections,
         refreshCollections    :  refreshCollections,
         showCurrentCollection :  showCurrentCollection,
-        showDocumentsNumber   :  showDocumentsNumber
+        showDocumentsNumber   :  showDocumentsNumber,
+        showDocuments         :  showDocuments,
+        initial               :  initial
     };
 }());
 

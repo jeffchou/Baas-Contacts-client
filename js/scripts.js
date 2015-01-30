@@ -30,6 +30,8 @@ $(document).ready(function() {
 	registerSigninEvents();
 	registerUsersEvents();
 	registerPersonEvents();
+    registerCollectionEvents();
+    BaasContact.Views.Collections.initial();
     
 	if (DEBUG) {
 		initializeImport();
@@ -53,8 +55,13 @@ $(document).ready(function() {
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
 
-		//$("#signin").click();
-        }
+		$("#signin").click();
+        setTimeout(function() {
+            $("#collection").click();
+        },800);
+    }
+    
+    
 });
 
 BaasContact.Views = {};
@@ -310,7 +317,7 @@ var loadContacts = function() {
 	var searchBy = $('input[name=optionsRadios]:checked', '#contacts-search-panel').val(),
 		searchKey = $("#search-contacts-text").val();
 
-	$.print(searchBy);
+    $.print(searchBy);
 	$.print(searchKey);
 	
 	if (searchKey === "") {
