@@ -339,7 +339,10 @@ BaasContact.Views.Users = {
 	}
 };
 
+// person controller (?
 var registerPersonEvents = function() {
+    var View = BaasContact.Views.Person;
+
     var $upload = $("#upload-face-img");
     $upload.hover(
         function() {
@@ -348,23 +351,76 @@ var registerPersonEvents = function() {
             $(this).find("div.float-buttom").fadeTo(200, 0.0);
         });
 
-    $upload.find("input").on("change", uploadImg);
-};
+    $upload.find("input").on("change", function(e) {
+        var files = e.target.files;
+        if (files.length < 0) return;
+        var file = files[0];
+        if (!file.type.match('image.*')) {
+            $.notify("file [" + file.name + "] is not a image");
+            return;
+        }
 
-var uploadImg = function(e) {
-    var files = e.target.files;
-    if (files.length < 0) return;
-    var file = files[0];
-    if (!file.type.match('image.*')) {
-        $.notify("file [" + file.name + "] is not a image");
-        return;
-    }
+        $.notify("Uploading " + file.name + "...");
 
-    var formData = new FormData();
-    formData.append("upload", file, file.name);
+        var formData = new FormData();
+        formData.append("upload", file);
 
-    $.notify("Uploading " + file.name + "...");
-    BaasContact.Models.Person.updatePersonalPortrait(formData);
+        BaasContact.Models.Person.updatePersonalPortrait(formData);
+        return {
+            employeeId: 0,
+            name: "",
+            department : "",
+            extNo: "",
+            email: "",
+            mobileNo: "",
+            birthDay: "",
+            address: ""
+        };
+    });
+
+    $("#edit-person").click(function() {
+        var Models = BaasContact.Models,
+            me = Models.Person.getMySelf(),
+            contactId = me.getContactId();
+
+        if (typeof contactId !== "undefined") {
+            Models.Contacts.getContact(contactId, function (contact) {
+                View.showEditPersonForm(me, contact);
+            });
+        } else {
+            //contact = Models.Contacts.createBlankContact();
+            $.notify("???: this user is lack of contact");
+        }
+    });
+
+    $("#pf-save").click(function() {
+        var contact = {};
+        contact.employeeId = parseInt($("#pf-id").val(), 10);
+        contact.name = $("#pf-name").val();
+        contact.department  = $("#pf-department").val();
+        contact.extNo = $("#pf-extno").val();
+        contact.email = $("#pf-email").val();
+        contact.mobileNo = $("#pf-mobileno").val();
+        contact.birthDay = $("#pf-birth").val();
+        contact.address = $("#pf-address").val();
+
+        var Models = BaasContact.Models;
+        var me = Models.Person.getMySelf();
+        me.setEmail(contact.email);
+        me.setName(contact.name);
+
+		contact.Id = me.getContactId();
+
+		$.print(contact);
+
+		// save contact me
+		// todo: bad api, not consistence
+		Models.Person.updatePublicInfo(contact);
+    });
+
+    $("#pf-cancel").click(function () {
+        View.showPerson();
+    });
 };
 
 
@@ -373,6 +429,7 @@ BaasContact.Models.Person = (function () {
     var Person = function(data) {
         this.data = data;
     };
+
     var PersonPrototype = Person.prototype;
     PersonPrototype.isAdmin = function() {
         var roles = this.data.user.roles;
@@ -383,13 +440,17 @@ BaasContact.Models.Person = (function () {
         }
         return false;
     };
+
+    PersonPrototype.hasPublicInfo = function() { return !!this.data.visibleByAnonymousUsers; };
     PersonPrototype.setPortrait = function(imgId) {
         this.data.visibleByAnonymousUsers.portraitImg = imgId;
     };
     PersonPrototype.getPortrait = function() { return this.data.visibleByAnonymousUsers.portraitImg; };
-    PersonPrototype.getPublicInfo = function() { return this.data.visibleByAnonymousUsers; };
+    PersonPrototype.getContactId = function () { return this.data.visibleByAnonymousUsers.contactId; };
     PersonPrototype.getName = function() { return this.data.visibleByTheUser.name; };
+    PersonPrototype.setName = function(name) { this.data.visibleByTheUser.name = name; };
     PersonPrototype.getEmail = function() { return this.data.visibleByTheUser.email; };
+    PersonPrototype.setEmail = function(email) { this.data.visibleByTheUser.email = email; };
     PersonPrototype.getAccount = function() { return this.data.user.name; };
 
     // data
@@ -416,8 +477,7 @@ BaasContact.Models.Person = (function () {
     };
 
     var bindContact = function() {
-        var publicInfo = me.getPublicInfo();
-        if (publicInfo && typeof publicInfo.contactId === "undefined") {
+        if (me.hasPublicInfo() && typeof me.getContactId() === "undefined") {
             var info = {
                 email: me.getEmail(),
                 name: me.getName()
@@ -430,7 +490,7 @@ BaasContact.Models.Person = (function () {
                 .fail(function(error){
                     var info = JSON.parse(error.responseText);
                     var message = info.message;
-                    $.notify("Error on crea image. message: " + message);
+                    $.notify("Error on create contact. message: " + message);
                 });
         }
     };
@@ -442,6 +502,7 @@ BaasContact.Models.Person = (function () {
     };
     
     var _updateMySelf = function() {
+		$.print("# _updateMySelf");
         return BaasBox.updateUserProfile(me.data);
     };
     
@@ -455,7 +516,7 @@ BaasContact.Models.Person = (function () {
                 return _updateMySelf();
             })
             .done(function(){
-                BaasContact.Views.Person.displayPortraitImg(me.getPortrait());
+                BaasContact.Views.Person.showPortraitImg(me.getPortrait());
             })
             .fail(function(error){
                 var info = JSON.parse(error.responseText);
@@ -469,6 +530,25 @@ BaasContact.Models.Person = (function () {
                 $.print(info);
             });
     };
+
+	var updatePublicInfo = function(contact){
+		_updateMySelf()
+			.done(function(res) {
+				$.print("# before update contact");
+				return BaasContact.Models.Contacts.updateContact(contact);
+			})
+			.done(function () {
+				var View = BaasContact.Views.Person;
+				View.renderPerson(me);
+				View.showPerson();
+			})
+			.fail(function(err){
+				var info = JSON.parse(err.responseText);
+				var message = info.message;
+
+				$.notify("Error on updating public person info and contact. Error message: " + message);
+			});
+	};
 
     var _uploadFile = function (formData) {
         return BaasBox.uploadFile(formData);
@@ -491,7 +571,8 @@ BaasContact.Models.Person = (function () {
         loadMySelf: loadMySelf,
         getMySelf: getMySelf,
         updatePersonalPortrait: updatePersonalPortrait,
-        Person: Person
+        Person: Person,
+		updatePublicInfo: updatePublicInfo
     };
 }());
 
@@ -500,8 +581,10 @@ BaasContact.Views.Person = (function () {
         $("#account-name").text(name);
     };
 
-    var displayPortraitImg = function(imgId){
+    var showPortraitImg = function(imgId){
         if (!imgId) return;
+
+        // todo: get it through Model or repository
         BaasBox.fetchFile(imgId, true)
             .done(function(){
                 $("#profile-face-thumb img").attr("src", this.url);
@@ -515,8 +598,6 @@ BaasContact.Views.Person = (function () {
     var renderPerson = function(person) {
         // todo use class Person's methods
         var personInfo = person.data;
-        $.print("personInfo:");
-        $.print(personInfo);
 
         $("#profile-name").text(personInfo.user.name);
         $("#profile-intro").text(personInfo.user.intro);
@@ -524,11 +605,9 @@ BaasContact.Views.Person = (function () {
         var joinDate = new Date(personInfo.signUpDate);
         $("#prfile-join-date").text(joinDate.toLocaleDateString());
 
-        if (person.getPublicInfo() && (typeof person.getPortrait() !== "undefined")) {
-            $.print("displayPortraitImg");
-            displayPortraitImg(person.getPortrait());
+        if (person.hasPublicInfo() && (typeof person.getPortrait() !== "undefined")) {
+            showPortraitImg(person.getPortrait());
         } else {
-            $.print("clean image");
             _clearPortraitImg();
         }
 
@@ -547,10 +626,40 @@ BaasContact.Views.Person = (function () {
         $("#profile-intro").html(text);
     };
 
+    var showEditPersonForm = function (person, contact) {
+        // 'person' is not used yet.
+        // todo
+        // renderPersonalEditForm(person);
+
+        renderContactEditForm(contact);
+        showEditPersonPanel();
+    };
+
+    var composeContactEditFormHtml = (function(){
+        var contactTmpl = $("#person-form-tmpl").html();
+        return doT.template(contactTmpl);
+    }());
+
+    var renderContactEditForm = function(contact){
+        var editorString = composeContactEditFormHtml(contact);
+        $("#edit-profile-panel>div:first").empty().append(editorString);
+    };
+
+    var showEditPersonPanel = function(){
+        $("#edit-profile-panel").show();
+        $("#profile-panel").hide();
+    };
+    var showPersonPanel = function () {
+        $("#edit-profile-panel").hide();
+        $("#profile-panel").show();
+    };
+
     return {
         renderAccountName: renderAccountName,
         renderPerson: renderPerson,
-        displayPortraitImg: displayPortraitImg
+        showPortraitImg: showPortraitImg,
+        showEditPersonForm: showEditPersonForm,
+        showPerson: showPersonPanel
     };
 }());
 
@@ -731,12 +840,3 @@ BaasContact.Views.Collections = (function () {
         initial               :  initial
     };
 }());
-
-
-var bindContact = function(userInfo) {
-    var me = BaasContact.Models.Person.getMySelf();
-    var publicInfo = BaasContact.Models.Person.getMySelf().getPublicInfo();
-    if (!publicInfo.contactId) {
-        $.notify("Welcome new comer: " + me.getAccount());
-    }
-};
