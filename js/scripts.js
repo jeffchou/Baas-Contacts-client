@@ -29,6 +29,9 @@ $(document).ready(function() {
 	registerContactsEvents();
 	registerSigninEvents();
 	registerUsersEvents();
+	registerPersonEvents();
+    registerCollectionEvents();
+    BaasContact.Views.Collections.initial();
     
 	if (DEBUG) {
 		initializeImport();
@@ -53,7 +56,12 @@ $(document).ready(function() {
 		$("#inputPassword").val("admin");
 
 		$("#signin").click();
-	}
+        setTimeout(function() {
+            $("#collection").click();
+        },800);
+    }
+    
+    
 });
 
 BaasContact.Views = {};
@@ -63,6 +71,9 @@ BaasContact.Views.Posts = {};
 BaasContact.Views.Profile = {};
 BaasContact.Views.Notify = {};
 BaasContact.Views.Modes = {};
+
+BaasContact.Models = {};
+BaasContact.Models.Users = {}; 
 
 BaasContact.Views.Notify.show = function(msg) {
 	$("#message-sm").text(msg).fadeIn().delay(3500).fadeOut(function () {
@@ -88,7 +99,39 @@ BaasContact.Views.Modes = (function() {
 			leave: function() {
 				$("#signin-form").hide();
 			}
-		}
+		},
+        "ChangePassword": {
+            enter: function() {
+				$("#change-password-form").show();
+			},
+			leave: function() {
+				$("#change-password-form").hide();
+			}
+		},
+        "ChangeUsername": {
+            enter: function() {
+				$("#change-username-form").show();
+			},
+			leave: function() {
+				$("#change-username-form").hide();
+			}
+		},
+        "ListUsers": {
+            enter: function() {
+				$("#list-user-form").show();
+			},
+			leave: function() {
+				$("#list-user-form").hide();
+			}
+		},
+        "Collections":{
+            enter: function() {
+				$("#collection-form").show();
+			},
+			leave: function() {
+				$("#collection-form").hide();
+			}
+        }
 	};
 
 	var goApp = function() {
@@ -98,11 +141,31 @@ BaasContact.Views.Modes = (function() {
 	var goLogon = function() {
 		this.gotoState("Logon");
 	};
+    
+    var goChangePassword = function() {
+		this.gotoState("ChangePassword");
+	};
+    
+    var goChangeUsername = function() {
+		this.gotoState("ChangeUsername");
+	};
+    
+    var goListUsers = function() {
+		this.gotoState("ListUsers");
+    };
+
+    var goCollections = function() {
+        this.gotoState("Collections");
+    };
 
 	return {
 		States: States,
 		goApp: goApp,
-		goLogon: goLogon
+		goLogon: goLogon,
+        goChangePassword: goChangePassword,
+        goChangeUsername: goChangeUsername,
+        goListUsers     : goListUsers,
+        goCollections   : goCollections
 	};
 })();
 $.makeStateMachine(BaasContact.Views.Modes);
@@ -140,24 +203,29 @@ $("#nav-contacts").click(function() {
 });
 //simon-change password start
 $("#change-password").click(function() {
+    
+    BaasContact.Views.Modes.goChangePassword();
+    /*
     $("#signin-form").hide();
     $("#app").hide();
-    $("#change-password-form").fadeIn();
+    $("#change-password-form").fadeIn();*/
     $("#change-password-old").val("");
     $("#change-password-new").val("");
 });
 
 $("#change-password-btn").click(function(event) {    
     BaasBox.changePassword($("#change-password-old").val(), $("#change-password-new").val())
-    .done(function(res){
-        $("#change-password-form").hide();
-        logout();
-        $.print("change password success");
-    })
-    .fail(function(err){
-	    alert("password isn't correct");
-        $.print("change password fail");
-    });
+		.done(function(res) {
+			$("#change-password-form").hide();
+			logout();
+			$.notify("Your password is changed, please signin again");
+
+			$.print("change password success");
+		})
+		.fail(function(err){
+			alert("password isn't correct");
+			$.print("change password fail");
+		});
 });
 
 $("#cancel-btn").click(function(event) {
@@ -176,44 +244,15 @@ var showProfile = function() {
 $("#nav-profile").click(showProfile);
 
 var loginSuccess = function(userInfo) {
+
+	$.print("# loginSuccess");
 	BaasContact.Views.Modes.goApp();
     
 	$("#search-text").focus();
-	$("#account-name").text(user.username);
-
-	checkAndLoadMyProfile();
+    BaasContact.Views.Person.renderAccountName(userInfo.username);
+    BaasContact.Models.Person.loadMySelf();
+	
 	$("#nav-profile").click();
-    registerProfileEvents();
-};
-
-var userInfo;
-var checkAndLoadMyProfile = function() {
-    BaasBox.fetchCurrentUser()
-        .done(function(res){
-            if (res.result === "ok") {
-                userInfo = res.data;
-				// todo: cover user data by a Class
-				userInfo.isAdmin = function() {
-					var roles = this.user.roles;
-					for (var i = 0; i < roles.length; i++) {
-						if (roles[i].name == BaasBox.ADMINISTRATOR_ROLE) {
-							return true;
-						}
-					}
-					return false;
-				};
-                renderProfile(userInfo);
-            } else {
-                $.notify("Login error");
-                $.print(data);
-                logout();    
-            }
-        })
-        .fail(function(){
-            // an error of login
-            $.notify("Your login has expired");
-            logout();
-        });
 };
 
 var logout = function() {
@@ -228,7 +267,7 @@ var composeContactHtml = (function(){
 var renderContact = function(contact) {
 	var contactHtml = composeContactHtml(contact);
 	var $contact = $(contactHtml).data("contact", contact);
-	if (userInfo.isAdmin()) {	// todo: move it to other place
+	if (BaasContact.Models.Person.getMySelf().isAdmin()) {	// todo: move it to other place
 		if (!contact.userId) {
 			$contact.find(".bind-user").show();
 		} else {
@@ -278,11 +317,11 @@ var loadContacts = function() {
 	var searchBy = $('input[name=optionsRadios]:checked', '#contacts-search-panel').val(),
 		searchKey = $("#search-contacts-text").val();
 
-	$.print(searchBy);
+    $.print(searchBy);
 	$.print(searchKey);
 	
 	if (searchKey === "") {
-		loadAllContacts();
+	   	loadAllContacts();
 		return;
 	}
 	

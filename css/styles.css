@@ -139,3 +139,7 @@ body {
     color: white;
     padding: 6px 0 0 34px;
 }
+
+.list-users-right {
+    float:right;
+}

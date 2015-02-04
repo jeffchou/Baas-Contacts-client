@@ -50,6 +50,13 @@
 	$.notify = function(msg) {
 		BaasContact.Views.Notify.show(msg);
 	};
-
+    
+    $.beautify = function (editor) {
+        var source = editor.getValue(),
+            output,
+            opts = {};
+        output = js_beautify(source, opts);
+        editor.setValue(output);
+    }
 	// add more jQuery plugins
 } (jQuery, window));
