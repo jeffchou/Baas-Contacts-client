@@ -25,7 +25,39 @@ BaasContact.Models.Contacts = (function () {
         return _updateContact(contact);
     };
 
+    var getContact = function(contactId, func) {
+        return BaasBox.loadObject(CONTACK_COLLECTION, contactId)
+            .done(function (res) {
+                var contact = res.data;
+                if (typeof func === "function") {
+                    func(contact);
+                }
+            })
+            .fail(function (res) {
+                $.notify("Getting contact [" + contactId + "] failed");
+            });
+    };
+
+    var updateContact = function (contact) {
+        return getContact(contact.Id, null)
+            .done(function(res) {
+                var oldContact = res.data;
+                $.print("# got contact");
+                $.print(contact);
+
+                contact = $.extend(oldContact, contact);
+
+                $.print("# before update contact");
+                $.print(oldContact);
+                $.print(contact);
+                return _updateContact(contact);
+            });
+    };
+
     return {
-        createContact: createContact
+        createContact: createContact,
+        createBlankContact: createBlankContact,
+        getContact: getContact,
+        updateContact: updateContact
     };
 } ());
