@@ -31,7 +31,7 @@ $(document).ready(function() {
 	registerUsersEvents();
 	registerPersonEvents();
     registerCollectionEvents();
-    registerRESTAPIaccessEvents();
+    registerAPIEvents();
     BaasContact.Views.Collections.initial();
     BaasContact.Views.Administrator.initial();
     
@@ -62,8 +62,8 @@ $(document).ready(function() {
             $("#collection").click();
         },800);*/
         setTimeout(function() {
-           $("#REST-API-access").click();
-        },800);
+           $("#API-settings").click();
+        },1500);
     }
     
     
@@ -144,6 +144,14 @@ BaasContact.Views.Modes = (function() {
 			leave: function() {
 				$("#REST-API-access-form").hide();
 			}
+        },
+        "APISettings":{
+            enter: function() {
+				$("#API-setting-form").show();
+			},
+			leave: function() {
+				$("#API-setting-form").hide();
+			}
         }
 	};
 
@@ -175,6 +183,10 @@ BaasContact.Views.Modes = (function() {
         this.gotoState("RESTAPIAccess");
     };
 
+    var goAPISettings = function() {
+        this.gotoState("APISettings");
+    };
+
 	return {
 		States: States,
 		goApp: goApp,
@@ -183,7 +195,8 @@ BaasContact.Views.Modes = (function() {
         goChangeUsername: goChangeUsername,
         goListUsers     : goListUsers,
         goCollections   : goCollections,
-        goRESTAPIAccess : goRESTAPIAccess
+        goRESTAPIAccess : goRESTAPIAccess,
+        goAPISettings   : goAPISettings
 	};
 })();
 $.makeStateMachine(BaasContact.Views.Modes);

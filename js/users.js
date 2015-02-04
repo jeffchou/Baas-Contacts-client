@@ -28,7 +28,8 @@ function registerSigninEvents() {
 	});
 }
 
-function registerRESTAPIaccessEvents(){
+
+function registerAPIEvents(){
     $("#REST-API-access").click(function() {
         BaasContact.Views.Modes.goRESTAPIAccess();
         BaasContact.Models.Administrator.listGroups();
@@ -44,6 +45,21 @@ function registerRESTAPIaccessEvents(){
     
     $("#Disable-EPG-btn").click(function() {
         BaasContact.Models.Administrator.disableAnEndpointGroup($("#specific-key").val());
+    });
+    
+    $("#API-settings, #fetch-all-settings-btn").click(function() {
+        BaasContact.Views.Modes.goAPISettings();
+        BaasContact.Models.Administrator.fetchCurrentSettings();
+    });
+
+    $("#fetch-section-of-settings-btn").click(function() {
+        BaasContact.Models.Administrator.fectchSectionOfSettings($("#section-name").val());
+    });
+    
+    $("#update-setting-btn").click(function() {
+        BaasContact.Models.Administrator.updateValueInSettings($("#section-name").val(), 
+                                                               $("#setting-field-key").val(), 
+                                                               $("#setting-field-value").val());
     });
 }
 
@@ -241,7 +257,8 @@ function registerUsersEvents() {
         BaasContact.Views.Modes.goApp();
     });
     
-    $("#change-password-form-cancel-btn, #change-username-form-cancel-btn, #exit-user-list-btn, #exit-collections-btn, #exit-REST-API-access-btn")
+    $("#change-password-form-cancel-btn, #change-username-form-cancel-btn, #exit-user-list-btn, #exit-collections-btn, #exit-REST-API-access-btn, \
+     #exit-API-settings-btn")
     .click(function() {
         BaasContact.Views.Modes.goApp();
     });
@@ -900,40 +917,82 @@ BaasContact.Models.Administrator = (function() {
             });
     };
     
+    var fetchCurrentSettings = function() {
+        BaasBoxEx.fetchCurrentSettings()
+            .done(function(res) {
+                BaasContact.Views.Administrator.showSettings(res.data);
+                $.print(res);
+            })
+            .fail(function(err) {
+                $.notify("fetchCurrentSettings fail  permission!!");
+            });             
+    };
+    
+    var fectchSectionOfSettings = function(sectionName) {
+        BaasBoxEx.fectchSectionOfSettings(sectionName)
+            .done(function(res) {
+                BaasContact.Views.Administrator.showSettings(res.data);
+                $.print(res);
+            })
+            .fail(function(err) {
+                $.notify("fetchCurrentSettings fail  permission!!");
+            });             
+    };
+    
+    var updateValueInSettings = function(sectionName, key, value) {
+        BaasBoxEx.updateValueInSettings(sectionName, key, value)
+            .done(function(res) {
+                fectchSectionOfSettings(sectionName);
+            })
+            .fail(function(err) {
+                $.notify("fetchCurrentSettings fail  permission!!");
+            }); 
+    };
     return {
         listGroups          : listGroups,
         readSpecificGroup   : readSpecificGroup,
         enableAnEndpointGroup  :  enableAnEndpointGroup,
-        disableAnEndpointGroup :  disableAnEndpointGroup
+        disableAnEndpointGroup :  disableAnEndpointGroup,
+        fetchCurrentSettings   :  fetchCurrentSettings,
+        fectchSectionOfSettings:  fectchSectionOfSettings,
+        updateValueInSettings  :  updateValueInSettings
         
     };
 }());
 
 BaasContact.Views.Administrator = (function() {
-    var jsEditor;
+    var jsEditorGroup,
+        jsEditorSettings;
     
     var initial = function() {
-        jsEditor = CodeMirror.fromTextArea($("#group-content")[0]);
+        jsEditorGroup = CodeMirror.fromTextArea($("#group-content")[0]);
+        jsEditorSettings = CodeMirror.fromTextArea($("#API-settings-content")[0]);
     };
     
     var showGroups = function(groups) {
-        jsEditor.setValue(JSON.stringify(groups));
-        $.beautify(jsEditor);
+        jsEditorGroup.setValue(JSON.stringify(groups));
+        $.beautify(jsEditorGroup);
     };
     
     var clearGroups = function() {
-        jsEditor.setValue("");
-         $.beautify(jsEditor);
+        jsEditorGroup.setValue("");
+        $.beautify(jsEditorGroup);
     };
     
     var showSpecificGroup = function(value) {
         $("#specific-value").val(value);
     };
     
+    var showSettings = function(settings) {
+        jsEditorSettings.setValue(JSON.stringify(settings));
+        $.beautify(jsEditorSettings);
+    };
+    
     return {
         initial     :   initial,
         showGroups  :   showGroups,
         clearGroups :   clearGroups,
-        showSpecificGroup : showSpecificGroup
+        showSpecificGroup : showSpecificGroup,
+        showSettings      : showSettings
     };
 }());

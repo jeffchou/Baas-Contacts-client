@@ -41,14 +41,17 @@ var BaasBoxEx = {};
     BaasBoxEx.fectchSectionOfSettings = function(section) {
         return $.ajax({
             method: "GET",
-             url: BaasBox.endPoint + "/admin/configuration/" + section
+            url: BaasBox.endPoint + "/admin/configuration/" + section
         });
     };
     
+    //updateValue need contentType, maybe source code have modified but document not yet
     BaasBoxEx.updateValueInSettings = function(section, key, value) {
         return $.ajax({
             method: "PUT",
-            url: BaasBox.endPoint + "/admin/configuration/" + section + "/" +key + "/" + value
+            url: BaasBox.endPoint + "/admin/configuration/" + section + "/" +key,
+            data: JSON.stringify({"value" : value}),
+            contentType: 'application/json'
         });
     };
     

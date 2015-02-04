@@ -46,6 +46,7 @@
                             <li><a href="#" id="change-username">Change user name</a></li>
 							<li><a href="#" id="collection">Collections</a></li>
                             <li><a href="#" id="REST-API-access">REST-API-access</a></li>
+                            <li><a href="#" id="API-settings">API-setting</a></li>
 						</ul>
 					</div>
 						
@@ -427,7 +428,23 @@
         <button type="button" class="btn btn-primary btn-sm" id="Disable-EPG-btn">Disable Endpoint Group</button>
     </div>
     <button type="button" class="btn btn-info btn-block" id="exit-REST-API-access-btn">Back</button>
+</div>
     
+<div class="container off" id="API-setting-form">
+	<div>
+		<h2><i class="fa fa-files-o fa-fw black"></i>API-Settings</h2>
+	</div>
+    <div><h2>API Setting information</h2></div>
+    <textarea id="API-settings-content" style="width: 470px; height: 107px;"></textarea>
+    <div>
+        Section:<input id="section-name"/>
+        <button type="button" class="btn btn-primary btn-sm" id="fetch-section-of-settings-btn">fetch section of settings</button>
+        <button type="button" class="btn btn-primary btn-sm" id="fetch-all-settings-btn">fetch all settings</button>
+        Key:<input id="setting-field-key"/>
+        Value:<input id="setting-field-value"/>
+        <button type="button" class="btn btn-primary btn-sm" id="update-setting-btn">update-setting</button>
+    </div>
+    <button type="button" class="btn btn-info btn-block" id="exit-API-settings-btn">Back</button>
 </div>
 
 
