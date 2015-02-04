@@ -26,7 +26,25 @@ function registerSigninEvents() {
 		BaasBox.logout();
 		logout();
 	});
-	
+}
+
+function registerRESTAPIaccessEvents(){
+    $("#REST-API-access").click(function() {
+        BaasContact.Views.Modes.goRESTAPIAccess();
+        BaasContact.Models.Administrator.listGroups();
+    });
+    
+    $("#read-specific-btn").click(function() {
+        BaasContact.Models.Administrator.readSpecificGroup($("#specific-key").val());
+    });
+    
+    $("#Enable-EPG-btn").click(function() {
+        BaasContact.Models.Administrator.enableAnEndpointGroup($("#specific-key").val());
+    });
+    
+    $("#Disable-EPG-btn").click(function() {
+        BaasContact.Models.Administrator.disableAnEndpointGroup($("#specific-key").val());
+    });
 }
 
 function registerCollectionEvents(){
@@ -223,7 +241,7 @@ function registerUsersEvents() {
         BaasContact.Views.Modes.goApp();
     });
     
-    $("#change-password-form-cancel-btn, #change-username-form-cancel-btn, #exit-user-list-btn, #exit-collections-btn")
+    $("#change-password-form-cancel-btn, #change-username-form-cancel-btn, #exit-user-list-btn, #exit-collections-btn, #exit-REST-API-access-btn")
     .click(function() {
         BaasContact.Views.Modes.goApp();
     });
@@ -732,6 +750,86 @@ BaasContact.Views.Collections = (function () {
     };
 }());
 
+BaasContact.Models.Administrator = (function() {
+    var listGroups = function() {
+        BaasBoxEx.listGroups()
+            .done(function(res) {
+                $.print(res);
+                BaasContact.Views.Administrator.showGroups(res.data);
+            })
+            .fail(function(err) {
+                BaasContact.Views.Administrator.clearGroups();
+                $.notify("listGroups fail  permission!!");
+		    });
+    };
+    
+    var readSpecificGroup = function(group) {
+        BaasBoxEx.readSpecificGroup(group)
+            .done(function(res) {
+                BaasContact.Views.Administrator.showSpecificGroup(res.data.enabled);
+            })
+            .fail(function(err) {
+                $.notify("readSpecificGroup fail  permission!!");
+            });
+    };
+    
+    var enableAnEndpointGroup = function(group) {
+        BaasBoxEx.enableAnEndpointGroup(group)
+            .done(function(res) {
+                listGroups();
+            })
+            .fail(function(err) {
+                 $.notify("enableAnEndpointGroup fail  permission!!");
+            });
+    };
+    
+    var disableAnEndpointGroup = function(group) {
+        BaasBoxEx.disableAnEndpointGroup(group)
+            .done(function(res) {
+                listGroups();
+            })
+            .fail(function(err) {
+                 $.notify("disableAnEndpointGroup fail  permission!!");
+            });
+    };
+    
+    return {
+        listGroups          : listGroups,
+        readSpecificGroup   : readSpecificGroup,
+        enableAnEndpointGroup  :  enableAnEndpointGroup,
+        disableAnEndpointGroup :  disableAnEndpointGroup
+        
+    };
+}());
+
+BaasContact.Views.Administrator = (function() {
+    var jsEditor;
+    
+    var initial = function() {
+        jsEditor = CodeMirror.fromTextArea($("#group-content")[0]);
+    };
+    
+    var showGroups = function(groups) {
+        jsEditor.setValue(JSON.stringify(groups));
+        $.beautify(jsEditor);
+    };
+    
+    var clearGroups = function() {
+        jsEditor.setValue("");
+         $.beautify(jsEditor);
+    };
+    
+    var showSpecificGroup = function(value) {
+        $("#specific-value").val(value);
+    };
+    
+    return {
+        initial     :   initial,
+        showGroups  :   showGroups,
+        clearGroups :   clearGroups,
+        showSpecificGroup : showSpecificGroup
+    };
+}());
 
 var bindContact = function(userInfo) {
     var me = BaasContact.Models.Person.getMySelf();

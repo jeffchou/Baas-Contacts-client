@@ -45,6 +45,7 @@
                             <li><a href="#" id="user-list">User list</a></li>
                             <li><a href="#" id="change-username">Change user name</a></li>
 							<li><a href="#" id="collection">Collections</a></li>
+                            <li><a href="#" id="REST-API-access">REST-API-access</a></li>
 						</ul>
 					</div>
 						
@@ -399,6 +400,27 @@
     </div>
     <button type="button" class="btn btn-info btn-block" id="exit-collections-btn">Back</button>
 </div>
+
+<div class="container off" id="REST-API-access-form">
+	<div>
+		<h2><i class="fa fa-files-o fa-fw black"></i>REST-API-Access</h2>
+	</div>
+    <div><h2>Groups content</h2></div>
+    <textarea id="group-content" style="width: 470px; height: 107px;"></textarea>
+    <div>
+        <Text>Group</Text>
+        <input id="specific-key"/>
+        <button type="button" class="btn btn-primary btn-sm" id="read-specific-btn">Read Specific Group</button>
+        <input id="specific-value"/>       
+    </div>
+    <div>
+        <button type="button" class="btn btn-primary btn-sm" id="Enable-EPG-btn">Enable Endpoint Group</button>
+        <button type="button" class="btn btn-primary btn-sm" id="Disable-EPG-btn">Disable Endpoint Group</button>
+    </div>
+    <button type="button" class="btn btn-info btn-block" id="exit-REST-API-access-btn">Back</button>
+    
+</div>
+
 
 <div class="container off" id="change-username-form">
     <div class="form-user" role="form">
