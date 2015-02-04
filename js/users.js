@@ -411,9 +411,6 @@ var registerPersonEvents = function() {
 
 		contact.Id = me.getContactId();
 
-		$.print(contact);
-
-		// save contact me
 		// todo: bad api, not consistence
 		Models.Person.updatePublicInfo(contact);
     });
@@ -447,6 +444,7 @@ BaasContact.Models.Person = (function () {
     };
     PersonPrototype.getPortrait = function() { return this.data.visibleByAnonymousUsers.portraitImg; };
     PersonPrototype.getContactId = function () { return this.data.visibleByAnonymousUsers.contactId; };
+	PersonPrototype.setContactId = function (contactId) { this.data.visibleByAnonymousUsers.contactId = contactId; };
     PersonPrototype.getName = function() { return this.data.visibleByTheUser.name; };
     PersonPrototype.setName = function(name) { this.data.visibleByTheUser.name = name; };
     PersonPrototype.getEmail = function() { return this.data.visibleByTheUser.email; };
@@ -484,7 +482,7 @@ BaasContact.Models.Person = (function () {
             };
             BaasContact.Models.Contacts.createContact(info)
                 .done(function(res) {
-                    publicInfo.contactId = res.id;
+					me.setContactId(res.id);
                     _updateMySelf();
                 })
                 .fail(function(error){

@@ -44,8 +44,8 @@ BaasContact.Models.Contacts = (function () {
                 var oldContact = res.data;
                 $.print("# got contact");
                 $.print(contact);
-                contact = $.extend(oldContact, contact);
 
+                contact = $.extend(oldContact, contact);
 
                 $.print("# before update contact");
                 $.print(oldContact);
