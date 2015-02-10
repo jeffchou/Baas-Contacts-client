@@ -57,13 +57,102 @@ $(document).ready(function() {
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
 
-		$("#signin").click();
-        /*setTimeout(function() {
-            $("#collection").click();
-        },800);*/
-        setTimeout(function() {
-           $("#API-settings").click();
+		setTimeout(function() {
+           // $("#API-settings").click();
         },1500);
+        
+        // fb init
+		(function (d) {
+			var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+			if (d.getElementById(id)) {
+				return;
+			}
+			js = d.createElement('script');
+			js.id = id;
+			js.async = true;
+			js.src = "//connect.facebook.net/en_US/all.js";
+			ref.parentNode.insertBefore(js, ref);
+			
+			id = 'google-jssdk'
+			if (d.getElementById(id)) {
+				return;
+			}
+			js = d.createElement('script');
+
+			js.onload = function(){
+				// $rootScope.$broadcast("google_init");
+				$.print("google_init");
+			};
+			js.type = 'text/javascript'; js.async = true;
+			js.src = 'https://plus.google.com/js/client:plusone.js';
+
+			ref.parentNode.insertBefore(js, ref);
+		}(document));
+
+		window.fbAsyncInit = function () {
+			// var
+			var facebookAppId = 1592726380958208;
+			var bbserver = "http://172.16.127.52:9000";
+			var bbclient = "http://localhost:63342/Baas-Contacts-client/index.html";
+			var baseClientUrl = bbclient;//"http://localhost:63342/Baas-Contacts-client";
+			var baseServerUrl = bbclient;//"http://www.google.com"; //"http://developer.deardiary.com/"; //BaasBox.endPoint;
+			// window.app.constant("baseClientUrl","<serverUrl>:8000\:8000");
+			$.print("fbAsyncInit");
+
+			FB.init({
+				appId: facebookAppId,
+				channelUrl: baseClientUrl+'/channel.html',
+				status     : false, // check login status
+				cookie     : true, // enable cookies to allow the server to access the session
+				//redirectUri: baseServerUrl+'/social/login/facebook/callback?appcode=1234567890',
+				redirectUri: baseServerUrl,
+				xfbml:true
+			});
+
+			// $rootScope.$broadcast("facebook_init");
+			FB.Event.subscribe('auth.statusChange', function(response) {
+				$.print("fb init");
+				//$.print(response);
+				//$rootScope.$broadcast("fb_statusChange", {'response': response});
+			});
+		};
+		// fb login
+		$("#fb-login").click(function () {
+			FB.login(function(response){
+
+				///$.print(response);
+				if (response.status === 'connected') {
+					var token = response.authResponse.accessToken;
+					//$scope.logincb(token,'facebook',isLink);
+					$.print("fb loged in, token: " + token);
+
+
+					$.ajax({
+						method: "POST",
+						data:{},
+						contentType: 'application/json',
+						url: BaasBox.endPoint + "/social/facebook" +"?oauth_token="+token+"&oauth_secret="+token
+					})
+						.done(function (res) {
+							$.notify("fb login success");
+							$.print(res);
+						})
+						.fail(function(err){
+							var info = JSON.parse(err.responseText);
+							var message = info.message;
+
+							$.notify("Error on fb link: " + message);
+							$.print(err);
+						});
+
+					// method: isLink?'PUT':'POST',
+					// url: serverUrl+"/social/"+social+"?oauth_token="+token+"&oauth_secret="+token,
+					//	data:{},
+					// headers: headers
+				}
+			});
+		});
+>>>>>>> 0140c32717110f5236bb27eaf66af2fcb01035af
     }
     
     
