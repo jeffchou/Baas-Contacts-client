@@ -152,7 +152,6 @@ $(document).ready(function() {
 				}
 			});
 		});
->>>>>>> 0140c32717110f5236bb27eaf66af2fcb01035af
     }
     
     
