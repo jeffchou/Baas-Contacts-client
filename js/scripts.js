@@ -57,10 +57,12 @@ $(document).ready(function() {
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
 
-		setTimeout(function() {
-           // $("#API-settings").click();
-        },1500);
-        
+		setTimeout(function () {
+			// $("#API-settings").click();
+		}, 1500);
+	}
+
+	if (DEBUG) {
         // fb init
 		(function (d) {
 			var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
@@ -117,7 +119,7 @@ $(document).ready(function() {
 			});
 		};
 		// fb login
-		$("#fb-login").click(function () {
+		$("#fb-login").tooltip().click(function () {
 			FB.login(function(response){
 
 				///$.print(response);
