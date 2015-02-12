@@ -58,6 +58,12 @@
             opts = {};
         output = js_beautify(source, opts);
         editor.setValue(output);
-    }
+    };
+    
+    $.jsBeautify = function (source) {
+        if (typeof source !== "string")
+            source = JSON.stringify(source);
+        return js_beautify(source, {});
+    };
 	// add more jQuery plugins
 } (jQuery, window));

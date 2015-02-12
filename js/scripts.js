@@ -32,6 +32,9 @@ $(document).ready(function() {
 	registerPersonEvents();
     registerCollectionEvents();
     registerAPIEvents();
+    
+    initializeSocialNetwork();
+    
     BaasContact.Views.Collections.initial();
     BaasContact.Views.Administrator.initial();
     
@@ -61,106 +64,6 @@ $(document).ready(function() {
 			// $("#API-settings").click();
 		}, 1500);
 	}
-
-    $("#fb-login").attr("disabled", true);
-	if (DEBUG) {
-        // fb init
-		(function (d) {
-			var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
-			if (d.getElementById(id)) {
-				return;
-			}
-			js = d.createElement('script');
-			js.id = id;
-			js.async = true;
-			js.src = "//connect.facebook.net/en_US/all.js";
-			ref.parentNode.insertBefore(js, ref);
-			
-			id = 'google-jssdk'
-			if (d.getElementById(id)) {
-				return;
-			}
-			js = d.createElement('script');
-
-			js.onload = function(){
-				// $rootScope.$broadcast("google_init");
-				$.print("google_init");
-			};
-			js.type = 'text/javascript'; js.async = true;
-			js.src = 'https://plus.google.com/js/client:plusone.js';
-
-			ref.parentNode.insertBefore(js, ref);
-            
-            $.notify("Downloading social SDK");
-		}(document));
-
-        
-		window.fbAsyncInit = function () {
-			// var      
-			var facebookAppId = 1592726380958208;
-            var googleAppId = "141524062056-89lomiij0kgkfbjv1gp7ovar0e49qlmh.apps.googleusercontent.com";
-            
-			var baseServerUrl = "http://172.16.127.52:9000\:9000";
-            var baseClientUrl = "http://172.16.127.52:8000\:8000";
-            
-            
-			$.print("# fbAsyncInit");
-            
-            $.notify("Initial Facebook SDK");
-            
-			FB.init({
-				appId: facebookAppId,
-				channelUrl: baseClientUrl+'/channel.html',
-				status     : false, // check login status
-				cookie     : true, // enable cookies to allow the server to access the session
-				redirectUri: baseServerUrl+'/social/login/facebook/callback?appcode=1234567890',
-                //redirectUri: baseServerUrl,
-				xfbml:true
-			});
-
-			// $rootScope.$broadcast("facebook_init");
-			FB.Event.subscribe('auth.statusChange', function(response) {
-				$.print(response);
-				//$.print(response);
-				//$rootScope.$broadcast("fb_statusChange", {'response': response});
-			});
-            
-            $("#fb-login").attr("disabled", false);
-		};
-        
-        // Login a User with a specified social network: Facebook
-		$("#fb-login").tooltip().click(function () {
-            $.notify("log in with facebook ...");
-			FB.login(function (response) {
-				if (response.status === 'connected') {
-					var token = response.authResponse.accessToken;
-					//$scope.logincb(token,'facebook',isLink);
-					$.print("fb loged in, token: " + token);
-                    
-					$.ajax({
-						method: "POST",
-						contentType: 'application/json',
-                        data: "{}",
-						url: BaasBox.endPoint + "/social/facebook" +"?oauth_token="+token+"&oauth_secret="+token
-					})
-                        .done(function (res) {
-                            $.notify("fb login success");
-                            BaasBox.handleLogin(res);
-                            loginSuccess(BaasBox.getCurrentUser());                        
-                        })
-                        .fail(function(err){
-                            var info = JSON.parse(err.responseText);
-                            var message = info.message;
-
-                            $.notify("Error on fb link: " + message);
-                            $.print(err);
-                        });
-				}
-			});
-		});
-    }
-    
-    
 });
 
 BaasContact.Views = {};
@@ -619,4 +522,179 @@ function registerContactsEvents() {
 	.on("mouseover", "div.row", function(e) {
 
 	});
+    
+}
+
+function initializeSocialNetwork() {
+    $("#fb-login").attr("disabled", true);
+	
+    // fb init
+    (function (d) {
+        var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+        if (d.getElementById(id)) {
+            return;
+        }
+        js = d.createElement('script');
+        js.id = id;
+        js.async = true;
+        js.src = "//connect.facebook.net/en_US/all.js";
+        ref.parentNode.insertBefore(js, ref);
+
+        id = 'google-jssdk'
+        if (d.getElementById(id)) {
+            return;
+        }
+        js = d.createElement('script');
+
+        js.onload = function(){
+            // $rootScope.$broadcast("google_init");
+            $.print("google_init");
+        };
+        js.type = 'text/javascript'; js.async = true;
+        js.src = 'https://plus.google.com/js/client:plusone.js';
+
+        ref.parentNode.insertBefore(js, ref);
+
+        $.notify("Downloading social SDK");
+    }(document));
+
+    
+    // global function for fb
+    window.fbAsyncInit = function () {
+        // var      
+        var facebookAppId = 1592726380958208;
+        var googleAppId = "141524062056-89lomiij0kgkfbjv1gp7ovar0e49qlmh.apps.googleusercontent.com";
+
+        var baseServerUrl = "http://172.16.127.52:9000\:9000";
+        var baseClientUrl = "http://172.16.127.52:8000\:8000";
+
+
+        $.print("# fbAsyncInit");
+
+        $.notify("Initial Facebook SDK");
+
+        FB.init({
+            appId: facebookAppId,
+            channelUrl: baseClientUrl+'/channel.html',
+            status     : false, // check login status
+            cookie     : true, // enable cookies to allow the server to access the session
+            redirectUri: baseServerUrl+'/social/login/facebook/callback?appcode=1234567890',
+            //redirectUri: baseServerUrl,
+            xfbml:true
+        });
+
+        // $rootScope.$broadcast("facebook_init");
+        FB.Event.subscribe('auth.statusChange', function(response) {
+            $.print(response);
+            //$.print(response);
+            //$rootScope.$broadcast("fb_statusChange", {'response': response});
+        });
+
+        $("#fb-login").attr("disabled", false);
+    };
+        
+    // Login a User with a specified social network: Facebook
+    $("#fb-login").tooltip().click(function () {
+        $.notify("log in with facebook ...");
+        FB.login(function (response) {
+            if (response.status === 'connected') {
+                var token = response.authResponse.accessToken;
+                //$scope.logincb(token,'facebook',isLink);
+                $.print("fb logged in, token: " + token);
+
+                BaasBoxEx.loginSocialNetwork("facebook", token)
+                    .done(function (res) {
+                        $.notify("fb login success");
+                        BaasBox.handleLogin(res);
+                        loginSuccess(BaasBox.getCurrentUser());                        
+                    })
+                    .fail(function(err){
+                        var info = JSON.parse(err.responseText);
+                        var message = info.message;
+
+                        $.notify("Error on fb link: " + message);
+                        $.print(err);
+                    });
+            }
+        });
+    });
+    
+    $("#link-facebook").click(function(){
+        $.notify("Linking with facebook ...");
+        FB.login(function (response) {
+            if (response.status === 'connected') {
+                var token = response.authResponse.accessToken;
+                //$scope.logincb(token,'facebook',isLink);
+                $.print("fb logged in, token: " + token);
+
+                BaasBoxEx.linkSocialNetwork("facebook", token)
+                    .done(function (res) {
+                        $.notify("facebook linked");
+                    })
+                    .fail(function(err){
+                        var info = JSON.parse(err.responseText);
+                        var message = info.message;
+
+                        $.notify("Error on fb link: " + message);
+                        $.print(err);
+                    });
+            }
+        });
+    });
+    
+    
+    var socialEditor = CodeMirror.fromTextArea($("#social-network-output")[0]);
+    $("#social-network").click(function() {
+        $('#social-network-form').modal({backdrop: "static"});
+        getSocialNetwork();
+    });
+    
+    var getSocialNetwork = function(){
+        BaasBoxEx.getSocialNetworkConnections()
+            .done(function (res) {
+                $.print(res);
+
+                if (res.result === "ok") {
+                    //socialEditor.setValue(JSON.stringify(res.data));
+                    //$.print(socialEditor.getValue());
+                    //$.beautify(socialEditor);
+                    socialEditor.setValue($.jsBeautify(res.data));
+                } else {
+                    $.notify("get SocialNetwork with some problem: ");
+                    socialEditor.setValue(JSON.stringify(res));
+                    $.beautify(socialEditor);
+                    //socialEditor.setValue($.jsBeautify(res));
+                }
+            })
+            .fail(function (res) {
+                if (res.status == 404) {
+                    $.notify("You don't have a link to any social network");
+                    socialEditor.setValue("You don't have a link to any social network");
+                } else {
+                    $.notify("get SocialNetwork with some error: ");
+                    socialEditor.setValue("");
+                }
+                $.print(res);
+            });
+    }
+    
+    $("#unlink-facebook").click(function(){
+        BaasBoxEx.unlinkSocialNetwork("facebook")
+            .done(function (res) {
+                $.print(res);
+                $.notify("unlinked facebook");
+                // getSocialNetwork();
+            })
+            .fail(function(err) {
+                socialEditor.setValue($.jsBeautify(err));
+                var errInfo = JSON.parse(err.responseText);
+                var errMsg = errInfo.message;
+                $.print(errMsg);
+                $.notify(errMsg);
+            });
+    });
+    
+    $("#refresh-social-network").click(function(){
+        getSocialNetwork();
+    });
 }
