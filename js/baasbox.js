@@ -84,6 +84,22 @@ var BaasBox = (function() {
       dfd.promise(promise)
       return dfd;
     }
+    
+    function handleLogin(res) {
+      var roles = [];
+      $(res.data.user.roles).each(function(idx, r) {
+          roles.push(r.name);
+      });
+      setCurrentUser({
+        "username": res.data.user.name,
+        "token": res.data['X-BB-SESSION'],
+        "roles": roles,
+        "visibleByAnonymousUsers": res.data["visibleByAnonymousUsers"],
+        "visibleByTheUser": res.data["visibleByTheUser"],
+        "visibleByFriends": res.data["visibleByFriends"],
+        "visibleByRegisteredUsers": res.data["visibleByRegisteredUsers"],
+      });
+    }
 
     return {
       appcode: "",
@@ -137,20 +153,8 @@ var BaasBox = (function() {
           appcode: BaasBox.appcode
         })
         .done(function(res) {
-          var roles = [];
-          $(res.data.user.roles).each(function(idx, r) {
-              roles.push(r.name);
-          });
-          setCurrentUser({
-            "username": res.data.user.name,
-            "token": res.data['X-BB-SESSION'],
-            "roles": roles,
-            "visibleByAnonymousUsers": res.data["visibleByAnonymousUsers"],
-            "visibleByTheUser": res.data["visibleByTheUser"],
-            "visibleByFriends": res.data["visibleByFriends"],
-            "visibleByRegisteredUsers": res.data["visibleByRegisteredUsers"],
-          });
-          deferred.resolve(getCurrentUser());
+            handleLogin(res);
+            deferred.resolve(getCurrentUser());
         })
         .fail(function(error) {
           deferred.reject(error);
@@ -198,19 +202,7 @@ var BaasBox = (function() {
           data: JSON.stringify(postData)
         })
           .done(function (res) {
-            var roles = [];
-            $(res.data.user.roles).each(function(idx, r) {
-              roles.push(r.name);
-            });
-            setCurrentUser({
-              "username": res.data.user.name,
-              "token": res.data['X-BB-SESSION'],
-              "roles": roles,
-              "visibleByAnonymousUsers": res.data["visibleByAnonymousUsers"],
-              "visibleByTheUser": res.data["visibleByTheUser"],
-              "visibleByFriends": res.data["visibleByFriends"],
-              "visibleByRegisteredUsers": res.data["visibleByRegisteredUsers"],
-            });
+            handleLogin(res);
             deferred.resolve(getCurrentUser());
           })
           .fail(function(error) {
@@ -222,6 +214,12 @@ var BaasBox = (function() {
       getCurrentUser: function() {
           return getCurrentUser();
       },
+        
+      setCurrentUser: function(user) {
+          return setCurrentUser(user);
+      },
+        
+      handleLogin : handleLogin,
 
       fetchCurrentUser: function () {
         return $.get(BaasBox.endPoint + '/me')
