@@ -82,5 +82,42 @@ var BaasBoxEx = {};
             url: BaasBox.endPoint + "/admin/endpoints/" + GroupName + "/enabled"
         });
     };
+    
+    BaasBoxEx.loginSocialNetwork = function (socialNetwork, token) {
+        return $.ajax({
+                    method: "POST",
+                    contentType: 'application/json',
+                    data: "{}",
+                    url: BaasBox.endPoint + "/social/" + socialNetwork +"?oauth_token="+token+"&oauth_secret="+token
+                });
+    };
+    
+    BaasBoxEx.linkSocialNetwork = function (socialNetwork, token) {
+        return $.ajax({
+                    method: "PUT",
+                    contentType: 'application/json',
+                    data: "{}",
+                    url: BaasBox.endPoint + "/social/" + socialNetwork +"?oauth_token="+token+"&oauth_secret="+token
+                });
+    };
+    
+    BaasBoxEx.unlinkSocialNetwork = function (socialNetwork) {
+        return $.ajax({
+            method: "DELETE",
+            url: BaasBox.endPoint + "/social/" + socialNetwork
+            //,
+            //contentType: 'application/json'
+        });
+    };
+    
+    BaasBoxEx.getSocialNetworkConnections = function() {
+        return $.ajax({
+            method: "GET",
+            url: BaasBox.endPoint + "/social"
+        });
+    };
+    
+    
+    
 	// add more BaasBox extensions
 } (BaasBoxEx, window));

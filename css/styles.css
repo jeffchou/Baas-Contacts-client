@@ -143,3 +143,10 @@ body {
 .list-users-right {
     float:right;
 }
+
+#account-name {
+    max-width: 100px;
+    word-wrap: break-word;
+    display: block;
+}
+}
