@@ -48,6 +48,7 @@
 	};
 
 	$.notify = function(msg) {
+        $.print("[Notify]: " + msg);
 		BaasContact.Views.Notify.show(msg);
 	};
     

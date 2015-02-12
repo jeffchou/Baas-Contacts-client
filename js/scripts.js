@@ -62,6 +62,7 @@ $(document).ready(function() {
 		}, 1500);
 	}
 
+    $("#fb-login").attr("disabled", true);
 	if (DEBUG) {
         // fb init
 		(function (d) {
@@ -89,12 +90,13 @@ $(document).ready(function() {
 			js.src = 'https://plus.google.com/js/client:plusone.js';
 
 			ref.parentNode.insertBefore(js, ref);
+            
+            $.notify("Downloading social SDK");
 		}(document));
 
+        
 		window.fbAsyncInit = function () {
-			// var
-            
-                        
+			// var      
 			var facebookAppId = 1592726380958208;
             var googleAppId = "141524062056-89lomiij0kgkfbjv1gp7ovar0e49qlmh.apps.googleusercontent.com";
             
@@ -103,7 +105,9 @@ $(document).ready(function() {
             
             
 			$.print("# fbAsyncInit");
-
+            
+            $.notify("Initial Facebook SDK");
+            
 			FB.init({
 				appId: facebookAppId,
 				channelUrl: baseClientUrl+'/channel.html',
@@ -116,14 +120,17 @@ $(document).ready(function() {
 
 			// $rootScope.$broadcast("facebook_init");
 			FB.Event.subscribe('auth.statusChange', function(response) {
-				$.print("fb init");
+				$.print(response);
 				//$.print(response);
 				//$rootScope.$broadcast("fb_statusChange", {'response': response});
 			});
+            
+            $("#fb-login").attr("disabled", false);
 		};
         
         // Login a User with a specified social network: Facebook
 		$("#fb-login").tooltip().click(function () {
+            $.notify("log in with facebook ...");
 			FB.login(function (response) {
 				if (response.status === 'connected') {
 					var token = response.authResponse.accessToken;
