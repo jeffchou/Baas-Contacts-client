@@ -13,6 +13,7 @@ $(document).ready(function() {
 	// initial BaasBox
 	// TODO: these should be decide in a config.
 	BaasBox.setEndPoint("http://172.16.127.52:9000");
+	//BaasBox.setEndPoint("http://localhost:9000");
 	BaasBox.appcode = "1234567890";
 	
 	// initialize account
@@ -32,6 +33,7 @@ $(document).ready(function() {
 	registerPersonEvents();
     registerCollectionEvents();
     registerAPIEvents();
+    registerAssetsEvents();
     
     initializeSocialNetwork();
     
@@ -59,9 +61,9 @@ $(document).ready(function() {
 	if (DEBUG && !user) {
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
-
+		//$("#signin").click();
 		setTimeout(function () {
-			// $("#API-settings").click();
+			//$("#API-settings").click();
 		}, 1500);
 	}
 });
@@ -769,5 +771,106 @@ function initializeSocialNetwork() {
                 $.print(errMsg);
                 $.notify(errMsg);
             });
+    });
+}
+
+function registerAssetsEvents() {
+	var assetsOutput = CodeMirror.fromTextArea($("#assets-output")[0]);
+
+	$('#assets-form').on('show.bs.modal', function () {
+        		setTimeout(function () {
+        			getAllAssets();
+        		}, 500);
+        	});
+
+    $("#assets").click(function() {
+        $('#assets-form').modal({backdrop: "static"});
+        	
+    });
+
+    $("#refresh-assets").click(function () {
+    	getAllAssets();
+    });
+
+    var getAllAssets = function() {
+    	$.get(BaasBox.endPoint + "/admin/asset")
+    		.done(function (res) {
+    			assetsOutput.setValue($.jsBeautify(res));
+    		})
+    		.fail(function(res){
+				$.notify(res);
+    		})
+    };
+
+    $("#fetch-asset").click(function() {
+    	var assetName = $("#assets-name").val();
+    	$.get(BaasBox.endPoint + "/asset/" + assetName)
+    		.done(function (res) {
+    			$.print(res);
+    			assetsOutput.setValue($.jsBeautify(res));
+    		})
+    		.fail(function(res){
+				$.notify(res);
+    		})
+    });
+
+    $("#delete-asset").click(function() {
+    	var assetName = $("#assets-name").val();
+    	$.ajax({
+    		url: BaasBox.endPoint + "/admin/asset/" + assetName,
+    		method: "DELETE"
+    	})
+    		.done(function (res) {
+    			assetsOutput.setValue($.jsBeautify(res));
+    		})
+    		.fail(function(res){
+				$.notify(res);
+    		})
+    });
+
+    var file;
+    $("#assets-file").on("change", function(e) {
+        var files = e.target.files;
+        if (files.length < 0) return;
+        file = files[0];
+    });
+
+    $("#add-asset").click(function() {
+		var name = $("#new-assets-name").val();
+		var meta = $("#assets-meta").val();
+		
+        var formData = new FormData();
+
+		if (!!file && !!file.name) {
+			$.notify("Uploading " + file.name + "...");
+			formData.append("file", file);
+        }
+        formData.append("name", name);
+        formData.append("meta", meta);
+
+		$.ajax({
+			type: "POST",
+			url: BaasBox.endPoint + "/admin/asset",
+			data: formData,
+			mimeType: "multipart/form-data",
+          	contentType: false,
+          	cache: false,
+          	processData:false     
+		})
+            .done(function(res) {
+          		$.print(res);
+
+      			if (res.result === "ok") {
+  					$.notify("Asset [" + res.data.name + "] is uploaded")
+
+      			} else {
+          			assetsOutput.setValue($.jsBeautify(res));
+      			}
+            })
+            .fail(function(err){
+            	err = JSON.parse(err.responseText);
+				$.notify(err.message);
+				assetsOutput.setValue(err);
+    		});
     });
 }
