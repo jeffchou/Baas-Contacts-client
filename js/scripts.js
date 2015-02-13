@@ -558,20 +558,15 @@ function initializeSocialNetwork() {
         $.notify("Downloading social SDK");
     }(document));
 
-    
+    var facebookAppId = 1592726380958208;
+    var googleAppId = "935727006819-m0te52af154qlfaqphelv6ts06g4pir5.apps.googleusercontent.com";
+
     // global function for fb
     window.fbAsyncInit = function () {
-        // var      
-        var facebookAppId = 1592726380958208;
-        var googleAppId = "141524062056-89lomiij0kgkfbjv1gp7ovar0e49qlmh.apps.googleusercontent.com";
-
         var baseServerUrl = "http://172.16.127.52:9000\:9000";
         var baseClientUrl = "http://172.16.127.52:8000\:8000";
 
-
-        $.print("# fbAsyncInit");
-
-        $.notify("Initial Facebook SDK");
+        $.notify("Initial Facebook SDK... ");
 
         FB.init({
             appId: facebookAppId,
@@ -604,9 +599,12 @@ function initializeSocialNetwork() {
 
                 BaasBoxEx.loginSocialNetwork("facebook", token)
                     .done(function (res) {
-                        $.notify("fb login success");
+                        $.notify("fb login success, 1 second");
                         BaasBox.handleLogin(res);
-                        loginSuccess(BaasBox.getCurrentUser());                        
+                    	setTimeout(function(){
+                        	loginSuccess(BaasBox.getCurrentUser());
+                        }, 1000);
+                        
                     })
                     .fail(function(err){
                         var info = JSON.parse(err.responseText);
@@ -696,5 +694,80 @@ function initializeSocialNetwork() {
     
     $("#refresh-social-network").click(function(){
         getSocialNetwork();
+    });
+
+    // Google..................................
+
+    $("#google-login").click(function() {
+    	gapi.auth.authorize({
+    		"client_id": googleAppId,
+			"scope":
+				[
+				"https://www.googleapis.com/auth/plus.login", "https://www.googleapis.com/auth/plus.me",
+				"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"
+				]
+			}, 
+			function(t) {
+				//$scope.logincb(t["access_token"],'google',isLink);
+				
+                var token = t.access_token;
+                $.print("Google logged in, token: " + token);
+
+                BaasBoxEx.loginSocialNetwork("google", token)
+                    .done(function (res) {
+                        $.notify("google login success");
+                        BaasBox.handleLogin(res);
+                        loginSuccess(BaasBox.getCurrentUser());                        
+                    })
+                    .fail(function(err){
+                        var info = JSON.parse(err.responseText);
+                        var message = info.message;
+
+                        $.notify("Error on google link: " + message);
+                        $.print(err);
+                    });
+			}
+		);
+    });
+
+	$("#link-google").click(function(){
+        gapi.auth.authorize({
+    		"client_id": googleAppId,
+			"scope":
+				[
+				"https://www.googleapis.com/auth/plus.login", "https://www.googleapis.com/auth/plus.me",
+				"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"
+				]
+			}, 
+			function(t) {
+				var token = t.access_token;
+                BaasBoxEx.linkSocialNetwork("google", token)
+                    .done(function (res) {
+                        $.notify("google linked");
+                    })
+                    .fail(function(err){
+                        var info = JSON.parse(err.responseText);
+                        var message = info.message;
+
+                        $.notify("Error on google link: " + message);
+                        $.print(err);
+                    });
+            }
+        );
+    });
+
+    $("#unlink-google").click(function(){
+        BaasBoxEx.unlinkSocialNetwork("google")
+            .done(function (res) {
+                $.print(res);
+                $.notify("unlinked google");
+            })
+            .fail(function(err) {
+                socialEditor.setValue($.jsBeautify(err));
+                var errInfo = JSON.parse(err.responseText);
+                var errMsg = errInfo.message;
+                $.print(errMsg);
+                $.notify(errMsg);
+            });
     });
 }

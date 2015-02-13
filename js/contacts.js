@@ -20,7 +20,11 @@ BaasContact.Models.Contacts = (function () {
         var contact = createBlankContact();
         contact.email = info.email;
         contact.name = info.name;
-        contact.employeeId = (new Date()).getTime();
+
+        var employeeId = (new Date()).getTime() - 1423700000000;
+        if (employeeId < 0) employeeId = (new Date()).getTime();
+        
+        contact.employeeId = employeeId;
 
         return _updateContact(contact);
     };
