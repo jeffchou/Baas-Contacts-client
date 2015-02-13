@@ -499,13 +499,15 @@ BaasContact.Models.Person = (function () {
                 } else {
                     $.notify("Login error");
                     $.print(data);
-                    logout();    
+                    logout();
+                    BaasBox.logout();
                 }
             })
             .fail(function(){
                 // an error of login
                 $.notify("Your login has expired");
                 logout();
+                BaasBox.logout();
             });
     };
 
@@ -612,6 +614,7 @@ BaasContact.Models.Person = (function () {
 BaasContact.Views.Person = (function () {
     var renderAccountName = function(name){
         $("#account-name").text(name);
+        $("#account-name").attr("title", name);
     };
 
     var showPortraitImg = function(imgId){

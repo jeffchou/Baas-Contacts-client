@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 
-	<title>Baas Contacts</title>
+	<title>Contacts</title>
 	<meta name="description" content="The Baas Contacts">
 	<meta name="author" content="rc3">
 
@@ -18,6 +18,25 @@
 	<link rel="stylesheet" href="css/styles-contacts.css">
     <link rel="stylesheet" href="css/codemirror.css">
 </head>
+
+
+<script>
+function signinCallback(authResult) {
+  if (authResult['access_token']) {
+    // Successfully authorized
+    // Hide the sign-in button now that the user is authorized, for example:
+    // document.getElementById('signinButton').setAttribute('style', 'display: none');
+      $.notify("Google sign in");
+  } else if (authResult['error']) {
+    // There was an error.
+    // Possible error codes:
+    //   "access_denied" - User denied access to your app
+    //   "immediate_failed" - Could not automatically log in the user
+    // console.log('There was an error: ' + authResult['error']);
+      $.notify("Google sign in Error !");
+  }
+}
+</script>
 
 <body>
 
@@ -45,8 +64,9 @@
                             <li><a href="#" id="user-list">User list</a></li>
                             <li><a href="#" id="change-username">Change user name</a></li>
 							<li><a href="#" id="collection">Collections</a></li>
-                            <li><a href="#" id="REST-API-access">REST-API-access</a></li>
-                            <li><a href="#" id="API-settings">API-setting</a></li>
+                            <li><a href="#" id="REST-API-access">REST API access</a></li>
+                            <li><a href="#" id="API-settings">API setting</a></li>
+                            <li><a href="#" id="social-network">Social network</a></li>
 						</ul>
 					</div>
 						
@@ -261,6 +281,31 @@
 			</div>
 		</div>
 	</div>
+    <div id="features">
+        <div class="modal fade" id="social-network-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="">Social Network</h4>
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="social-network-output" style="width: 300px; height: 600px;"></textarea>
+                        <button id="refresh-social-network">Refresh</button>
+                        <br />
+                        <button id="unlink-facebook">Unlink facebook</button>
+                        <button id="link-facebook">Link facebook</button>
+                        <br />
+                        <button id="unlink-google">Unlink Google</button>
+                        <button id="link-google">Link Google</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -309,8 +354,35 @@
 		</div>
 		<button class="btn btn-lg btn-info btn-block" id="signup-gate">Sign up</button>
 		<br />
-		test <button class="btn btn-facebook btn-primary btn-sm" href="#" id="fb-login" title="social login is testing" ><i class="icon-facebook"></i> Login with facebook </button>
+		<button class="btn btn-facebook btn-primary btn-sm" href="#" id="fb-login" title="faceboook login" ><i class="icon-facebook"></i> Login with facebook </button>
+		<button class="btn btn-google btn-danger btn-sm" href="#" id="google-login" title="google login is testing" ><i class="icon-google"></i> Login with Google </button>
+
 	</div>
+	
+	<!--
+	<span id="signinButton">
+      <span
+        class="g-signin"
+        data-callback="signinCallback"
+        data-clientid="141524062056-89lomiij0kgkfbjv1gp7ovar0e49qlmh.apps.googleusercontent.com"
+        data-cookiepolicy="single_host_origin"
+        data-requestvisibleactions="http://schemas.google.com/AddActivity"
+        data-scope="https://www.googleapis.com/auth/plus.login">
+      </span>
+    </span>
+	-->
+
+<!-- Place this asynchronous JavaScript just before your </body> tag -->
+    <script type="text/javascript">
+      (function() {
+	   return;/////////////////////
+       var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+       po.src = 'https://apis.google.com/js/client:plusone.js';
+       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+     })();
+    </script>
+	
+	
 </div>
 
 <div class="container off" id="signup-form">
@@ -459,6 +531,8 @@
         <button type="button" class="btn btn-lg btn-info btn-block" id="change-username-form-cancel-btn">cancel</button>
     </div>
 </div>>
+
+
 
 <script id="contact-tmpl" type="text/template">
 	<div class="row">
