@@ -607,7 +607,8 @@ BaasContact.Models.Person = (function () {
         getMySelf: getMySelf,
         updatePersonalPortrait: updatePersonalPortrait,
         Person: Person,
-		updatePublicInfo: updatePublicInfo
+		updatePublicInfo: updatePublicInfo,
+        uploadPublicFile: _uploadPublicFile
     };
 }());
 

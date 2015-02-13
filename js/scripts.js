@@ -12,8 +12,8 @@ $(document).ready(function() {
 	
 	// initial BaasBox
 	// TODO: these should be decide in a config.
-	BaasBox.setEndPoint("http://172.16.127.52:9000");
-	//BaasBox.setEndPoint("http://localhost:9000");
+	//BaasBox.setEndPoint("http://172.16.127.52:9000");
+	BaasBox.setEndPoint("http://localhost:9000");
 	BaasBox.appcode = "1234567890";
 	
 	// initialize account
@@ -34,6 +34,7 @@ $(document).ready(function() {
     registerCollectionEvents();
     registerAPIEvents();
     registerAssetsEvents();
+    registerPostEvents();
     
     initializeSocialNetwork();
     
@@ -61,7 +62,7 @@ $(document).ready(function() {
 	if (DEBUG && !user) {
 		$("#inputAccount").val("admin");
 		$("#inputPassword").val("admin");
-		//$("#signin").click();
+		$("#signin").click();
 		setTimeout(function () {
 			//$("#API-settings").click();
 		}, 1500);
@@ -200,6 +201,17 @@ BaasContact.Views.Modes = (function() {
 })();
 $.makeStateMachine(BaasContact.Views.Modes);
 
+BaasContact.Views.Posts = (function() {
+	var show = function(){
+		$("#main-feature>div").hide();
+		$("#post-panel").show();
+	};
+
+	return {
+		show: show
+	};
+})();
+
 BaasContact.Views.Contacts = (function() {
 	var show = function(){
 		$("#main-feature>div").hide();
@@ -226,11 +238,21 @@ $("#nav-contacts").click(function() {
 	BaasContact.Views.Contacts.show();
 	loadAllContacts();
     
+	var $this = $(this);
+	$this.parent().find("li").removeClass('active');
+	$this.addClass('active');
+});
+
+
+$("#nav-post").click(function() {
+	BaasContact.Views.Posts.show();
+	// loadAllPosts();
     
 	var $this = $(this);
 	$this.parent().find("li").removeClass('active');
 	$this.addClass('active');
 });
+
 //simon-change password start
 $("#change-password").click(function() {
     
@@ -874,3 +896,105 @@ function registerAssetsEvents() {
     		});
     });
 }
+
+
+var registerPostEvents = function () {
+	var file;
+    $("#post-file").on("change", function(e) {
+        var files = e.target.files;
+        if (files.length < 0) return;
+        file = files[0];
+    });
+
+    $("#post-it").click(function() {
+    	var formData = new FormData();
+    	formData.append("upload", file);
+
+    	var postContent = $("#new-post").val();
+
+    	var imgId;
+		BaasContact.Models.Person.uploadPublicFile(formData)
+            .done(function(res) {
+                var info = JSON.parse(res);
+                imgId = info.data.id;
+
+                var post = {
+            		"textContent": postContent
+            		//"imgId": imgId
+                };
+                
+                return BaasBox.save(post, "posts");
+            })
+            .done(function(res){
+            	res = JSON.parse(res);
+        		var post = res.data;
+
+            	return $.ajax({
+            		method : "POST", 
+            		url : BaasBox.endPoint + '/link/' + post.id + '/imgId/' + imgId
+            	});
+            })
+            .done(function(res){
+            	$("#new-post").val("");
+                $.notify("Your post uploaded");
+
+                $.print(res);
+            })
+            .fail(function(error){
+                var info = JSON.parse(error.responseText);
+                var message = info.message;
+
+                $.notify("Error on post. message: " + message);
+                $.print("-----------------");
+                $.print("error: ");
+                $.print(error);
+                $.print("info: ");
+                $.print(info);
+            });
+    });
+
+	var loadPost = function () {
+		$.print("loadPost");
+		BaasBox.loadCollection("posts")
+			.done(function(posts) {
+				$.print("post:");
+				$.print(posts);
+
+				renderPostList(posts);
+			})
+			.fail(function(err) {
+				alert("load contact failed");
+					$.print("load contact failed");
+					$.print(err);
+			});
+	}
+
+	$("#nav-post").click(loadPost);
+
+	var renderPostList = function (posts) {
+		$("#posts-list").empty();
+		var count = posts.length;
+		for (var i = 0; i < count; i++) {
+			var post = posts[i];
+
+			var $post = renderPost(post);
+			$post.prependTo('#posts-list');
+		}
+	};
+
+	var renderPost = function (post) {
+		var html = '<li><div>'
+			+ '<img title="image/png" alt="image/png" src="/file/' + post.imgId + '?X-BB-SESSION=' + BaasBox.getCurrentUser().token + '&amp;X-BAASBOX-APPCODE=undefined&amp;" />'
+			+ '<p>' + post.textContent + '</p>'
+			+ '<p>author: ' + post._author + '</p>'
+			+ '</li></div>';
+		
+		var $post = $(html);
+		 // todo: get it through Model or repository
+        BaasBox.fetchFile(post.imgId, true)
+            .done(function(){
+                $post.find("img").attr("src", this.url);
+            });
+        return $post;
+	};
+};
