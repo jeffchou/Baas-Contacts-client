@@ -67,6 +67,7 @@ function signinCallback(authResult) {
                             <li><a href="#" id="REST-API-access">REST API access</a></li>
                             <li><a href="#" id="API-settings">API setting</a></li>
                             <li><a href="#" id="social-network">Social network</a></li>
+                            <li><a href="#" id="assets">Assets</a></li>
 						</ul>
 					</div>
 						
@@ -298,6 +299,30 @@ function signinCallback(authResult) {
                         <br />
                         <button id="unlink-google">Unlink Google</button>
                         <button id="link-google">Link Google</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="assets-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="">Assets</h4>
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="assets-output" style="width: 300px; height: 600px;"></textarea>
+                        <button id="refresh-assets">Refresh</button>
+                        <br />
+                        <input id="assets-name" /><button id="fetch-asset">download</button><button id="delete-asset">delete</button>
+                        <br /><br />
+                    	Name: <input id="new-assets-name" />
+                    	Meta: <input id="assets-meta" />
+                    	<input id="assets-file" type="file" />
+                    	<button id="add-asset">Add</button>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
