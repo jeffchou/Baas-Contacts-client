@@ -861,27 +861,38 @@ function registerAssetsEvents() {
 		var name = $("#new-assets-name").val();
 		var meta = $("#assets-meta").val();
 		
-        var formData = new FormData();
-
-		if (!!file && !!file.name) {
-			$.notify("Uploading " + file.name + "...");
-			formData.append("file", file);
-        }
-        formData.append("name", name);
-        formData.append("meta", meta);
-
-		$.ajax({
+		var createAssetParam = {
 			type: "POST",
 			url: BaasBox.endPoint + "/admin/asset",
-			data: formData,
-			mimeType: "multipart/form-data",
-          	contentType: false,
-          	cache: false,
-          	processData:false     
-		})
+			cache: false
+		};
+
+        if (!!file && !!file.name) {
+			$.notify("Uploading " + file.name + "...");
+			var formData = new FormData();
+			formData.append("file", file);
+			formData.append("name", name);
+        	formData.append("meta", meta);
+
+        	createAssetParam.data = formData;
+			createAssetParam.mimeType = "multipart/form-data";
+			createAssetParam.processData = false;
+			createAssetParam.contentType = false;
+        }
+        else {
+        	createAssetParam.data = {
+        		file: null,
+        		name: name,
+        		meta: meta
+        	};
+        }
+        
+		$.ajax(createAssetParam)
             .done(function(res) {
           		$.print(res);
-
+      			if (typeof res === "string") {
+      				res = JSON.parse(res);
+      			}
       			if (res.result === "ok") {
   					$.notify("Asset [" + res.data.name + "] is uploaded")
 
@@ -890,9 +901,11 @@ function registerAssetsEvents() {
       			}
             })
             .fail(function(err){
-            	err = JSON.parse(err.responseText);
+            	if (!!err.responseText) {
+            		err = JSON.parse(err.responseText);
+            	}
 				$.notify(err.message);
-				assetsOutput.setValue(err);
+				assetsOutput.setValue(JSON.stringify(err));
     		});
     });
 }
