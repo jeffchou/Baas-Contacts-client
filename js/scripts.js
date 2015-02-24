@@ -798,12 +798,14 @@ function initializeSocialNetwork() {
 
 function registerAssetsEvents() {
 	var assetsOutput = CodeMirror.fromTextArea($("#assets-output")[0]);
+	assetsOutput.setSize(950, 300);
 
 	$('#assets-form').on('show.bs.modal', function () {
         		setTimeout(function () {
         			getAllAssets();
         		}, 500);
-        	});
+        	})
+	.find(".modal-dialog").css("width", 1000);
 
     $("#assets").click(function() {
         $('#assets-form').modal({backdrop: "static"});
@@ -826,13 +828,18 @@ function registerAssetsEvents() {
 
     $("#fetch-asset").click(function() {
     	var assetName = $("#assets-name").val();
+    	var link = BaasBox.endPoint + "/asset/" + assetName + "/download" + "?X-BAASBOX-APPCODE=" + BaasBox.appcode;
+		$("#asset-link").empty()
+			.append("<a href='" + link + "' target='_new'>" + link + "</a>");
+
     	$.get(BaasBox.endPoint + "/asset/" + assetName)
     		.done(function (res) {
-    			$.print(res);
-    			assetsOutput.setValue($.jsBeautify(res));
+    			//$.print(res);
+    			//assetsOutput.setValue($.jsBeautify(res));
+    			$.notify(assetName + "'s link is ready.");
     		})
     		.fail(function(res){
-				$.notify(res);
+				$.notify(assetName + " has no file, the link is not available. (MnHung)");
     		})
     });
 
@@ -843,10 +850,15 @@ function registerAssetsEvents() {
     		method: "DELETE"
     	})
     		.done(function (res) {
+    			$.notify(assetName + " deleted");
     			assetsOutput.setValue($.jsBeautify(res));
     		})
     		.fail(function(res){
-				$.notify(res);
+    			if (!!res.responseText) {
+            		res = JSON.parse(res.responseText);
+            	}
+				$.notify(res.message);
+				assetsOutput.setValue($.jsBeautify(res));
     		})
     });
 

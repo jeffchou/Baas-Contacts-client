@@ -321,17 +321,25 @@ function signinCallback(authResult) {
                         <h4 class="modal-title" id="">Assets</h4>
                     </div>
                     <div class="modal-body">
-                        <textarea id="assets-output" style="width: 300px; height: 600px;"></textarea>
-                        <button id="refresh-assets">Refresh</button>
-                        <br />
-                        <input id="assets-name" /><button id="fetch-asset">download</button><button id="delete-asset">delete</button>
-                        <br /><br />
-                    	Name: <input id="new-assets-name" />
-                    	Meta: <input id="assets-meta" />
-                    	<input id="assets-file" type="file" />
-                    	<button id="add-asset">Add</button>
+                    	<div class="left">
+	                        <textarea id="assets-output" style="width: 300px; height: 600px;"></textarea>
+	                    </div>
+	                    <div class="left">
+	                        <button id="refresh-assets">Refresh</button>
+	                        <br /><br />
+	                        Name: <input id="assets-name" /><button id="fetch-asset">Get link</button><button id="delete-asset">Delete asset</button>
+	                        <p id="asset-link"></p>
+	                        <br />
+	                    	Name: <input id="new-assets-name" />
+	                    	Meta: <input id="assets-meta" />
+	                    	<input id="assets-file" type="file" style="
+							    display: inline-block;
+							    width: 163px;
+							">
+	                    	<button id="add-asset">Add asset</button>
+                    	</div>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer" style="clear:both">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>
