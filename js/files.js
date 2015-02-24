@@ -1,6 +1,5 @@
-$.ready(function(){
+$(document).ready(function() {
 	// register | controller
-	return ;
 	var filesOutput = CodeMirror.fromTextArea($("#files-output")[0]);
 	//filesOutput.setSize(950, 300);
 
