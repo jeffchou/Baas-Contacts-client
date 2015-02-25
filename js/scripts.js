@@ -35,6 +35,7 @@ $(document).ready(function() {
     registerAPIEvents();
     registerAssetsEvents();
     registerPostEvents();
+    registerLinksEvents();
     
     initializeSocialNetwork();
     
@@ -1087,4 +1088,56 @@ var registerPostEvents = function () {
 		}
 		return $post;
 	};
+};
+
+var registerLinksEvents = function () {
+	// register | controller
+	var linksOutput = CodeMirror.fromTextArea($("#links-output")[0]);
+
+	$('#links-form').on('show.bs.modal', function () {
+        		setTimeout(function () {
+        			getLinks();
+        		}, 500);
+        	})
+	.find(".modal-dialog").css("width", 800).css("height", 700);
+
+    $("#my-links").click(function() {
+        $('#links-form').modal({backdrop: "static"});
+        	
+    });
+
+    $("#fetch-links").click(function () {
+    	getLinks();
+    });
+
+    var getLinks = function() {
+    	$.ajax({
+				method:"get",
+				url : BaasBox.endPoint + '/link'
+			})
+    		.done(function (res) {
+                $.print(res);
+    			linksOutput.setValue($.jsBeautify(res));
+    		})
+    		.fail(function(res){
+				$.notify(res);
+    		});
+    };
+
+    $("#delete-link").click(function () {
+        var linkId = $("#link-id").val();
+
+        $.ajax({
+				method:"DELETE",
+				url : BaasBox.endPoint + '/link/' + linkId
+			})
+            .done(function(res){
+                $.notify("deleted");
+                $.print(res);
+            })
+            .fail(function (res) {
+                $.notify("error on delete");
+                $.print(res);
+            })
+    });
 };
