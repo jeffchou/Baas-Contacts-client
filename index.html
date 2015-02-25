@@ -58,11 +58,13 @@ function signinCallback(authResult) {
 							<span class="sr-only">Toggle Dropdown</span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li class="divider"></li>
 							<li><a href="#" id="signout">Sign out</a></li>
 							<li><a href="#" id="change-password">Change password</a></li>
-                            <li><a href="#" id="user-list">User list</a></li>
                             <li><a href="#" id="change-username">Change user name</a></li>
+                            <li><a href="#" id="my-files">My files</a></li>
+                            <li><a href="#" id="my-links">Links</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#" id="user-list">User list</a></li>
 							<li><a href="#" id="collection">Collections</a></li>
                             <li><a href="#" id="REST-API-access">REST API access</a></li>
                             <li><a href="#" id="API-settings">API setting</a></li>
@@ -136,7 +138,17 @@ function signinCallback(authResult) {
 				</div>
 			</div>
 			<div id="post-panel" class="well">
-				to be post
+				<div class="well">
+					<textarea id="new-post" title="Write something" style="width: 480px; height: 100px;"
+						placeholder="Write something"></textarea>
+					<div>
+						<input id="post-file" type="file" />
+						<span id="post-file-message"></span><button id="clear-file">Clear file</button>
+					</div>
+					<button id="post-it">Post it</button>
+				</div>
+				<ul id="posts-list">
+				</ul>
 			</div>
 			<div id="contacts-panel" class="well">
 				<div class="navbar-form">
@@ -314,15 +326,79 @@ function signinCallback(authResult) {
                         <h4 class="modal-title" id="">Assets</h4>
                     </div>
                     <div class="modal-body">
-                        <textarea id="assets-output" style="width: 300px; height: 600px;"></textarea>
-                        <button id="refresh-assets">Refresh</button>
-                        <br />
-                        <input id="assets-name" /><button id="fetch-asset">download</button><button id="delete-asset">delete</button>
-                        <br /><br />
-                    	Name: <input id="new-assets-name" />
-                    	Meta: <input id="assets-meta" />
-                    	<input id="assets-file" type="file" />
-                    	<button id="add-asset">Add</button>
+                    	<div class="left">
+	                        <textarea id="assets-output" style="width: 300px; height: 600px;"></textarea>
+	                    </div>
+	                    <div class="left">
+	                        <button id="refresh-assets">Refresh</button>
+	                        <br /><br />
+	                        Name: <input id="assets-name" /><button id="fetch-asset">Get link</button><button id="delete-asset">Delete asset</button>
+	                        <p id="asset-link"></p>
+	                        <br />
+	                    	Name: <input id="new-assets-name" />
+	                    	Meta: <input id="assets-meta" />
+	                    	<input id="assets-file" type="file" style="
+							    display: inline-block;
+							    width: 163px;
+							">
+	                    	<button id="add-asset">Add asset</button>
+                    	</div>
+                    </div>
+                    <div class="modal-footer" style="clear:both">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="files-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                        	<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                        </button>
+                        <h4 class="modal-title" id="">My Files</h4>
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="files-output" style="width: 300px; height: 600px;"></textarea>
+                        <button id="fetch-files">Get all</button>
+                        <p>
+                    		Id: <input id="file-id"/> <button id="fetch-one-file">Get one</button>
+            				<br />
+                    		<button type="button" class="btn btn-primary btn-sm" id="grant-file"> Grant </button> |
+					        <button type="button" class="btn btn-primary btn-sm" id="revoke-file"> Revoke </button>
+                    		Permission <input id="file-ac-permission" value="read" />
+                    		on 
+					        <input type="radio" name="permissions-on" value="role" checked="checked"> role </input> |
+					        <input type="radio" name="permissions-on" value="user"> user </input>
+					        <input id="file-ac-target" value="ANONYMOUS" />
+					    	
+					        <br />
+				        	<button type="button" class="btn btn-primary btn-sm" id="delete-file"> Delete it</button>
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="links-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                        	<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                        </button>
+                        <h4 class="modal-title" id="">Links</h4>
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="links-output" style="width: 300px; height: 600px;"></textarea>
+                        <button id="fetch-links">refresh</button>
+                        <p>
+                    		Id: <input id="link-id"/>
+				        	<button type="button" class="btn btn-primary btn-sm" id="delete-link"> Delete it</button>
+                        </p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -656,17 +732,18 @@ function signinCallback(authResult) {
 <script src="js/baasbox.js"></script>
 <script src="js/extends.baasbox.js"></script>
 <script src="js/extends.jquery.js"></script>
+
 <script src="js/scripts.js"></script>
 <script src="js/users.js"></script>
 <script src="js/profile.js"></script>
 <script src="js/contacts.js"></script>
+<script src="js/files.js"></script>
 <script src="js/debug.js"></script>
 
 <script src="js/libs/codemirror/lib/codemirror.js"></script>
 <script src="js/libs/codemirror/mode/javascript/javascript.js"></script>
 <script src="js/libs/beautify.js"></script>
 <script src="js/import.js"></script>
-
 
 </body>
 </html>

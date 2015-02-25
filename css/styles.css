@@ -22,6 +22,16 @@ body {
 	display: none;
 }
 
+div.left{
+	float: left;
+}
+div.right{
+	float: right;
+}
+div.clear{
+	clear: both;
+}
+
 .form-user {
 	max-width: 350px;
 	padding: 15px;
@@ -149,4 +159,15 @@ body {
     word-wrap: break-word;
     display: block;
 }
+
+#assets-form {
+
+}
+
+#posts-list {
+	width: 800px;
+}
+
+#posts-list li {
+	margin: 1em;
 }

@@ -12,8 +12,8 @@ $(document).ready(function() {
 	
 	// initial BaasBox
 	// TODO: these should be decide in a config.
-	BaasBox.setEndPoint("http://172.16.127.52:9000");
-	//BaasBox.setEndPoint("http://localhost:9000");
+	//BaasBox.setEndPoint("http://172.16.127.52:9000");
+	BaasBox.setEndPoint("http://localhost:9000");
 	BaasBox.appcode = "1234567890";
 	
 	// initialize account
@@ -34,6 +34,8 @@ $(document).ready(function() {
     registerCollectionEvents();
     registerAPIEvents();
     registerAssetsEvents();
+    registerPostEvents();
+    registerLinksEvents();
     
     initializeSocialNetwork();
     
@@ -59,9 +61,9 @@ $(document).ready(function() {
 	}
 
 	if (DEBUG && !user) {
-		$("#inputAccount").val("admin");
-		$("#inputPassword").val("admin");
-		//$("#signin").click();
+		$("#inputAccount").val("mnhung2");
+		$("#inputPassword").val("1234");
+		$("#signin").click();
 		setTimeout(function () {
 			//$("#API-settings").click();
 		}, 1500);
@@ -200,6 +202,17 @@ BaasContact.Views.Modes = (function() {
 })();
 $.makeStateMachine(BaasContact.Views.Modes);
 
+BaasContact.Views.Posts = (function() {
+	var show = function(){
+		$("#main-feature>div").hide();
+		$("#post-panel").show();
+	};
+
+	return {
+		show: show
+	};
+})();
+
 BaasContact.Views.Contacts = (function() {
 	var show = function(){
 		$("#main-feature>div").hide();
@@ -226,11 +239,21 @@ $("#nav-contacts").click(function() {
 	BaasContact.Views.Contacts.show();
 	loadAllContacts();
     
+	var $this = $(this);
+	$this.parent().find("li").removeClass('active');
+	$this.addClass('active');
+});
+
+
+$("#nav-post").click(function() {
+	BaasContact.Views.Posts.show();
+	// loadAllPosts();
     
 	var $this = $(this);
 	$this.parent().find("li").removeClass('active');
 	$this.addClass('active');
 });
+
 //simon-change password start
 $("#change-password").click(function() {
     
@@ -776,12 +799,14 @@ function initializeSocialNetwork() {
 
 function registerAssetsEvents() {
 	var assetsOutput = CodeMirror.fromTextArea($("#assets-output")[0]);
+	assetsOutput.setSize(950, 300);
 
 	$('#assets-form').on('show.bs.modal', function () {
         		setTimeout(function () {
         			getAllAssets();
         		}, 500);
-        	});
+        	})
+	.find(".modal-dialog").css("width", 1000);
 
     $("#assets").click(function() {
         $('#assets-form').modal({backdrop: "static"});
@@ -804,13 +829,18 @@ function registerAssetsEvents() {
 
     $("#fetch-asset").click(function() {
     	var assetName = $("#assets-name").val();
+    	var link = BaasBox.endPoint + "/asset/" + assetName + "/download" + "?X-BAASBOX-APPCODE=" + BaasBox.appcode;
+		$("#asset-link").empty()
+			.append("<a href='" + link + "' target='_new'>" + link + "</a>");
+
     	$.get(BaasBox.endPoint + "/asset/" + assetName)
     		.done(function (res) {
-    			$.print(res);
-    			assetsOutput.setValue($.jsBeautify(res));
+    			//$.print(res);
+    			//assetsOutput.setValue($.jsBeautify(res));
+    			$.notify(assetName + "'s link is ready.");
     		})
     		.fail(function(res){
-				$.notify(res);
+				$.notify(assetName + " has no file, the link is not available. (MnHung)");
     		})
     });
 
@@ -821,10 +851,15 @@ function registerAssetsEvents() {
     		method: "DELETE"
     	})
     		.done(function (res) {
+    			$.notify(assetName + " deleted");
     			assetsOutput.setValue($.jsBeautify(res));
     		})
     		.fail(function(res){
-				$.notify(res);
+    			if (!!res.responseText) {
+            		res = JSON.parse(res.responseText);
+            	}
+				$.notify(res.message);
+				assetsOutput.setValue($.jsBeautify(res));
     		})
     });
 
@@ -839,27 +874,38 @@ function registerAssetsEvents() {
 		var name = $("#new-assets-name").val();
 		var meta = $("#assets-meta").val();
 		
-        var formData = new FormData();
-
-		if (!!file && !!file.name) {
-			$.notify("Uploading " + file.name + "...");
-			formData.append("file", file);
-        }
-        formData.append("name", name);
-        formData.append("meta", meta);
-
-		$.ajax({
+		var createAssetParam = {
 			type: "POST",
 			url: BaasBox.endPoint + "/admin/asset",
-			data: formData,
-			mimeType: "multipart/form-data",
-          	contentType: false,
-          	cache: false,
-          	processData:false     
-		})
+			cache: false
+		};
+
+        if (!!file && !!file.name) {
+			$.notify("Uploading " + file.name + "...");
+			var formData = new FormData();
+			formData.append("file", file);
+			formData.append("name", name);
+        	formData.append("meta", meta);
+
+        	createAssetParam.data = formData;
+			createAssetParam.mimeType = "multipart/form-data";
+			createAssetParam.processData = false;
+			createAssetParam.contentType = false;
+        }
+        else {
+        	createAssetParam.data = {
+        		file: null,
+        		name: name,
+        		meta: meta
+        	};
+        }
+        
+		$.ajax(createAssetParam)
             .done(function(res) {
           		$.print(res);
-
+      			if (typeof res === "string") {
+      				res = JSON.parse(res);
+      			}
       			if (res.result === "ok") {
   					$.notify("Asset [" + res.data.name + "] is uploaded")
 
@@ -868,9 +914,230 @@ function registerAssetsEvents() {
       			}
             })
             .fail(function(err){
-            	err = JSON.parse(err.responseText);
+            	if (!!err.responseText) {
+            		err = JSON.parse(err.responseText);
+            	}
 				$.notify(err.message);
-				assetsOutput.setValue(err);
+				assetsOutput.setValue(JSON.stringify(err));
     		});
     });
 }
+
+
+var registerPostEvents = function () {
+	$("#clear-file").hide().click(function(){
+		$("#post-file").val("");
+		$("#clear-file").hide();
+	});
+
+	var clearPost = function () {
+		$("#new-post").val("");
+		$("#post-file").val("");
+		$("#post-file-message").data({});
+	};
+
+    $("#post-file").css("display", "inline").on("change", function(e) {
+        var files = e.target.files;
+        if (files.length < 0) return;
+
+        var $fileMessage = $("#post-file-message");
+        $fileMessage.data({});
+
+        var file = files[0];
+
+        var formData = new FormData();
+    	formData.append("upload", file);
+    	
+    	var fileName = file.name;
+
+    	$("#post-file-message").fadeIn().text("Uploading [" + fileName + "]...");
+		$("#clear-file").fadeIn();
+
+    	BaasContact.Models.Person.uploadPublicFile(formData)
+	    	.done(function(res) {
+                var info = JSON.parse(res);
+                var imgId = info.data.id;
+
+                $fileMessage.data("imgId", imgId);
+
+                $("#post-file-message").text("[" + fileName + "] is ready");
+            })
+            .fail(function(error) {
+        		$.notify("# Error when uploading file, go check console");
+        		$.print(error);
+            });
+    });
+
+    $("#post-it").click(function() {
+    	var post = {
+    		textContent : $("#new-post").val()
+		};
+
+		if (post.textContent.length <= 0) return;
+
+    	var imgId = $("#post-file-message").data("imgId");
+
+    	if (!!imgId) {
+			BaasBox.save(post, "posts")
+	            .done(function(res){
+	        		post = res;
+
+	            	return $.ajax({
+	            		method : "POST", 
+	            		url : BaasBox.endPoint + '/link/' + post.id + '/img/' + imgId
+	            	})
+	            	.done(function (linkRes) {
+		            	$.print('link created');
+		            	$.print(linkRes);
+		            	post.link = linkRes.data.id;
+
+		            	BaasBox.save(post, "posts")
+		            		.done(function () {
+								clearPost();
+								loadPost();
+							});
+		            })
+					.fail(function(error) {
+						$.notify("Error on post with link");
+						$.print(error);
+					});
+	            })
+				.fail(function(error) {
+					$.notify("Error on post with link");
+					$.print(error);
+				});
+    	} else {
+			BaasBox.save(post, "posts")
+				.done(function () {
+					clearPost();
+					loadPost();
+				})
+				.fail(function(error) {
+					$.notify("Error on post");
+					$.print(error);
+				});
+    	}
+    });
+
+	var loadPost = function () {
+		$.print("loadPost");
+
+		BaasBox.loadCollection("posts")
+			.done(function(posts) {
+				$.print("post:");
+				$.print(posts);
+				renderPostList(posts);
+			})
+			.fail(function(err) {
+				alert("load contact failed");
+					$.print("load contact failed");
+					$.print(err);
+			});
+	}
+
+	$("#nav-post").click(loadPost);
+
+	var renderPostList = function (posts) {
+		$("#posts-list").empty();
+		var count = posts.length;
+		for (var i = 0; i < count; i++) {
+			var post = posts[i];
+
+			var $post = renderPost(post);
+			$post.prependTo('#posts-list');
+		}
+	};
+
+	var renderPost = function (post) {
+		var html = '<li><div>'
+			+ '<div><img /></div>'
+			+ '<div class="left">' + post.textContent + '</div>'
+			+ '<div class="right">author: ' + post._author + '</div>'
+			+ '<div class="clear"></div>'
+			+ '</li></div>';
+
+		var $post = $(html);
+
+		if (!!post.link) {
+
+			// get the link
+			$.ajax({
+				method:"get",
+				url : BaasBox.endPoint + '/link' + '?where=id+like+' + encodeURIComponent("\'%" + post.link + "%\'") + ""
+			})
+			.done(function (res) {
+				if (res.data.length > 0) {
+					var link = res.data[0];
+					$.print(link);
+
+					// get the image id from link
+					var imgId = link.in.id;
+
+					$.get(BaasBox.endPoint + '/file/details/' + imgId)
+			            .done(function (res) {
+			                $.print(res);
+			                var imgInfo = res.data;
+
+			                $post.find("img")
+			                	.attr("alt", imgInfo.fileName)
+			                	.attr("title", imgInfo.fileName)
+			                	.attr("src", BaasBox.endPoint + '/file/' + imgInfo.id + '?X-BB-SESSION=' + BaasBox.getCurrentUser().token + '&amp;X-BAASBOX-APPCODE=undefined&amp;');
+			            });
+				}
+			})
+		}
+		return $post;
+	};
+};
+
+var registerLinksEvents = function () {
+	// register | controller
+	var linksOutput = CodeMirror.fromTextArea($("#links-output")[0]);
+
+	$('#links-form').on('show.bs.modal', function () {
+        		setTimeout(function () {
+        			getLinks();
+        		}, 500);
+        	})
+	.find(".modal-dialog").css("width", 800).css("height", 700);
+
+    $("#my-links").click(function() {
+        $('#links-form').modal({backdrop: "static"});
+        	
+    });
+
+    $("#fetch-links").click(function () {
+    	getLinks();
+    });
+
+    var getLinks = function() {
+    	$.ajax({
+				method:"get",
+				url : BaasBox.endPoint + '/link'
+			})
+    		.done(function (res) {
+                $.print(res);
+    			linksOutput.setValue($.jsBeautify(res));
+    		})
+    		.fail(function(res){
+				$.notify(res);
+    		});
+    };
+
+    $("#delete-link").click(function () {
+        var linkId = $("#link-id").val();
+
+        $.ajax({
+				method:"DELETE",
+				url : BaasBox.endPoint + '/link/' + linkId
+			})
+            .done(function(res){
+                $.notify("deleted");
+                $.print(res);
+            })
+            .fail(function (res) {
+                $.notify("error on delete");
+                $.print(res);
+            })
+    });
+};
