@@ -138,9 +138,12 @@ function signinCallback(authResult) {
 			</div>
 			<div id="post-panel" class="well">
 				<div class="well">
-					<textarea id="new-post" title="Write something" style="width: 420px; height: 100px;"
+					<textarea id="new-post" title="Write something" style="width: 480px; height: 100px;"
 						placeholder="Write something"></textarea>
-					<input id="post-file" type="file" />
+					<div>
+						<input id="post-file" type="file" />
+						<span id="post-file-message"></span><button id="clear-file">Clear file</button>
+					</div>
 					<button id="post-it">Post it</button>
 				</div>
 				<ul id="posts-list">

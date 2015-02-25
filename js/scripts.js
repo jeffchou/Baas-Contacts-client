@@ -60,8 +60,8 @@ $(document).ready(function() {
 	}
 
 	if (DEBUG && !user) {
-		$("#inputAccount").val("admin");
-		$("#inputPassword").val("admin");
+		$("#inputAccount").val("mnhung2");
+		$("#inputPassword").val("1234");
 		$("#signin").click();
 		setTimeout(function () {
 			//$("#API-settings").click();
@@ -924,67 +924,107 @@ function registerAssetsEvents() {
 
 
 var registerPostEvents = function () {
-	var file;
-    $("#post-file").on("change", function(e) {
+	$("#clear-file").hide().click(function(){
+		$("#post-file").val("");
+		$("#clear-file").hide();
+	});
+
+	var clearPost = function () {
+		$("#new-post").val("");
+		$("#post-file").val("");
+		$("#post-file-message").data({});
+	};
+
+    $("#post-file").css("display", "inline").on("change", function(e) {
         var files = e.target.files;
         if (files.length < 0) return;
-        file = files[0];
+
+        var $fileMessage = $("#post-file-message");
+        $fileMessage.data({});
+
+        var file = files[0];
+
+        var formData = new FormData();
+    	formData.append("upload", file);
+    	
+    	var fileName = file.name;
+
+    	$("#post-file-message").fadeIn().text("Uploading [" + fileName + "]...");
+		$("#clear-file").fadeIn();
+
+    	BaasContact.Models.Person.uploadPublicFile(formData)
+	    	.done(function(res) {
+                var info = JSON.parse(res);
+                var imgId = info.data.id;
+
+                $fileMessage.data("imgId", imgId);
+
+                $("#post-file-message").text("[" + fileName + "] is ready");
+            })
+            .fail(function(error) {
+        		$.notify("# Error when uploading file, go check console");
+        		$.print(error);
+            });
     });
 
     $("#post-it").click(function() {
-    	var formData = new FormData();
-    	formData.append("upload", file);
+    	var post = {
+    		textContent : $("#new-post").val()
+		};
 
-    	var postContent = $("#new-post").val();
+		if (post.textContent.length <= 0) return;
 
-    	var imgId;
-		BaasContact.Models.Person.uploadPublicFile(formData)
-            .done(function(res) {
-                var info = JSON.parse(res);
-                imgId = info.data.id;
+    	var imgId = $("#post-file-message").data("imgId");
 
-                var post = {
-            		"textContent": postContent
-            		//"imgId": imgId
-                };
-                
-                return BaasBox.save(post, "posts");
-            })
-            .done(function(res){
-            	res = JSON.parse(res);
-        		var post = res.data;
+    	if (!!imgId) {
+			BaasBox.save(post, "posts")
+	            .done(function(res){
+	        		post = res;
 
-            	return $.ajax({
-            		method : "POST", 
-            		url : BaasBox.endPoint + '/link/' + post.id + '/imgId/' + imgId
-            	});
-            })
-            .done(function(res){
-            	$("#new-post").val("");
-                $.notify("Your post uploaded");
+	            	return $.ajax({
+	            		method : "POST", 
+	            		url : BaasBox.endPoint + '/link/' + post.id + '/img/' + imgId
+	            	})
+	            	.done(function (linkRes) {
+		            	$.print('link created');
+		            	$.print(linkRes);
+		            	post.link = linkRes.data.id;
 
-                $.print(res);
-            })
-            .fail(function(error){
-                var info = JSON.parse(error.responseText);
-                var message = info.message;
-
-                $.notify("Error on post. message: " + message);
-                $.print("-----------------");
-                $.print("error: ");
-                $.print(error);
-                $.print("info: ");
-                $.print(info);
-            });
+		            	BaasBox.save(post, "posts")
+		            		.done(function () {
+								clearPost();
+								loadPost();
+							});
+		            })
+					.fail(function(error) {
+						$.notify("Error on post with link");
+						$.print(error);
+					});
+	            })
+				.fail(function(error) {
+					$.notify("Error on post with link");
+					$.print(error);
+				});
+    	} else {
+			BaasBox.save(post, "posts")
+				.done(function () {
+					clearPost();
+					loadPost();
+				})
+				.fail(function(error) {
+					$.notify("Error on post");
+					$.print(error);
+				});
+    	}
     });
 
 	var loadPost = function () {
 		$.print("loadPost");
+
 		BaasBox.loadCollection("posts")
 			.done(function(posts) {
 				$.print("post:");
 				$.print(posts);
-
 				renderPostList(posts);
 			})
 			.fail(function(err) {
@@ -1009,17 +1049,42 @@ var registerPostEvents = function () {
 
 	var renderPost = function (post) {
 		var html = '<li><div>'
-			+ '<img title="image/png" alt="image/png" src="/file/' + post.imgId + '?X-BB-SESSION=' + BaasBox.getCurrentUser().token + '&amp;X-BAASBOX-APPCODE=undefined&amp;" />'
-			+ '<p>' + post.textContent + '</p>'
-			+ '<p>author: ' + post._author + '</p>'
+			+ '<div><img /></div>'
+			+ '<div class="left">' + post.textContent + '</div>'
+			+ '<div class="right">author: ' + post._author + '</div>'
+			+ '<div class="clear"></div>'
 			+ '</li></div>';
-		
+
 		var $post = $(html);
-		 // todo: get it through Model or repository
-        BaasBox.fetchFile(post.imgId, true)
-            .done(function(){
-                $post.find("img").attr("src", this.url);
-            });
-        return $post;
+
+		if (!!post.link) {
+
+			// get the link
+			$.ajax({
+				method:"get",
+				url : BaasBox.endPoint + '/link' + '?where=id+like+' + encodeURIComponent("\'%" + post.link + "%\'") + ""
+			})
+			.done(function (res) {
+				if (res.data.length > 0) {
+					var link = res.data[0];
+					$.print(link);
+
+					// get the image id from link
+					var imgId = link.in.id;
+
+					$.get(BaasBox.endPoint + '/file/details/' + imgId)
+			            .done(function (res) {
+			                $.print(res);
+			                var imgInfo = res.data;
+
+			                $post.find("img")
+			                	.attr("alt", imgInfo.fileName)
+			                	.attr("title", imgInfo.fileName)
+			                	.attr("src", BaasBox.endPoint + '/file/' + imgInfo.id + '?X-BB-SESSION=' + BaasBox.getCurrentUser().token + '&amp;X-BAASBOX-APPCODE=undefined&amp;');
+			            });
+				}
+			})
+		}
+		return $post;
 	};
 };

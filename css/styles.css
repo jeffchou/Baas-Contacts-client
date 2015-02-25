@@ -25,6 +25,12 @@ body {
 div.left{
 	float: left;
 }
+div.right{
+	float: right;
+}
+div.clear{
+	clear: both;
+}
 
 .form-user {
 	max-width: 350px;
@@ -156,4 +162,12 @@ div.left{
 
 #assets-form {
 
+}
+
+#posts-list {
+	width: 800px;
+}
+
+#posts-list li {
+	margin: 1em;
 }
