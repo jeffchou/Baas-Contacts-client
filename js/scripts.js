@@ -12,8 +12,8 @@ $(document).ready(function() {
 	
 	// initial BaasBox
 	// TODO: these should be decide in a config.
-	//BaasBox.setEndPoint("http://172.16.127.52:9000");
-	BaasBox.setEndPoint("http://localhost:9000");
+	BaasBox.setEndPoint("http://172.16.127.52:9000");
+	//BaasBox.setEndPoint("http://localhost:9000");
 	BaasBox.appcode = "1234567890";
 	
 	// initialize account
