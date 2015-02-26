@@ -169,7 +169,8 @@
 				
 				var data=JSON.parse(pushMessage);
 				
-				var url="http://172.16.127.52:9000/push/message";
+				//var url="http://172.16.127.52:9000/push/message";
+				var url="http://localhost:9000/push/message";
 
 				 jQuery.ajax({
 			        url:    url ,
@@ -177,6 +178,37 @@
 			        contentType: 'application/json',
 					type: 'post',
 					data: JSON.stringify(data),
+					headers: { "X-BB-SESSION": sessionToken},
+			        success: function(result) {
+
+	                	var data=JSON.stringify(result, undefined, 2);
+	                	$("#panel_body").removeClass("alert-warning");
+	                	$("#panel_body").addClass("alert-success");
+	                	$("#gird_data").html(data);
+	                	
+	     			},
+					error:function(jqXHR, ajaxOptions, thrownError){
+						console.error("status="+jqXHR.status+"response="+jqXHR.responseText);
+						var errorMsg=JSON.stringify(JSON.parse(jqXHR.responseText), undefined, 2);
+						$("#panel_body").addClass("alert-warning");
+						$("#gird_data").html(errorMsg);
+
+					}
+			    });
+
+			});
+			
+			$("#enable_push").click(function() {
+				console.info("enable_push button pressed...");
+				
+				//var url="http://172.16.127.52:9000/push/message";
+				//var url="http://localhost:9000/push/enable/android/APA91bHQhhQhW2cq3Spi4ihCccS6ANgc9ETM5s9cwig668RVuUf0CDgNK38L5_kZOvc0UwnPd33FTnGT9wwo2YJPZq0Cl4q9j9eGR5m8O00I7lfBPTUdiTuAXMjuAYWu6Z5oiw11HI-JjTuAyfshdId7HWSVIhAVKsTsG8--y7AEqxgRsoMYRAo";
+				var url="http://localhost:9000/push/enable/android/123";
+
+
+				 jQuery.ajax({
+			        url:    url ,
+					type: 'put',
 					headers: { "X-BB-SESSION": sessionToken},
 			        success: function(result) {
 
@@ -211,9 +243,9 @@
 				<div class="col-md-3">
 
 					<label for="inputAccount" class="sr-only">Account</label>
-					<input type="text" id="inputAccount" class="form-control" placeholder="User Account" required autofocus>
+					<input type="text" id="inputAccount" class="form-control" value="admin" placeholder="User Account" required autofocus>
 					<label for="inputPassword" class="sr-only">Password</label>
-					<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+					<input type="password" id="inputPassword" class="form-control" value="admin" placeholder="Password" required>
 				</div>
 				<div class="col-md-9">
 					<button type="button" class="btn btn-primary" id="login">Login</button>
@@ -244,6 +276,9 @@
 		
 		<div class="panel">
 			<div class="row ">
+				<div class="col-md-8">
+					<button type="button" class="btn btn-primary" id="enable_push">Enable push notifications</button>
+				</div>
 				<div class="col-md-8">
 					<textarea id="push_message" cols="80" rows="5">
 {
