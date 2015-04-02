@@ -1,0 +1,76 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>AllJoyn User Portal</title>
+		<meta name="description" content="AllJoyn User Portal">
+		<meta name="author" content="rc3">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+
+	<body>
+		<div class="container" id='login' style='text-align: center'>
+			<form name='cred'>
+				<label for='jid'>JID:</label>
+				<input type='text' id='jid' value='randy@rc3test' />
+				<label for='pass'>Password:</label>
+				<input type='password' id='pass' value='1234' />
+				<input type='button' id='connect' value='connect' />
+			</form>
+		</div>
+
+		<div class="container">
+		
+			<div class="panel">
+				<div class="row ">
+					<div class="col-md-8">
+						<textarea id="message_body" cols="80" rows="12">
+{
+	"message": {
+		"method": "org.alljoyn.chat.chat.FindAdvertisedName",
+		"params": [
+			"org.alljoyn.sl."
+		],
+		"id": 3
+	},
+	"jid": "test@rc3test"
+}
+
+						</textarea>
+					</div>
+					<div class="col-md-4">
+						<button type="button" class="btn btn-primary" id="send_message">Send Message</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-body" id="panel_body" style="min-height: 10px; max-height: 480px; overflow: auto;">
+					<pre class="panel" id="gird_data"></pre>
+				</div>
+			</div>
+			
+			<div class="panel panel-primary">
+				<div class="panel-body" id="log_body" style="min-height: 10px; max-height: 120px; overflow: auto;">
+					<pre class="panel" id="log"></pre>
+				</div>
+			</div>
+
+		</div>
+	
+		<link type="image/x-icon" rel="shortcut icon" href="favicon.ico">
+		<link type="image/x-icon" rel="icon" href="favicon.ico" />
+
+		<link rel="stylesheet" href="../css/reset.css">
+		<link rel="stylesheet" href="../css/bootstrap.css">
+		<link rel="stylesheet" href="../css/bootstrap-theme.css">
+		<link rel="stylesheet" href="../css/styles.css">
+
+		<script src="../js/libs/jquery-2.1.1.js"></script>
+	
+		<script src="js/strophe.js"></script>
+		<script src="js/user_portal.js"></script>
+	
+	</body>
+</html>
